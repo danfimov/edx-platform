@@ -556,7 +556,7 @@ FEATURES = {
     'ENABLE_GRADING_METHOD_IN_PROBLEMS': False,
 
     # See annotations in lms/envs/common.py for details.
-    'ENABLE_BLAKE2B_HASHING': False,
+    'ENABLE_BLAKE2B_HASHING': True,
 
     # .. toggle_name: FEATURES['BADGES_ENABLED']
     # .. toggle_implementation: DjangoSetting

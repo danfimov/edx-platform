@@ -39,3 +39,37 @@ API_ACCESS_MANAGER_EMAIL: "api-access@example.com"
 
 # So that you can login to studio on bare-metal
 SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT: 'http://localhost:18000'
+
+
+DATABASES:
+    default:
+        ATOMIC_REQUESTS: true
+        CONN_MAX_AGE: 0
+        ENGINE: django.db.backends.mysql
+        HOST: mysql.tutor-local.orb.local
+        NAME: openedx
+        OPTIONS:
+            isolation_level: read committed
+        PASSWORD: 8mp1Fqdd
+        PORT: '3306'
+        USER: openedx
+    read_replica:
+        CONN_MAX_AGE: 0
+        ENGINE: django.db.backends.mysql
+        HOST: mysql.tutor-local.orb.local
+        NAME: openedx
+        OPTIONS:
+            isolation_level: read committed
+        PASSWORD: 8mp1Fqdd
+        PORT: '3306'
+        USER: openedx
+    student_module_history:
+        CONN_MAX_AGE: 0
+        ENGINE: django.db.backends.mysql
+        HOST: mysql.tutor-local.orb.local
+        NAME: openedx
+        OPTIONS:
+            isolation_level: read committed
+        PASSWORD: 8mp1Fqdd
+        PORT: '3306'
+        USER: openedx

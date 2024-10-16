@@ -1067,7 +1067,7 @@ FEATURES = {
     # .. toggle_target_removal_date: 2024-12-09
     # .. toggle_warning: For consistency, keep the value in sync with the setting of the same name in the LMS and CMS.
     # .. toggle_tickets: https://github.com/openedx/edx-platform/pull/34442
-    'ENABLE_BLAKE2B_HASHING': False,
+    'ENABLE_BLAKE2B_HASHING': True,
 
     # .. toggle_name: FEATURES['BADGES_ENABLED']
     # .. toggle_implementation: DjangoSetting
