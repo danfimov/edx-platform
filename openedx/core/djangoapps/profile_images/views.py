@@ -38,7 +38,7 @@ def _make_upload_dt():
     Generate a server-side timestamp for the upload. This is in a separate
     function so its behavior can be overridden in tests.
     """
-    return datetime.datetime.utcnow().replace(tzinfo=UTC)
+    return datetime.datetime.now(utc)
 
 
 class ProfileImageView(DeveloperErrorViewMixin, APIView):

@@ -48,7 +48,7 @@ def is_bumper_enabled(video):
          bool.
     """
     bumper_last_view_date = getattr(video, 'bumper_last_view_date', None)
-    utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
+    utc_now = datetime.now(pytz.utc)
     periodicity = settings.FEATURES.get('SHOW_BUMPER_PERIODICITY', 0)
     has_viewed = any([
         video.bumper_do_not_show_again,

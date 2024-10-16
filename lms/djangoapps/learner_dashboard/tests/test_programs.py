@@ -83,19 +83,6 @@ class TestProgramListing(ProgramsApiConfigMixin, SharedModuleStoreTestCase):
         """
         return program['title']
 
-    def assert_dict_contains_subset(self, superset, subset):
-        """
-        Verify that the dict superset contains the dict subset.
-
-        Works like assertDictContainsSubset, deprecated since Python 3.2.
-        See: https://docs.python.org/2.7/library/unittest.html#unittest.TestCase.assertDictContainsSubset.
-        """
-        superset_keys = set(superset.keys())
-        subset_keys = set(subset.keys())
-        intersection = {key: superset[key] for key in superset_keys & subset_keys}
-
-        assert subset == intersection
-
     def test_login_required(self, mock_get_programs):
         """
         Verify that login is required to access the page.
@@ -150,7 +137,7 @@ class TestProgramListing(ProgramsApiConfigMixin, SharedModuleStoreTestCase):
 
         for index, actual_program in enumerate(actual):
             expected_program = self.data[index]
-            self.assert_dict_contains_subset(actual_program, expected_program)
+            assert actual_program.items() <= expected_program.items()
 
     def test_program_discovery(self, mock_get_programs):
         """

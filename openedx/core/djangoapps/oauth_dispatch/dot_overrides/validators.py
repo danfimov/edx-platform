@@ -152,4 +152,4 @@ def _get_utc_now():
     """
     Return current time in UTC.
     """
-    return datetime.utcnow().replace(tzinfo=utc)
+    return datetime.now(utc)

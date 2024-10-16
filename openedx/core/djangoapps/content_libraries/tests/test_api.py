@@ -345,17 +345,14 @@ class ContentLibraryCollectionsTest(ContentLibrariesRestApiTest, OpenEdxEventsTe
         assert collection.created_by == self.user
 
         assert event_receiver.call_count == 1
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_COLLECTION_CREATED,
                 "sender": None,
                 "library_collection": LibraryCollectionData(
                     self.lib2.library_key,
                     collection_key="COL4",
                 ),
-            },
-            event_receiver.call_args_list[0].kwargs,
-        )
+            }.items() <= event_receiver.call_args_list[0].kwargs.items()
 
     def test_create_library_collection_invalid_library(self):
         library_key = LibraryLocatorV2.from_string("lib:INVALID:test-lib-does-not-exist")
@@ -381,17 +378,14 @@ class ContentLibraryCollectionsTest(ContentLibrariesRestApiTest, OpenEdxEventsTe
         assert self.col1.created_by == self.user
 
         assert event_receiver.call_count == 1
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_COLLECTION_UPDATED,
                 "sender": None,
                 "library_collection": LibraryCollectionData(
                     self.lib1.library_key,
                     collection_key="COL1",
                 ),
-            },
-            event_receiver.call_args_list[0].kwargs,
-        )
+            }.items() <= event_receiver.call_args_list[0].kwargs.items()
 
     def test_update_library_collection_wrong_library(self):
         with self.assertRaises(api.ContentLibraryCollectionNotFound) as exc:
@@ -411,17 +405,14 @@ class ContentLibraryCollectionsTest(ContentLibrariesRestApiTest, OpenEdxEventsTe
         )
 
         assert event_receiver.call_count == 1
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_COLLECTION_DELETED,
                 "sender": None,
                 "library_collection": LibraryCollectionData(
                     self.lib1.library_key,
                     collection_key="COL1",
                 ),
-            },
-            event_receiver.call_args_list[0].kwargs,
-        )
+            }.items() <= event_receiver.call_args_list[0].kwargs.items()
 
     def test_update_library_collection_components(self):
         assert not list(self.col1.entities.all())
@@ -464,39 +455,30 @@ class ContentLibraryCollectionsTest(ContentLibrariesRestApiTest, OpenEdxEventsTe
         )
 
         assert event_receiver.call_count == 3
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": CONTENT_OBJECT_ASSOCIATIONS_CHANGED,
                 "sender": None,
                 "content_object": ContentObjectChangedData(
                     object_id=self.lib1_problem_block["id"],
                     changes=["collections"],
                 ),
-            },
-            event_receiver.call_args_list[0].kwargs,
-        )
-        self.assertDictContainsSubset(
-            {
+            }.items() <= event_receiver.call_args_list[0].kwargs.items()
+        assert {
                 "signal": CONTENT_OBJECT_ASSOCIATIONS_CHANGED,
                 "sender": None,
                 "content_object": ContentObjectChangedData(
                     object_id=self.lib1_html_block["id"],
                     changes=["collections"],
                 ),
-            },
-            event_receiver.call_args_list[1].kwargs,
-        )
-        self.assertDictContainsSubset(
-            {
+            }.items() <= event_receiver.call_args_list[1].kwargs.items()
+        assert {
                 "signal": LIBRARY_COLLECTION_UPDATED,
                 "sender": None,
                 "library_collection": LibraryCollectionData(
                     self.lib1.library_key,
                     collection_key="COL1",
                 ),
-            },
-            event_receiver.call_args_list[2].kwargs,
-        )
+            }.items() <= event_receiver.call_args_list[2].kwargs.items()
 
     def test_update_collection_components_from_wrong_library(self):
         with self.assertRaises(api.ContentLibraryBlockNotFound) as exc:
@@ -526,19 +508,15 @@ class ContentLibraryCollectionsTest(ContentLibrariesRestApiTest, OpenEdxEventsTe
 
         assert len(authoring_api.get_collection(self.lib2.learning_package_id, self.col2.key).entities.all()) == 1
         assert len(authoring_api.get_collection(self.lib2.learning_package_id, self.col3.key).entities.all()) == 1
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": CONTENT_OBJECT_ASSOCIATIONS_CHANGED,
                 "sender": None,
                 "content_object": ContentObjectChangedData(
                     object_id=self.lib2_problem_block["id"],
                     changes=["collections"],
                 ),
-            },
-            event_receiver.call_args_list[0].kwargs,
-        )
-        self.assertDictContainsSubset(
-            {
+            }.items() <= event_receiver.call_args_list[0].kwargs.items()
+        assert {
                 "signal": LIBRARY_COLLECTION_UPDATED,
                 "sender": None,
                 "library_collection": LibraryCollectionData(
@@ -546,11 +524,8 @@ class ContentLibraryCollectionsTest(ContentLibrariesRestApiTest, OpenEdxEventsTe
                     collection_key=self.col2.key,
                     background=True,
                 ),
-            },
-            collection_update_event_receiver.call_args_list[0].kwargs,
-        )
-        self.assertDictContainsSubset(
-            {
+            }.items() <= collection_update_event_receiver.call_args_list[0].kwargs.items()
+        assert {
                 "signal": LIBRARY_COLLECTION_UPDATED,
                 "sender": None,
                 "library_collection": LibraryCollectionData(
@@ -558,6 +533,4 @@ class ContentLibraryCollectionsTest(ContentLibrariesRestApiTest, OpenEdxEventsTe
                     collection_key=self.col3.key,
                     background=True,
                 ),
-            },
-            collection_update_event_receiver.call_args_list[1].kwargs,
-        )
+            }.items() <= collection_update_event_receiver.call_args_list[1].kwargs.items()

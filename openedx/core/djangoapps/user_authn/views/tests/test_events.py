@@ -83,8 +83,7 @@ class RegistrationEventTest(UserAPITestCase, OpenEdxEventsTestMixin):
 
         user = User.objects.get(username=self.user_info.get("username"))
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": STUDENT_REGISTRATION_COMPLETED,
                 "sender": None,
                 "user": UserData(
@@ -96,9 +95,7 @@ class RegistrationEventTest(UserAPITestCase, OpenEdxEventsTestMixin):
                     id=user.id,
                     is_active=user.is_active,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
 
 @skip_unless_lms
@@ -165,8 +162,7 @@ class LoginSessionEventTest(UserAPITestCase, OpenEdxEventsTestMixin):
 
         user = User.objects.get(username=self.user.username)
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": SESSION_LOGIN_COMPLETED,
                 "sender": None,
                 "user": UserData(
@@ -178,6 +174,4 @@ class LoginSessionEventTest(UserAPITestCase, OpenEdxEventsTestMixin):
                     id=user.id,
                     is_active=user.is_active,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()

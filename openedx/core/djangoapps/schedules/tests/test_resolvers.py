@@ -25,6 +25,7 @@ from openedx.core.djangoapps.schedules.config import (
     _EXTERNAL_COURSE_UPDATES_FLAG,
     COURSE_UPDATE_SHOW_UNSUBSCRIBE_WAFFLE_SWITCH,
 )
+from pytz import utc
 from openedx.core.djangoapps.schedules.models import Schedule
 from openedx.core.djangoapps.schedules.resolvers import (
     LOG,
@@ -235,7 +236,7 @@ class TestCourseNextSectionUpdateResolver(SchedulesResolverTestMixin, ModuleStor
 
     def setUp(self):
         super().setUp()
-        self.today = datetime.datetime.utcnow()
+        self.today = datetime.datetime.now(utc)
         self.yesterday = self.today - datetime.timedelta(days=1)
         self.course = CourseFactory.create(
             highlights_enabled_for_messaging=True, self_paced=True,

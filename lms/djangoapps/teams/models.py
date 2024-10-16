@@ -101,7 +101,7 @@ def handle_activity(user, post, original_author_id=None):
 
 
 def utc_now():
-    return datetime.utcnow().replace(tzinfo=pytz.utc)
+    return datetime.now(pytz.UTC)
 
 
 class CourseTeam(models.Model):
@@ -286,7 +286,7 @@ class CourseTeamMembership(models.Model):
         if self.pk is None:
             should_reset_team_size = True
         if not self.last_activity_at:
-            self.last_activity_at = datetime.utcnow().replace(tzinfo=pytz.utc)
+            self.last_activity_at = datetime.now(pytz.utc)
         super().save(*args, **kwargs)
         if should_reset_team_size:
             self.team.reset_team_size()
@@ -345,7 +345,7 @@ class CourseTeamMembership(models.Model):
         # information.
         except ObjectDoesNotExist:
             return
-        now = datetime.utcnow().replace(tzinfo=pytz.utc)
+        now = datetime.now(pytz.utc)
         membership.last_activity_at = now
         membership.team.last_activity_at = now
         membership.team.save()

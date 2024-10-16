@@ -855,8 +855,7 @@ class TestDuplicateItem(ItemTest, DuplicateHelper, OpenEdxEventsTestMixin):
         XBLOCK_DUPLICATED.connect(event_receiver)
         usage_key = self._duplicate_and_verify(self.vert_usage_key, self.seq_usage_key)
         event_receiver.assert_called()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": XBLOCK_DUPLICATED,
                 "sender": None,
                 "xblock_info": DuplicatedXBlockData(
@@ -864,9 +863,7 @@ class TestDuplicateItem(ItemTest, DuplicateHelper, OpenEdxEventsTestMixin):
                     block_type=usage_key.block_type,
                     source_usage_key=self.vert_usage_key,
                 ),
-            },
-            event_receiver.call_args.kwargs,
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_ordering(self):
         """
@@ -3575,7 +3572,7 @@ class TestXBlockInfo(ItemTest):
                     self.validate_xblock_info_consistency(
                         child_response,
                         has_child_info=(
-                            not child_response.get("child_info", None) is None
+                            child_response.get("child_info", None) is not None
                         ),
                         course_outline=course_outline,
                     )

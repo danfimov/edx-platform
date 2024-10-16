@@ -5506,7 +5506,7 @@ wheels = [
 [[package]]
 name = "yandex-study"
 version = "0.13.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "acid-xblock" },
     { name = "analytics-python" },

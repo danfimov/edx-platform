@@ -2,6 +2,7 @@
 import datetime
 from unittest.mock import patch
 
+from pytz import utc
 import pytest
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory, BlockFactory
@@ -124,7 +125,7 @@ class TestContentHighlights(ModuleStoreTestCase):  # lint-amnesty, pylint: disab
         # It only goes up to 6 days because we are using two_days_ago as our reference point
         # so 6 + 2 = 8 days for the duration of the course
         mock_duration.return_value = datetime.timedelta(days=8)
-        today = datetime.datetime.utcnow()
+        today = datetime.datetime.now(utc)
         two_days_ago = today - datetime.timedelta(days=2)
         two_days = today + datetime.timedelta(days=2)
         three_days = today + datetime.timedelta(days=3)
@@ -171,7 +172,7 @@ class TestContentHighlights(ModuleStoreTestCase):  # lint-amnesty, pylint: disab
         with self.assertRaisesRegex(CourseUpdateDoesNotExist, 'Course block .* not found'):
             get_week_highlights(self.user, self.course_key, 1)
 
-        yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        yesterday = datetime.datetime.now(utc) - datetime.timedelta(days=1)
         today = datetime.datetime.utcnow()
         with self.assertRaisesRegex(CourseUpdateDoesNotExist, 'Course block .* not found'):
             get_next_section_highlights(self.user, self.course_key, yesterday, today.date())

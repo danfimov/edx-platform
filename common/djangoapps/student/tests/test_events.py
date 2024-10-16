@@ -271,8 +271,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
         enrollment = CourseEnrollment.enroll(self.user, self.course.id)
 
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": COURSE_ENROLLMENT_CREATED,
                 "sender": None,
                 "enrollment": CourseEnrollmentData(
@@ -293,9 +292,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
                     is_active=enrollment.is_active,
                     creation_date=enrollment.created,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_enrollment_changed_event_emitted(self):
         """
@@ -314,8 +311,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
         enrollment.update_enrollment(mode="verified")
 
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": COURSE_ENROLLMENT_CHANGED,
                 "sender": None,
                 "enrollment": CourseEnrollmentData(
@@ -336,9 +332,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
                     is_active=enrollment.is_active,
                     creation_date=enrollment.created,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_unenrollment_completed_event_emitted(self):
         """
@@ -357,8 +351,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
         CourseEnrollment.unenroll(self.user, self.course.id)
 
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": COURSE_UNENROLLMENT_COMPLETED,
                 "sender": None,
                 "enrollment": CourseEnrollmentData(
@@ -379,9 +372,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
                     is_active=False,
                     creation_date=enrollment.created,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
 
 @skip_unless_lms
@@ -430,8 +421,7 @@ class TestCourseAccessRoleEvents(TestCase, OpenEdxEventsTestMixin):
         role.add_users(self.user)
 
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": COURSE_ACCESS_ROLE_ADDED,
                 "sender": None,
                 "course_access_role_data": CourseAccessRoleData(
@@ -447,9 +437,7 @@ class TestCourseAccessRoleEvents(TestCase, OpenEdxEventsTestMixin):
                     org_key=self.course_key.org,
                     role=role._role_name,  # pylint: disable=protected-access
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     @ddt.data(
         CourseStaffRole,
@@ -468,8 +456,7 @@ class TestCourseAccessRoleEvents(TestCase, OpenEdxEventsTestMixin):
         role.remove_users(self.user)
 
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": COURSE_ACCESS_ROLE_REMOVED,
                 "sender": None,
                 "course_access_role_data": CourseAccessRoleData(
@@ -485,6 +472,4 @@ class TestCourseAccessRoleEvents(TestCase, OpenEdxEventsTestMixin):
                     org_key=self.course_key.org,
                     role=role._role_name,  # pylint: disable=protected-access
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()

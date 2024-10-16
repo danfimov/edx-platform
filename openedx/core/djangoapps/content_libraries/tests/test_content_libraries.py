@@ -760,17 +760,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         library_key = LibraryLocatorV2.from_string(lib['id'])
 
         event_receiver.assert_called_once()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": CONTENT_LIBRARY_CREATED,
                 "sender": None,
                 "content_library": ContentLibraryData(
                     library_key=library_key,
                     update_blocks=False,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_content_library_update_event(self):
         """
@@ -788,17 +785,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         library_key = LibraryLocatorV2.from_string(lib2['id'])
 
         event_receiver.assert_called_once()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": CONTENT_LIBRARY_UPDATED,
                 "sender": None,
                 "content_library": ContentLibraryData(
                     library_key=library_key,
                     update_blocks=False,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_content_library_delete_event(self):
         """
@@ -816,17 +810,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         self._delete_library(lib["id"])
 
         event_receiver.assert_called_once()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": CONTENT_LIBRARY_DELETED,
                 "sender": None,
                 "content_library": ContentLibraryData(
                     library_key=library_key,
                     update_blocks=False,
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_library_block_create_event(self):
         """
@@ -850,17 +841,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         )
 
         event_receiver.assert_called_once()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_BLOCK_CREATED,
                 "sender": None,
                 "library_block": LibraryBlockData(
                     library_key=library_key,
                     usage_key=usage_key
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_library_block_olx_update_event(self):
         """
@@ -903,17 +891,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         self._set_library_block_olx(block_id, new_olx)
 
         event_receiver.assert_called_once()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_BLOCK_UPDATED,
                 "sender": None,
                 "library_block": LibraryBlockData(
                     library_key=library_key,
                     usage_key=usage_key
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     @skip("We still need to re-implement static asset handling.")
     def test_library_block_add_asset_update_event(self):
@@ -943,17 +928,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         )
 
         event_receiver.assert_called_once()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_BLOCK_UPDATED,
                 "sender": None,
                 "library_block": LibraryBlockData(
                     library_key=library_key,
                     usage_key=usage_key
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     @skip("We still need to re-implement static asset handling.")
     def test_library_block_del_asset_update_event(self):
@@ -985,17 +967,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         )
 
         event_receiver.assert_called()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_BLOCK_UPDATED,
                 "sender": None,
                 "library_block": LibraryBlockData(
                     library_key=library_key,
                     usage_key=usage_key
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_library_block_delete_event(self):
         """
@@ -1024,17 +1003,14 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         self._delete_library_block(block_id)
 
         event_receiver.assert_called()
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": LIBRARY_BLOCK_DELETED,
                 "sender": None,
                 "library_block": LibraryBlockData(
                     library_key=library_key,
                     usage_key=usage_key
                 ),
-            },
-            event_receiver.call_args.kwargs
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
     def test_library_paste_clipboard(self):
         """

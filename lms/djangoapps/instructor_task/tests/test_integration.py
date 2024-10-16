@@ -583,7 +583,7 @@ class TestGradeReportConditionalContent(TestReportMixin, TestConditionalContent,
         Arguments:
             task_result (dict): Return value of `CourseGradeReport.generate`.
         """
-        self.assertDictContainsSubset({'attempted': 2, 'succeeded': 2, 'failed': 0}, task_result)
+        assert {'attempted': 2, 'succeeded': 2, 'failed': 0}.items() <= task_result.items()
 
     def verify_grades_in_csv(self, students_grades, ignore_other_columns=False):
         """

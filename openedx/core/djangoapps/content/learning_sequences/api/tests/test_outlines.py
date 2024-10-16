@@ -1064,7 +1064,7 @@ class SpecialExamsTestCase(OutlineProcessorTestCase):  # lint-amnesty, pylint: d
         for sequence_key in self.get_sequence_keys(exclude=[self.seq_normal_key]):
             assert sequence_key in student_details.special_exam_attempts.sequences
             attempt_summary = student_details.special_exam_attempts.sequences[sequence_key]
-            assert type(attempt_summary) == dict  # lint-amnesty, pylint: disable=unidiomatic-typecheck
+            assert isinstance(attempt_summary, dict)  # lint-amnesty, pylint: disable=unidiomatic-typecheck
             assert attempt_summary["summary"]["usage_key"] == str(sequence_key)
 
     @patch.dict(settings.FEATURES, {'ENABLE_SPECIAL_EXAMS': False})
@@ -1101,7 +1101,7 @@ class SpecialExamsTestCase(OutlineProcessorTestCase):  # lint-amnesty, pylint: d
         # Ensure that exam type is correct for proctored exam
         assert self.seq_proctored_exam_key in student_details.special_exam_attempts.sequences
         attempt_summary = student_details.special_exam_attempts.sequences[self.seq_proctored_exam_key]
-        assert type(attempt_summary) == dict  # lint-amnesty, pylint: disable=unidiomatic-typecheck
+        assert isinstance(attempt_summary, dict)  # lint-amnesty, pylint: disable=unidiomatic-typecheck
         assert attempt_summary["short_description"] == "Proctored Exam"
 
 

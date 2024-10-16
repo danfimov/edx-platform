@@ -82,11 +82,7 @@ class ContentLibrariesRestApiTest(APITransactionTestCase):
 
     def assertDictContainsEntries(self, big_dict, subset_dict):
         """
-        Assert that the first dict contains at least all of the same entries as
-        the second dict.
-
-        Like python 2's assertDictContainsSubset, but with the arguments in the
-        correct order.
+        Assert that the first dict contains at least all of the same entries as the second dict.
         """
         assert big_dict.items() >= subset_dict.items()
 

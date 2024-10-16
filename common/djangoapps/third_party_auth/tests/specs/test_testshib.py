@@ -396,10 +396,7 @@ class TestShibIntegrationTest(SamlIntegrationTestUtilities, IntegrationTestMixin
             assert msg.startswith('SAML login %s')
             assert action_type == 'request'
             assert idp_name == self.PROVIDER_IDP_SLUG
-            self.assertDictContainsSubset(
-                {"idp": idp_name, "auth_entry": "login", "next": expected_next_url},
-                request_data
-            )
+            assert {"idp": idp_name, "auth_entry": "login", "next": expected_next_url}.items() <= request_data.items()
             assert next_url == expected_next_url
             assert '<samlp:AuthnRequest' in xml
 
@@ -407,7 +404,7 @@ class TestShibIntegrationTest(SamlIntegrationTestUtilities, IntegrationTestMixin
             assert msg.startswith('SAML login %s')
             assert action_type == 'response'
             assert idp_name == self.PROVIDER_IDP_SLUG
-            self.assertDictContainsSubset({"RelayState": idp_name}, response_data)
+            assert {"RelayState": idp_name}.items() <= response_data.items()
             assert 'SAMLResponse' in response_data
             assert next_url == expected_next_url
             assert '<saml2p:Response' in xml

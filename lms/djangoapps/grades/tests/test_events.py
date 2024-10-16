@@ -90,8 +90,7 @@ class PersistentGradeEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixi
         PERSISTENT_GRADE_SUMMARY_CHANGED.connect(event_receiver)
         grade = PersistentCourseGrade.update_or_create(**self.params)
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": PERSISTENT_GRADE_SUMMARY_CHANGED,
                 "sender": None,
                 "grade": PersistentCourseGradeData(
@@ -106,9 +105,7 @@ class PersistentGradeEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixi
                     letter_grade=self.params["letter_grade"],
                     passed_timestamp=grade.passed_timestamp
                 )
-            },
-            event_receiver.call_args.kwargs,
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
 
 class CoursePassingStatusEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
@@ -151,8 +148,7 @@ class CoursePassingStatusEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTest
             grade_factory.update(self.user, self.course)
 
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": COURSE_PASSING_STATUS_UPDATED,
                 "sender": None,
                 "course_passing_status": CoursePassingStatusData(
@@ -170,9 +166,7 @@ class CoursePassingStatusEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTest
                         course_key=self.course.id,
                     ),
                 ),
-            },
-            event_receiver.call_args.kwargs,
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()
 
 
 class CCXCoursePassingStatusEventsTest(
@@ -224,8 +218,7 @@ class CCXCoursePassingStatusEventsTest(
             grade_factory.update(self.user, self.store.get_course(self.ccx_locator))
 
         self.assertTrue(self.receiver_called)
-        self.assertDictContainsSubset(
-            {
+        assert {
                 "signal": CCX_COURSE_PASSING_STATUS_UPDATED,
                 "sender": None,
                 "course_passing_status": CcxCoursePassingStatusData(
@@ -249,6 +242,4 @@ class CCXCoursePassingStatusEventsTest(
                         max_students_allowed=self.ccx.max_student_enrollments_allowed,
                     ),
                 ),
-            },
-            event_receiver.call_args.kwargs,
-        )
+            }.items() <= event_receiver.call_args.kwargs.items()

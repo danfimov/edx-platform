@@ -292,7 +292,7 @@ class TeamSignalsTest(EventTestMixin, SharedModuleStoreTestCase):
         if should_update:
             assert team.last_activity_at > team_last_activity
             assert team_membership.last_activity_at > team_membership_last_activity
-            now = datetime.utcnow().replace(tzinfo=pytz.utc)
+            now = datetime.now(pytz.utc)
             assert now > team.last_activity_at
             assert now > team_membership.last_activity_at
             self.assert_event_emitted(

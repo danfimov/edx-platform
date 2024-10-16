@@ -206,6 +206,9 @@ dev = [
     "nodeenv>=1.9.1",                        # Utility for managing Node.js environments; we use this for deployments and testing
 ]
 
+[tool.uv]
+package = true
+
 [project.scripts]
 xmodule_assets = "xmodule.static_content:main"
 
@@ -797,6 +800,11 @@ filterwarnings = [
     "ignore:Deprecated call to `pkg_resources.declare_namespace.*:DeprecationWarning",
     "ignore:.*pkg_resources is deprecated as an API.*:DeprecationWarning",
     "ignore:'etree' is deprecated. Use 'xml.etree.ElementTree' instead.:DeprecationWarning:wiki",
+    # Remove before migration to Django 5.*
+    "ignore::django.utils.deprecation.RemovedInDjango51Warning",
+    "ignore::django.utils.deprecation.RemovedInDjango50Warning",
+    # Remove before migration to Python 3.13
+    "ignore:.*Python 3.13:DeprecationWarning",
 ]
 junit_family = "xunit2"
 norecursedirs = ".* *.egg build conf dist node_modules test_root cms/envs lms/envs"

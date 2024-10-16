@@ -1,14 +1,5 @@
-FROM ubuntu:focal as minimal-system
-
-# Warning: This file is experimental.
-#
-# Short-term goals:
-# * Be a suitable replacement for the `edxops/edxapp` image in devstack (in progress).
-# * Take advantage of Docker caching layers: aim to put commands in order of
-#   increasing cache-busting frequency.
-# * Related to ^, use no Ansible or Paver.
-# Long-term goal:
-# * Be a suitable base for production LMS and CMS images (THIS IS NOT YET THE CASE!).
+# From https://rtc.yandex-team.ru/docs/containers/virtual-images#docker
+FROM registry.yandex.net/rtc-base/jammy:sb-1630807043 AS minimal-system
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG SERVICE_VARIANT
@@ -31,11 +22,41 @@ ENV LMS_CFG="$CONFIG_ROOT/lms.yml"
 ENV CMS_CFG="$CONFIG_ROOT/cms.yml"
 
 # Env vars: path
-ENV VIRTUAL_ENV="/edx/app/edxapp/venvs/edxapp"
-ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+ENV UV_INSTALL_DIR="edx/uv"
+ENV PATH="${UV_INSTALL_DIR}/bin:${PATH}"
 ENV PATH="/edx/app/edxapp/edx-platform/node_modules/.bin:${PATH}"
 ENV PATH="/edx/app/edxapp/edx-platform/bin:${PATH}"
 ENV PATH="/edx/app/edxapp/nodeenv/bin:${PATH}"
+
+# Turn of logs buffering for faster logging
+# Do not write *.pyc in a container
+# Turns off writing cache to keep smaller image size
+# Faster building
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=off
+ENV PIP_DISABLE_PIP_VERSION_CHECK=on
+ENV PIP_DEFAULT_TIMEOUT=200
+ENV PIP_INDEX_URL=https://pypi.yandex-team.ru/simple/
+
+# Silence uv complaining about not being able to use hard links
+ENV UV_LINK_MODE=copy
+# Tell uv to byte-compile packages for faster application startups
+ENV UV_COMPILE_BYTECODE=1
+# Prevent uv from accidentally downloading isolated Python builds
+ENV UV_PYTHON_DOWNLOADS=never
+# Pick a Python for uv commands
+ENV UV_PYTHON=python3.11
+# Declare `/edx/app/edxapp/venvs/edxapp` as the target for `uv sync`.
+ENV UV_PROJECT_ENVIRONMENT="/edx/app/edxapp/venvs/edxapp"
+# Set index url for uv
+ENV UV_INDEX_URL=https://pypi.yandex-team.ru/simple/
+# TODO: delete after putting all packages to our pypi
+ENV UV_EXTRA_INDEX_URL=https://pypi.org/simple/
+# Force the use of system CA certificate bundle, not certifi
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
+RUN wget https://crls.yandex.net/YandexInternalRootCA.crt -O /usr/local/share/ca-certificates/YandexInternalRootCA.crt && update-ca-certificates
 
 WORKDIR /edx/app/edxapp/edx-platform
 
@@ -46,24 +67,16 @@ RUN useradd -m --shell /bin/false app
 RUN echo "locales locales/default_environment_locale select en_US.UTF-8" | debconf-set-selections
 RUN echo "locales locales/locales_to_be_generated multiselect en_US.UTF-8 UTF-8" | debconf-set-selections
 
-# Setting up ppa deadsnakes to get python 3.11
-RUN apt-get update && \
-  apt-get install -y software-properties-common && \
-  apt-add-repository -y ppa:deadsnakes/ppa
-
 # Install requirements that are absolutely necessary
 RUN apt-get update && \
-    apt-get -y dist-upgrade && \
-    apt-get -y install --no-install-recommends \
+    apt-get -y dist-upgrade --allow-downgrades && \
+    apt-get -y install --no-install-recommends --allow-downgrades \
         python3-pip \
         python3.11 \
-        # python3-dev: required for building mysqlclient python package
         python3.11-dev \
-        python3.11-venv \
-        libpython3.11 \
-        libpython3.11-stdlib \
+        # python3-dev: required for building mysqlclient python package version 2.2.0
         libmysqlclient21 \
-        # libmysqlclient-dev: required for building mysqlclient python package
+        # libmysqlclient-dev: required for building mysqlclient python package version 2.2.0
         libmysqlclient-dev \
         pkg-config \
         libssl1.1 \
@@ -77,10 +90,14 @@ RUN apt-get update && \
         gfortran \
         graphviz \
         locales \
-        swig \
-    && \
-    apt-get clean all && \
-    rm -rf /var/lib/apt/*
+        swig && \
+    apt-get clean all && rm -rf /var/lib/apt/*
+
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 3
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 3
+
+# Installation of uv package manager
+RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="${UV_INSTALL_DIR}" sh
 
 RUN mkdir -p /edx/var/edxapp
 RUN mkdir -p /edx/etc
@@ -89,7 +106,7 @@ RUN chown app:app /edx/var/edxapp
 # The builder-production stage is a temporary stage that installs required packages and builds the python virtualenv,
 # installs nodejs and node_modules.
 # The built artifacts from this stage are then copied to the base stage.
-FROM minimal-system as builder-production
+FROM minimal-system AS builder-production
 
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
@@ -108,17 +125,17 @@ RUN apt-get update && \
         libxslt1-dev
 
 # Setup python virtual environment
-# It is already 'activated' because $VIRTUAL_ENV/bin was put on $PATH
-RUN python3.11 -m venv "${VIRTUAL_ENV}"
+RUN uv venv
 
 # Install python requirements
 # Requires copying over requirements files, but not entire repository
-COPY requirements requirements
-RUN pip install -r requirements/pip.txt
-RUN pip install -r requirements/edx/base.txt
+COPY pyproject.toml pyproject.toml
+COPY uv.lock uv.lock
+
+RUN uv sync --no-install-project --locked
 
 # Install node and npm
-RUN nodeenv /edx/app/edxapp/nodeenv --node=18.19.0 --prebuilt
+RUN uv run nodeenv /edx/app/edxapp/nodeenv --node=18.19.0 --prebuilt
 RUN npm install -g npm@10.5.x
 
 # This script is used by an npm post-install hook.
@@ -133,12 +150,12 @@ RUN npm set progress=false && npm ci
 
 # The builder-development stage is a temporary stage that installs python modules required for development purposes
 # The built artifacts from this stage are then copied to the development stage.
-FROM builder-production as builder-development
+FROM builder-production AS builder-development
 
-RUN pip install -r requirements/edx/development.txt
+RUN uv sync --no-install-project --locked --all-extras
 
 # base stage
-FROM minimal-system as base
+FROM minimal-system AS base
 
 # Copy python virtual environment, nodejs and node_modules
 COPY --from=builder-production /edx/app/edxapp/venvs/edxapp /edx/app/edxapp/venvs/edxapp
@@ -148,14 +165,19 @@ COPY --from=builder-production /edx/app/edxapp/edx-platform/node_modules /edx/ap
 # Copy over remaining parts of repository (including all code)
 COPY . .
 
+## Copy scripts for symlinks creation
+## We can't store them in the repo due Arcadia rules, so we will create them during image build
+#COPY scripts/create_symlinks.sh scripts/create_symlinks.sh
+#RUN ./scripts/create_symlinks.sh
+
 # Install Python requirements again in order to capture local projects
-RUN pip install -e .
+RUN uv sync --all-extras --locked
 
 # Setting edx-platform directory as safe for git commands
 RUN git config --global --add safe.directory /edx/app/edxapp/edx-platform
 
 # Production target
-FROM base as production
+FROM base AS production
 
 USER app
 
@@ -174,7 +196,7 @@ CMD gunicorn \
     - ${SERVICE_VARIANT}.wsgi:application
 
 # Development target
-FROM base as development
+FROM base AS development
 
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
@@ -197,4 +219,4 @@ RUN touch ../edxapp_env
 ENV EDX_PLATFORM_SETTINGS='devstack_docker'
 ENV SERVICE_VARIANT="${SERVICE_VARIANT}"
 EXPOSE ${SERVICE_PORT}
-CMD ./manage.py ${SERVICE_VARIANT} runserver 0.0.0.0:${SERVICE_PORT}
+CMD ["./manage.py", "${SERVICE_VARIANT}", "runserver", "0.0.0.0:${SERVICE_PORT}"]

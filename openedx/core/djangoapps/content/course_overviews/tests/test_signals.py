@@ -29,7 +29,7 @@ class CourseOverviewSignalsTestCase(ModuleStoreTestCase):
     """
     MODULESTORE = TEST_DATA_ONLY_SPLIT_MODULESTORE_DRAFT_PREFERRED
     ENABLED_SIGNALS = ['course_deleted', 'course_published']
-    TODAY = datetime.datetime.utcnow().replace(tzinfo=UTC)
+    TODAY = datetime.datetime.now(UTC)
     NEXT_WEEK = TODAY + datetime.timedelta(days=7)
 
     def assert_changed_signal_sent(self, changes, mock_signal):
