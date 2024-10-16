@@ -1,11 +1,11 @@
 """  # lint-amnesty, pylint: disable=django-not-configured
-Check code quality using pycodestyle, pylint, and diff_quality.
+Check code quality using ruff, pylint, and diff_quality.
 """
 
 import json
 import os
 import re
-from datetime import datetime
+from datetime import datetime, UTC
 from xml.sax.saxutils import quoteattr
 
 from paver.easy import BuildFailure, cmdopts, needs, sh, task
@@ -20,7 +20,7 @@ JUNIT_XML_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 </testsuite>
 """
 JUNIT_XML_FAILURE_TEMPLATE = '<failure message={message}/>'
-START_TIME = datetime.utcnow()
+START_TIME = datetime.now(UTC)
 
 
 def write_junit_xml(name, message=None):
@@ -35,7 +35,7 @@ def write_junit_xml(name, message=None):
         'failure_count': 1 if message else 0,
         'failure_element': failure_element,
         'name': name,
-        'seconds': (datetime.utcnow() - START_TIME).total_seconds(),
+        'seconds': (datetime.now(UTC) - START_TIME).total_seconds(),
     }
     Env.QUALITY_DIR.makedirs_p()
     filename = Env.QUALITY_DIR / f'{name}.xml'
@@ -77,9 +77,9 @@ def top_python_dirs(dirname):
     return top_dirs
 
 
-def _get_pep8_violations(clean=True):
+def _get_ruff_violations(clean=True):
     """
-    Runs pycodestyle. Returns a tuple of (number_of_violations, violations_string)
+    Runs ruff. Returns a tuple of (number_of_violations, violations_string)
     where violations_string is a string of all PEP 8 violations found, separated
     by new lines.
     """
@@ -87,20 +87,20 @@ def _get_pep8_violations(clean=True):
     if clean:
         report_dir.rmtree(ignore_errors=True)
     report_dir.makedirs_p()
-    report = report_dir / 'pep8.report'
+    report = report_dir / 'ruff.report'
 
     # Make sure the metrics subdirectory exists
     Env.METRICS_DIR.makedirs_p()
 
     if not report.exists():
-        sh(f'pycodestyle . | tee {report} -a')
+        sh(f'ruff check . | tee {report} -a')
 
-    violations_list = _pep8_violations(report)
+    violations_list = _ruff_violations(report)
 
     return len(violations_list), violations_list
 
 
-def _pep8_violations(report_file):
+def _ruff_violations(report_file):
     """
     Returns the list of all PEP 8 violations in the given report_file.
     """
@@ -113,12 +113,12 @@ def _pep8_violations(report_file):
     ("system=", "s", "System to act on"),
 ])
 @timed
-def run_pep8(options):  # pylint: disable=unused-argument
+def run_ruff(options):  # pylint: disable=unused-argument
     """
-    Run pycodestyle on system code.
+    Run ruff on system code.
     Fail the task if any violations are found.
     """
-    (count, violations_list) = _get_pep8_violations()
+    (count, violations_list) = _get_ruff_violations()
     violations_list = ''.join(violations_list)
 
     # Print number of violations to log
@@ -127,7 +127,7 @@ def run_pep8(options):  # pylint: disable=unused-argument
     print(violations_list)
 
     # Also write the number of violations to a file
-    with open(Env.METRICS_DIR / "pep8", "w") as f:
+    with open(Env.METRICS_DIR / "ruff", "w") as f:
         f.write(violations_count_str + '\n\n')
         f.write(violations_list)
 
