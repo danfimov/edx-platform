@@ -1,0 +1,809 @@
+[project]
+name = "yandex-study"
+version = "0.13.0"
+description = "Platform for summer schools that biult on top of Open edX Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "acid-xblock>=0.3.1",                    # This XBlock is used for unit tests as well as manual tests
+    "analytics-python>=1.4.post1",           # Used for Segment analytics
+    "babel>=2.16.0",                         # Internationalization utilities, used for date formatting in a few places
+    "nh3==0.2.17",                           # Python bindings to the ammonia (whitelist-based HTML sanitizing library); used for capa and LTI
+    "boto==2.49.0",
+    "boto3==1.35.27",                        # Amazon Web Services SDK for Python
+    "bridgekeeper>=0.9",                     # Used for determining permissions for courseware. Use of django-rules is preferred.
+    "celery>=5.4.0,<6.0.0",                  # Asynchronous task execution library
+    "chem>=1.3.0",                           # A helper library for chemistry calculations
+    "codejail-includes>=1.0.0",              # CodeJail manages execution of untrusted code in secure sandboxes
+    "cryptography>=43.0.1",                  # Implementations of assorted cryptography algorithms
+    "defusedxml>=0.7.1",
+    "django-celery-results>=2.5.1",          # Only used for the CacheBackend for celery results
+    "django-config-models>=2.7.0",           # Configuration models for Django allowing config management with auditing
+    "django-cors-headers>=4.4.0",            # Used to allow to configure CORS headers for cross-domain requests
+    "django-countries>=7.6.1",               # Country data for Django forms and model fields
+    "django-crum>=0.7.9",                    # Middleware that stores the current request and user in thread local storage
+    "django-filter>=24.3",                   # Allows users to filter Django querysets dynamically
+    "django-ipware>=7.0.1",                  # Get the client's real IP address
+    "django-method-override>=1.0.4",         # Allow use of HTTP methods normally not supported by browsers via the X-HTTP-Method-Override header
+    "django-model-utils>=5.0.0",
+    "django-mptt>=0.16.0",
+    "django-oauth-toolkit==1.7.1",           # Provides oAuth2 capabilities for Django
+    "django-pipeline>=3.1.0",
+    "django-ratelimit>=4.1.0",
+    "django-sekizai>=4.1.0",
+    "django-simple-history==3.4.0",
+    "django-statici18n>=2.5.0",
+    "django-storages>=1.14.4",
+    "django-user-tasks>=3.2.0",
+    "django-waffle>=4.1.0",
+    "django-webpack-loader==0.7.0",          # Used to wire webpack bundles into the django asset pipeline
+    "django>=4.2.16,<5.0",                   # Web application framework
+    "djangorestframework>=3.15.2",
+    "drf-spectacular>=0.27.2",
+    "edx-ace>=1.11.2",
+    "edx-api-doc-tools>=2.0.0",
+    "edx-auth-backends>=4.4.0",              # Allow Studio to use LMS SSO
+    "edx-bulk-grades>=1.1.0",                # LMS REST API for managing bulk grading operations
+    "edx-ccx-keys>=1.3.0",
+    "edx-celeryutils>=1.3.0",
+    "edx-codejail>=3.4.1",
+    "edx-completion>=4.7.1",
+    "edx-django-release-util>=1.4.0",        # Release utils for the edx release pipeline
+    "edx-django-sites-extensions>=4.2.0",
+    "edx-django-utils>=5.4.0",               # Utilities for cache, monitoring, and plugins
+    "edx-drf-extensions>=10.4.0",
+    "edx-enterprise==4.27.3",
+    "edx-event-bus-kafka>=5.6.0",            # Kafka implementation of event bus
+    "edx-event-bus-redis>=0.5.0",
+    "edx-i18n-tools>=1.6.1",
+    "edx-milestones>=0.6.0",
+    "edx-name-affirmation>=2.4.2",
+    "edx-opaque-keys>=2.11.0",               # Create and introspect course and xblock identities
+    "edx-organizations>=6.13.0",
+    "edx-proctoring>=2.0.1",
+    "edx-rest-api-client==5.7.1",
+    "edx-search>=4.0.0",
+    "edx-submissions>=3.8.0",
+    "edx-toggles>=5.2.0",                    # Feature toggles management
+    "edx-token-utils>=0.2.1",                # Validate exam access tokens
+    "edx-when>=2.5.0",
+    "edxval>=2.6.0",
+    "enmerkar-underscore>=2.3.1",            # Implements a underscore extractor for django-babel
+    "event-tracking>=2.4.0",
+    "fs-s3fs==0.1.8",
+    "fs>=2.0.27",
+    "geoip2>=4.8.0",                         # Python API for the GeoIP web services and databases
+    "glob2>=0.7",                            # Enhanced glob module, used in openedx.core.lib.rooted_paths
+    "gunicorn>=23.0.0",
+    "help-tokens>=2.4.0",
+    "html5lib>=1.1",                         # HTML parser, used for capa problems
+    "icalendar>=6.0.0",                      # Generator of .ics, used by calendar_sync
+    "ipaddress>=1.0.23",                     # Ip network support for Embargo feature
+    "jsonfield>=3.1.0",                      # Django model field for validated JSON; used in several apps
+    "laboratory>=1.0.2",                     # Library for testing that code refactors/infrastructure changes produce identical results
+    "lti-consumer-xblock>=7.3.0",
+    "lxml>=5.3.0",                           # XML parser
+    "mako>=1.3.5",                           # Primary template language used for server-side page rendering
+    "markdown<=3.4.0",                       # Convert text markup to HTML; used in capa problems, forums, and course wikis
+    "meilisearch>=0.31.5",                   # Library to access Meilisearch search engine (will replace ElasticSearch)
+    "mongoengine>=0.29.1",                   # Object-document mapper for MongoDB, used in the LMS dashboard
+    "nodeenv>=1.9.1",                        # Utility for managing Node.js environments; we use this for deployments and testing
+    "oauthlib>=3.2.2",                       # OAuth specification support for authenticating via LTI or other Open edX services
+    "olxcleaner>=0.3.0",
+    "openedx-atlas>=0.6.2",                  # CLI tool to manage translations
+    "openedx-calc>=3.1.0",                   # Library supporting mathematical calculations for Open edX
+    "openedx-django-require>=2.1.0",
+    "openedx-django-wiki>=2.1.0",
+    "openedx-events>=9.14.1",                # Open edX Events from Hooks Extension Framework (OEP-50)
+    "openedx-filters>=1.10.0",               # Open edX Filters from Hooks Extension Framework (OEP-50)
+    "openedx-learning==0.15.0",              # Open edX Learning core (experimental)
+    "openedx-mongodbproxy>=0.2.2",
+    "path<16.12.0",
+    "piexif>=1.1.3",                         # Exif image metadata manipulation, used in the profile_images app
+    "py2neo<2022",
+    "pillow>=10.4.0",                        # Image manipulation library; used for course assets, profile images, invoice PDFs, etc.
+    "pycountry>=24.6.1",
+    "pycryptodomex>=3.20.0",
+    "pyjwkest>=1.4.2",
+    "pyjwt>=1.6.3",
+    "pylti1p3>=2.0.0",                       # Required by content_libraries core library to support LTI 1.3 launches
+    "pymongo<4.0.0",                         # MongoDB driver
+    "pynliner>=0.8.0",                       # Inlines CSS styles into HTML for email notifications
+    "pysrt>=1.1.2",                          # Support for SubRip subtitle files, used in the video XModule
+    "python-dateutil>=2.9.0.post0",
+    "python3-openid>=3.2.0",
+    "python3-saml>=1.16.0",
+    "pytz>=2024.2",                          # Time zone information database
+    "pyuca>=1.2",                            # For more accurate sorting of translated country names in django-countries
+    "pyyaml>=6.0.2",                         # Used to parse XModule resource templates
+    "random2>=1.0.2",
+    "redis>=5.1.0",                          # Celery task broker
+    "requests-oauthlib>=2.0.0",              # Simplifies use of OAuth via the requests library, used for CCX and LTI
+    "rules>=3.5",                            # Django extension for rules-based authorization checks
+    "shapely>=2.0.6",                        # Geometry library, used for image click regions in capa
+    "simplejson>=3.19.3",
+    "slumber>=0.7.1",                        # The following dependency is unsupported and used by the DeprecatedRestApiClient
+    "social-auth-app-django>=5.4.2",
+    "social-auth-core>=4.5.4",
+    "sorl-thumbnail>=12.11.0",
+    "sortedcontainers>=2.4.0",               # Provides SortedKeyList, used for lists of XBlock assets
+    "stevedore>=5.3.0",                      # Support for runtime plugins, used for XBlocks and edx-platform Django app plugins
+    "unicodecsv>=0.14.1",                    # Easier support for CSV files with Unicode text
+    "user-util>=1.1.0",                      # Functionality for retiring users (GDPR compliance)
+    "web-fragments>=2.2.0",                  # Provides the ability to render fragments of web pages
+    "webob>=1.8.8",
+    "xblock[django]>=5.1.0",                 # Courseware component architecture
+    "xss-utils>=0.6.0",                      # Fix XSS via Translations: https://github.com/openedx/edx-platform/pull/20633
+    # temporary dependencies for mysql. will be replaced with "django-postgresql>=0.0.3"
+    "django-mysql>=4.14.0",
+    "mysqlclient>=2.2.4",
+    "urllib3==1.26.20",
+]
+
+[project.optional-dependencies]
+bundled = [  # Dependencies that are normally "bundled" with the platform, but are not core to the platform's functionality.
+    "crowdsourcehinter-xblock>=0.7",
+    "done-xblock>=2.4.0",                    # A very simple XBlock that allows learners to mark an activity as Done
+    "edx-sga>=0.25.0",                       # The more well known "staff graded assignment" XBlock, from MIT.
+    "ora2>=4.5.0",                           # Open Response Assessment XBlock
+    "recommender-xblock>=2.2.1",             # https://github.com/edx/RecommenderXBlock
+    "staff-graded-xblock>=2.3.0",            # Allows off-site bulk scoring.
+    "xblock-drag-and-drop-v2>=4.0.3",        # Drag and Drop XBlock
+    "xblock-google-drive>=0.7.0",            # XBlock for google docs and calendar
+    "xblock-poll>=1.14.0",                   # Xblock for polling users
+]
+testing = [
+    "beautifulsoup4>=4.12.3",                # Library for extracting data from HTML and XML files
+    "code-annotations>=1.8.0",               # Perform code annotation checking, such as for PII annotations
+    "cssselect>=1.2.0",                      # Used to extract HTML fragments via CSS selectors in 2 test cases and pyquery
+    "ddt>=1.7.2",                            # Run a test case multiple times with different input; used in many, many of our tests
+    "edx-lint>=5.4.0",                       # pylint extensions for Open edX repositories
+    "factory-boy>=3.3.1",                    # Library for creating test fixtures, used in many tests
+    "freezegun>=1.5.1",                      # Allows tests to mock the output of assorted datetime module functions
+    "httpretty>=1.1.4",                      # Library for mocking HTTP requests, used in many tests
+    "import-linter>=2.0",                    # Tool for making assertions about which modules can import which others
+    "pact-python>=2.2.1",                    # Library for contract testing
+    "polib>=1.2.0",                          # Library for manipulating gettext translation files, used to test paver i18n commands
+    "py>=1.11.0",                            # Needed for pytest configurations, was previously been fetched through tox
+    "pylint-pytest==0.3.0",                  # A Pylint plugin to suppress pytest-related false positives.
+    "pylint<2.16.0",
+    "pyquery>=2.0.1",                        # jQuery-like API for retrieving fragments of HTML and XML files in tests
+    "pytest==8.3.3",
+    "pytest-cov>=5.0.0",                     # pytest plugin for measuring code coverage
+    "pytest-django>=4.9.0",                  # Django support for pytest
+    "pytest-json-report==1.5.0",             # Output json formatted warnings after running pytest
+    "pytest-randomly>=3.15.0",               # pytest plugin to randomly order tests
+    "pytest-xdist[psutil]>=3.6.1",           # Parallel execution of tests on multiple CPU cores or hosts
+    "pytest>=8.3.3",                         # Testing framework
+    "singledispatch>=4.1.0",                 # Backport of functools.singledispatch from Python 3.4+, used in tests of XBlock rendering
+    "testfixtures>=8.3.0",                   # Provides a LogCapture utility used by several tests
+    "tox>=4.20.0",                           # Virtualenv management for tests
+    "django-stubs>=5.1.0",                   # Stubs for django (for mypy tests)
+    "djangorestframework-stubs>=3.15.1",     # Stubs for drf (for mypy tests)
+    "mypy>=1.11.2",                          # Library for checking types
+    "pytest-attrib>=0.1.3",                  # Library for finding tests with attributes (not only marks)
+    "diff-cover>=9.2.0",                     # Automatically find diff lines that need test coverage
+    "ruff>=0.6.8",                           # Linter thar replaced pycodestyle and isort
+    "mock>=1.0.1",                           # For edx-proctoring test (without it this tests crushing)
+]
+paver = [
+    "lazy>=1.6",                             # Lazily-evaluated attributes for Python objects
+    "paver>=1.3.4",                          # For commmands during build and development
+    "path>=16.11.0",                         # Easier manipulation of filesystem paths
+    "psutil>=6.0.0",                         # Library for retrieving information on running processes and system utilization
+    "pygments>=2.18.0",                      # Used to support colors in paver command output
+    "pymemcache>=4.0.0",                     # Python interface to the memcached memory cache daemon
+    "python-memcached>=1.62",                # Python interface to the memcached memory cache daemon
+    "libsass>=0.23.0",                       # Python bindings for the LibSass CSS compiler
+    "markupsafe>=2.1.5",                     # XML/HTML/XHTML Markup safe strings
+    "requests>=2.32.3",                      # Simple interface for making HTTP requests
+    "watchdog>=5.0.3",                       # Used in paver watch_assets
+    "wrapt>=1.16.0",                         # Decorator utilities used in the @timed paver task decorator
+]
+dev = [
+    "click>=8.1.7",                          # Used for perf_tests utilities in modulestore
+    "django-debug-toolbar>=4.4.6",           # A set of panels that display debug information about the current request/response
+    "nodeenv>=1.9.1",                        # Utility for managing Node.js environments; we use this for deployments and testing
+]
+
+[project.scripts]
+xmodule_assets = "xmodule.static_content:main"
+
+[project.entry-points."cms.djangoapp"]
+ace_common = "openedx.core.djangoapps.ace_common.apps:AceCommonConfig"
+announcements = "openedx.features.announcements.apps:AnnouncementsConfig"
+bookmarks = "openedx.core.djangoapps.bookmarks.apps:BookmarksConfig"
+content_libraries = "openedx.core.djangoapps.content_libraries.apps:ContentLibrariesConfig"
+content_staging = "openedx.core.djangoapps.content_staging.apps:ContentStagingAppConfig"
+course_apps = "openedx.core.djangoapps.course_apps.apps:CourseAppsConfig"
+course_live = "openedx.core.djangoapps.course_live.apps:CourseLiveConfig"
+discussion = "lms.djangoapps.discussion.apps:DiscussionConfig"
+discussions = "openedx.core.djangoapps.discussions.apps:DiscussionsConfig"
+instructor = "lms.djangoapps.instructor.apps:InstructorConfig"
+olx_rest_api = "openedx.core.djangoapps.olx_rest_api.apps:OlxRestApiAppConfig"
+password_policy = "openedx.core.djangoapps.password_policy.apps:PasswordPolicyConfig"
+plugins = "openedx.core.djangoapps.plugins.apps:PluginsConfig"
+theming = "openedx.core.djangoapps.theming.apps:ThemingConfig"
+user_authn = "openedx.core.djangoapps.user_authn.apps:UserAuthnConfig"
+zendesk_proxy = "openedx.core.djangoapps.zendesk_proxy.apps:ZendeskProxyConfig"
+
+[project.entry-points."lms.djangoapp"]
+ace_common = "openedx.core.djangoapps.ace_common.apps:AceCommonConfig"
+announcements = "openedx.features.announcements.apps:AnnouncementsConfig"
+bookmarks = "openedx.core.djangoapps.bookmarks.apps:BookmarksConfig"
+content_libraries = "openedx.core.djangoapps.content_libraries.apps:ContentLibrariesConfig"
+course_apps = "openedx.core.djangoapps.course_apps.apps:CourseAppsConfig"
+course_live = "openedx.core.djangoapps.course_live.apps:CourseLiveConfig"
+courseware_api = "openedx.core.djangoapps.courseware_api.apps:CoursewareAPIConfig"
+credentials = "openedx.core.djangoapps.credentials.apps:CredentialsConfig"
+discussion = "lms.djangoapps.discussion.apps:DiscussionConfig"
+discussions = "openedx.core.djangoapps.discussions.apps:DiscussionsConfig"
+grades = "lms.djangoapps.grades.apps:GradesConfig"
+instructor = "lms.djangoapps.instructor.apps:InstructorConfig"
+password_policy = "openedx.core.djangoapps.password_policy.apps:PasswordPolicyConfig"
+plugins = "openedx.core.djangoapps.plugins.apps:PluginsConfig"
+program_enrollments = "lms.djangoapps.program_enrollments.apps:ProgramEnrollmentsConfig"
+theming = "openedx.core.djangoapps.theming.apps:ThemingConfig"
+user_authn = "openedx.core.djangoapps.user_authn.apps:UserAuthnConfig"
+zendesk_proxy = "openedx.core.djangoapps.zendesk_proxy.apps:ZendeskProxyConfig"
+
+[project.entry-points."openedx.ace.policy"]
+bulk_email_optout = "lms.djangoapps.bulk_email.policies:CourseEmailOptout"
+course_push_notification_optout = "openedx.core.djangoapps.notifications.policies:CoursePushNotificationOptout"
+
+[project.entry-points."openedx.block_structure_transformer"]
+access_denied_message_filter = "lms.djangoapps.course_blocks.transformers.access_denied_filter:AccessDeniedMessageFilterTransformer"
+completion = "lms.djangoapps.course_api.blocks.transformers.block_completion:BlockCompletionTransformer"
+content_type_gate = "openedx.features.content_type_gating.block_transformers:ContentTypeGateTransformer"
+course_blocks_api = "lms.djangoapps.course_api.blocks.transformers.blocks_api:BlocksAPITransformer"
+discussions_link = "openedx.core.djangoapps.discussions.transformers:DiscussionsTopicLinkTransformer"
+effort_estimation = "openedx.features.effort_estimation.api:EffortEstimationTransformer"
+grades = "lms.djangoapps.grades.transformer:GradesTransformer"
+hidden_content = "lms.djangoapps.course_blocks.transformers.hidden_content:HiddenContentTransformer"
+library_content = "lms.djangoapps.course_blocks.transformers.library_content:ContentLibraryTransformer"
+library_content_randomize = "lms.djangoapps.course_blocks.transformers.library_content:ContentLibraryOrderTransformer"
+load_override_data = "lms.djangoapps.course_blocks.transformers.load_override_data:OverrideDataTransformer"
+milestones = "lms.djangoapps.course_api.blocks.transformers.milestones:MilestonesAndSpecialExamsTransformer"
+open_assessment_transformer = "lms.djangoapps.courseware.transformers:OpenAssessmentDateTransformer"
+split_test = "lms.djangoapps.course_blocks.transformers.split_test:SplitTestTransformer"
+start_date = "lms.djangoapps.course_blocks.transformers.start_date:StartDateTransformer"
+user_partitions = "lms.djangoapps.course_blocks.transformers.user_partitions:UserPartitionTransformer"
+visibility = "lms.djangoapps.course_blocks.transformers.visibility:VisibilityTransformer"
+
+[project.entry-points."openedx.call_to_action"]
+personalized_learner_schedules = "openedx.features.personalized_learner_schedules.call_to_action:PersonalizedLearnerScheduleCallToAction"
+
+[project.entry-points."openedx.course_app"]
+calculator = "lms.djangoapps.courseware.plugins:CalculatorCourseApp"
+custom_pages = "lms.djangoapps.courseware.plugins:CustomPagesCourseApp"
+discussion = "openedx.core.djangoapps.discussions.plugins:DiscussionCourseApp"
+edxnotes = "lms.djangoapps.edxnotes.plugins:EdxNotesCourseApp"
+live = "openedx.core.djangoapps.course_live.plugins:LiveCourseApp"
+ora_settings = "lms.djangoapps.courseware.plugins:ORASettingsApp"
+proctoring = "lms.djangoapps.courseware.plugins:ProctoringCourseApp"
+progress = "lms.djangoapps.courseware.plugins:ProgressCourseApp"
+teams = "lms.djangoapps.teams.plugins:TeamsCourseApp"
+textbooks = "lms.djangoapps.courseware.plugins:TextbooksCourseApp"
+wiki = "lms.djangoapps.course_wiki.plugins.course_app:WikiCourseApp"
+
+[project.entry-points."openedx.course_tab"]
+ccx = "lms.djangoapps.ccx.plugins:CcxCourseTab"
+courseware = "lms.djangoapps.courseware.tabs:CoursewareTab"
+dates = "lms.djangoapps.courseware.tabs:DatesTab"
+discussion = "lms.djangoapps.discussion.plugins:DiscussionTab"
+edxnotes = "lms.djangoapps.edxnotes.plugins:EdxNotesTab"
+external_discussion = "lms.djangoapps.courseware.tabs:ExternalDiscussionCourseTab"
+external_link = "lms.djangoapps.courseware.tabs:ExternalLinkCourseTab"
+html_textbooks = "lms.djangoapps.courseware.tabs:HtmlTextbookTabs"
+instructor = "lms.djangoapps.instructor.views.instructor_dashboard:InstructorDashboardTab"
+lti_discussion = "openedx.features.lti_course_tab.tab:DiscussionLtiCourseTab"
+lti_live = "openedx.core.djangoapps.course_live.tab:CourseLiveTab"
+lti_tab = "openedx.features.lti_course_tab.tab:LtiCourseTab"
+pdf_textbooks = "lms.djangoapps.courseware.tabs:PDFTextbookTabs"
+progress = "lms.djangoapps.courseware.tabs:ProgressTab"
+static_tab = "xmodule.tabs:StaticTab"
+syllabus = "lms.djangoapps.courseware.tabs:SyllabusTab"
+teams = "lms.djangoapps.teams.plugins:TeamsTab"
+textbooks = "lms.djangoapps.courseware.tabs:TextbookTabs"
+wiki = "lms.djangoapps.course_wiki.tab:WikiTab"
+
+[project.entry-points."openedx.course_tool"]
+calendar_sync_toggle = "openedx.features.calendar_sync.plugins:CalendarSyncToggleTool"
+course_bookmarks = "openedx.features.course_bookmarks.plugins:CourseBookmarksTool"
+course_updates = "openedx.features.course_experience.plugins:CourseUpdatesTool"
+financial_assistance = "lms.djangoapps.courseware.course_tools:FinancialAssistanceTool"
+
+[project.entry-points."openedx.dynamic_partition_generator"]
+content_type_gating = "openedx.features.content_type_gating.partitions:create_content_gating_partition"
+enrollment_track = "xmodule.partitions.enrollment_track_partition_generator:create_enrollment_track_partition"
+team = "openedx.core.lib.teams_config:create_team_set_partition"
+
+[project.entry-points."openedx.learning_context"]
+lib = "openedx.core.djangoapps.content_libraries.library_context:LibraryContextImpl"
+
+[project.entry-points."openedx.user_partition_scheme"]
+cohort = "openedx.core.djangoapps.course_groups.partition_scheme:CohortPartitionScheme"
+content_type_gate = "openedx.features.content_type_gating.partitions:ContentTypeGatingPartitionScheme"
+enrollment_track = "openedx.core.djangoapps.verified_track_content.partition_scheme:EnrollmentTrackPartitionScheme"
+random = "openedx.core.djangoapps.user_api.partition_schemes:RandomUserPartitionScheme"
+team = "lms.djangoapps.teams.team_partition_scheme:TeamPartitionScheme"
+verification = "openedx.core.djangoapps.user_api.partition_schemes:ReturnGroup1PartitionScheme"
+
+[project.entry-points."xblock.v1"]
+about = "xmodule.html_block:AboutBlock"
+annotatable = "xmodule.annotatable_block:AnnotatableBlock"
+book = "xmodule.template_block:TranslateCustomTagBlock"
+chapter = "xmodule.seq_block:SectionBlock"
+conditional = "xmodule.conditional_block:ConditionalBlock"
+course = "xmodule.course_block:CourseBlock"
+course_info = "xmodule.html_block:CourseInfoBlock"
+custom_tag_template = "xmodule.template_block:CustomTagTemplateBlock"
+customtag = "xmodule.template_block:CustomTagBlock"
+discuss = "xmodule.template_block:TranslateCustomTagBlock"
+discussion = "xmodule.discussion_block:DiscussionXBlock"
+error = "xmodule.error_block:ErrorBlock"
+hidden = "xmodule.hidden_block:HiddenBlock"
+html = "xmodule.html_block:HtmlBlock"
+image = "xmodule.template_block:TranslateCustomTagBlock"
+library = "xmodule.library_root_xblock:LibraryRoot"
+library_content = "xmodule.library_content_block:LegacyLibraryContentBlock"
+lti = "xmodule.lti_block:LTIBlock"
+poll_question = "xmodule.poll_block:PollBlock"
+problem = "xmodule.capa_block:ProblemBlock"
+randomize = "xmodule.randomize_block:RandomizeBlock"
+sequential = "xmodule.seq_block:SequenceBlock"
+slides = "xmodule.template_block:TranslateCustomTagBlock"
+split_test = "xmodule.split_test_block:SplitTestBlock"
+static_tab = "xmodule.html_block:StaticTabBlock"
+unit = "xmodule.unit_block:UnitBlock"
+vertical = "xmodule.vertical_block:VerticalBlock"
+video = "xmodule.video_block:VideoBlock"
+videoalpha = "xmodule.video_block:VideoBlock"
+videodev = "xmodule.template_block:TranslateCustomTagBlock"
+word_cloud = "xmodule.word_cloud_block:WordCloudBlock"
+wrapper = "xmodule.wrapper_block:WrapperBlock"
+
+[project.entry-points."xblock_asides.v1"]
+tagging_aside = "cms.lib.xblock.tagging:StructuredTagsAside"
+
+# Mypy
+
+[tool.mypy]
+follow_imports = "silent"
+ignore_missing_imports = "True"
+allow_untyped_globals = "True"
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main"
+]
+files = [
+    "openedx/core/djangoapps/content/learning_sequences/",
+    "openedx/core/djangoapps/content_staging",
+    "openedx/core/djangoapps/content_libraries",
+    "openedx/core/djangoapps/xblock",
+    "openedx/core/types",
+    "openedx/core/djangoapps/content_tagging",
+    "xmodule/util/keys.py"
+]
+
+[tool.django-stubs]
+# content_staging only works with CMS; others work with either, so we run mypy with CMS settings.
+django_settings_module = "cms.envs.test"
+
+# Selectively ignore packages known to be lacking type hints
+[tool.mypy-bridgekeeper]
+ignore_missing_imports = "True"
+[tool.mypy-celery]
+ignore_missing_imports = "True"
+
+[tool.mypy-celery_utils]
+ignore_missing_imports = "True"
+
+[tool.mypy-completion]
+ignore_missing_imports = "True"
+
+[tool.mypy-crum]
+ignore_missing_imports = "True"
+
+[tool.mypy-ddt]
+ignore_missing_imports = "True"
+
+[tool.mypy-edx_api_doc_tools]
+ignore_missing_imports = "True"
+
+[tool.mypy-edx_django_utils]
+ignore_missing_imports = "True"
+
+[tool.mypy-edx_proctoring]
+ignore_missing_imports = "True"
+
+[tool.mypy-edx_rest_api_client]
+ignore_missing_imports = "True"
+
+[tool.mypy-edx_rest_framework_extensions]
+ignore_missing_imports = "True"
+
+[tool.mypy-eventtracking]
+ignore_missing_imports = "True"
+
+[tool.mypy-fs]
+ignore_missing_imports = "True"
+
+[tool.mypy-model_utils]
+ignore_missing_imports = "True"
+
+[tool.mypy-openedx_events]
+ignore_missing_imports = "True"
+
+[tool.mypy-organizations]
+ignore_missing_imports = "True"
+
+[tool.mypy-search]
+ignore_missing_imports = "True"
+
+[tool.mypy-rules]
+ignore_missing_imports = "True"
+
+[tool.mypy-web_fragments]
+ignore_missing_imports = "True"
+
+[tool.mypy-webob]
+ignore_missing_imports = "True"
+
+[tool.mypy-xblock]
+ignore_missing_imports = "True"
+
+# Coverage
+
+[tool.coverage.run]
+branch = "True"
+data_file = "reports/.coverage"
+source =  [
+    "cms",
+    "common/djangoapps",
+    "lms",
+    "openedx",
+    "pavelib",
+    "scripts",
+    "xmodule",
+]
+omit = [
+    "cms/envs/*",
+    "cms/manage.py",
+    "cms/djangoapps/contentstore/views/dev.py",
+    "cms/djangoapps/*/migrations/*",
+    "cms/djangoapps/*/features/*",
+    "cms/lib/*/migrations/*",
+    "lms/debug/*",
+    "lms/envs/*",
+    "lms/djangoapps/*/migrations/*",
+    "lms/djangoapps/*/features/*",
+    "common/djangoapps/terrain/*",
+    "common/djangoapps/*/migrations/*",
+    "openedx/core/djangoapps/*/migrations/*",
+    "openedx/core/djangoapps/debug/*",
+    "openedx/features/*/migrations/*"
+]
+concurrency= "multiprocessing"
+parallel = "true"
+relative_files = "true"
+
+[tool.coverage.reprt]
+ignore_errors = "true"
+exclude_lines = [
+   "pragma: no cover",
+   "raise NotImplementedError"
+]
+
+[tool.coverage.html]
+title = "edx-platform Python Test Coverage Report"
+directory = "reports/cover"
+
+[tool.coverage.xml]
+output = "reports/coverage.xml"
+
+[tool.coverage.paths]
+jenkins_source = [
+    "/home/jenkins/workspace/$JOB_NAME",
+    "/home/jenkins/workspace/$SUBSET_JOB",
+    "/home/jenkins/edx-platform"
+]
+
+# Tox
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{311,312} quality
+
+# This is needed to prevent the lms, cms, and openedx packages inside the "Open
+# edX" package (defined in setup.py) from getting installed into site-packages
+# where they can get imported, which is bad because those won't even contain
+# most of the source code since we don't explicitly add anything to the source
+# distribution.
+skipsdist = True
+
+# The default toxworkdir is in the source tree (as ".tox/"), but `django-admin
+# compilemessages` unconditionally walks the entire directory tree under the
+# source root and cannot handle encountering the toxworkdir.  So, we un-break
+# compilemessages by moving the toxworkdir to the home directory.
+toxworkdir = {homedir}/edxapp_toxenv
+
+[testenv]
+# This ensures "-e ." is installed, so that a link back to the top-level
+# edx-platform source directory is installed in site-packages, making
+# edx-platform source code importable from python subprocesses.  Child
+# processes running python code do not import from the current working
+# directory without hacking sys.path, but they will inherit the tox virtualenv
+# and look in site-packages.
+usedevelop = True
+setenv =
+    PYTHONHASHSEED=0
+    TOXENV={envname}
+passenv =
+    FRONTEND_TEST_SERVER_CMS_PORT
+    FRONTEND_TEST_SERVER_HOSTNAME
+    FRONTEND_TEST_SERVER_LMS_PORT
+    DISABLE_COURSEENROLLMENT_HISTORY
+    DISPLAY
+    DJANGO_SETTINGS_MODULE
+    EDXAPP_TEST_MONGO_HOST
+    EDX_PLATFORM_SETTINGS
+    JOB_NAME
+    LMS_CFG
+    REVISION_CFG
+    MOZ_HEADLESS
+    NO_PREREQ_INSTALL
+    NO_PYTHON_UNINSTALL
+    NPM_CONFIG_PREFIX
+    PYTHON_VERSION
+    SCRAPY_SETTINGS_MODULE
+    SELENIUM_BROWSER
+    SELENIUM_HOST
+    SELENIUM_PORT
+    SKIP_NPM_INSTALL
+    SSH_AUTH_SOCK
+    STUDIO_CFG
+    SUBSET_JOB
+    TARGET_BRANCH
+    TEST_SUITE
+    XDIST_GIT_BRANCH
+    XDIST_GIT_REFSPEC
+    XDIST_INSTANCE_TYPE
+    XDIST_NUM_WORKERS
+    XDIST_REMOTE_NUM_PROCESSES
+    XDIST_WORKER_AMI
+    XDIST_WORKER_IAM_PROFILE_ARN
+    XDIST_WORKER_KEY_NAME
+    XDIST_WORKER_SECURITY_GROUP
+    XDIST_WORKER_SUBNET
+commands_pre = make test-requirements
+allowlist_externals =
+    /bin/bash
+    /usr/bin/curl
+    /bin/tar
+commands =
+    {posargs}
+"""
+
+# import-linter
+
+[tool.importlinter]
+root_packages = [
+    "lms",
+    "cms",
+    "openedx",
+]
+include_external_packages = "True"
+contract_types = [
+    # Our custom contract which checks that we're only importing from 'api.py'
+    # for participating packages.
+    "isolated_apps: openedx.testing.importlinter.isolated_apps_contract.IsolatedAppsContract",
+]
+
+[[tool.importlinter.contracts]]
+name = "lms and cms are independent"
+type = "independence"
+modules = [
+    "lms",
+    "cms",
+]
+ignore_imports = [
+    ############################################################################
+    # lms side imports that we are ignoring for now
+    "lms.djangoapps.course_home_api.outline.tests.test_view -> cms.djangoapps.contentstore.outlines",
+    "lms.djangoapps.course_home_api.tests.utils -> cms.djangoapps.contentstore.outlines",
+    # lms.djangoapps.instructor.tests.test_api & lms.djangoapps.instructor.tests.test_tools
+    #   -> openedx.core.djangoapps.course_date_signals.handlers
+    #   -> cms.djangoapps.contentstore.config.waffle
+    "openedx.core.djangoapps.course_date_signals.handlers -> cms.djangoapps.contentstore.config.waffle",
+    ############################################################################
+    # cms side imports that we are ignoring for now
+    "cms.djangoapps.contentstore.views.tests.test_block -> lms.djangoapps.lms_xblock.mixin",
+    "cms.envs.common -> lms.envs.common",
+    "cms.djangoapps.contentstore.signals.handlers -> lms.djangoapps.grades.api",
+    "cms.djangoapps.contentstore.course_group_config -> lms.lib.utils",
+    "cms.djangoapps.contentstore.views.preview -> lms.djangoapps.lms_xblock.field_data",
+    "cms.envs.common -> lms.djangoapps.lms_xblock.mixin",
+    "cms.envs.test -> lms.envs.test",
+    # cms.djangoapps.contentstore.views.tests.test_group_configurations
+    #   -> openedx.features.content_type_gating.helpers
+    #   -> lms.djangoapps.courseware.masquerade
+    "openedx.features.content_type_gating.helpers -> lms.djangoapps.courseware.masquerade",
+    # cms.djangoapps.contentstore.utils
+    #   -> openedx.core.djangoapps.django_comment_common.models
+    #   -> openedx.core.djangoapps.course_groups.cohorts
+    #   -> lms.djangoapps.courseware.courses
+    "openedx.core.djangoapps.course_groups.cohorts -> lms.djangoapps.courseware.courses",
+    # cms.djangoapps.models.settings.course_metadata
+    #   -> openedx.features.course_experience
+    #   -> openedx.features.course_experience.url_helpers
+    #   -> lms.djangoapps.courseware.toggles
+    "openedx.features.course_experience.url_helpers -> lms.djangoapps.courseware.toggles",
+    # cms.djangoapps.contentstore.[various]
+    #  -> openedx.features.content_type_gating.partitions
+    #  -> lms.djangoapps.commerce.utils
+    "openedx.features.content_type_gating.partitions -> lms.djangoapps.commerce.utils",
+    # cms.djangoapps.contentstore.course_group_config
+    #  -> openedx.core.djangoapps.course_groups.partition_scheme
+    #  -> lms.djangoapps.courseware.masquerade
+    "openedx.core.djangoapps.course_groups.partition_scheme -> lms.djangoapps.courseware.masquerade",
+    # cms.djangoapps.contentstore.[various] & cms.djangoapps.coursegraph.[various]
+    #  -> openedx.core.djangoapps.content.course_overviews.models
+    #  -> lms.djangoapps.ccx.utils
+    #   & lms.djangoapps.certificates.api
+    #   & lms.djangoapps.discussion.django_comment_client
+    "openedx.core.djangoapps.content.course_overviews.models -> lms.djangoapps.*.*",
+    # cms.djangoapps.export_course_metadata.tasks
+    #  -> openedx.core.djangoapps.schedules.content_highlights
+    #  -> lms.djangoapps.courseware.block_render & lms.djangoapps.courseware.model_data
+    "openedx.core.djangoapps.content_libraries.* -> lms.djangoapps.*.*",
+    # cms.djangoapps.contentstore.tasks -> openedx.core.djangoapps.content_libraries.[various]
+    # -> lms.djangoapps.grades.api
+    "openedx.core.djangoapps.xblock.*.* -> lms.djangoapps.*.*",
+    # cms.djangoapps.contentstore.tasks -> openedx.core.djangoapps.content_libraries.[various] -> openedx.core.djangoapps.xblock.[various]
+    # -> lms.djangoapps.courseware & lms.djangoapps.courseware.grades
+    "openedx.core.djangoapps.schedules.content_highlights -> lms.djangoapps.courseware.*",
+    # cms.djangoapps.contentstore.[various]
+    #  -> openedx.core.lib.gating.api
+    #  -> lms.djangoapps.course_blocks.api & lms.djangoapps.courseware.access & lms.djangoapps.grades.api
+    "openedx.core.lib.gating.api -> lms.djangoapps.*.*",
+    # cms.djangoapps.contentstore.[various]
+    #  -> openedx.features.content_type_gating.partitions
+    #  -> openedx.features.discounts.utils
+    #  -> lms.djangoapps.courseware.utils & lms.djangoapps.experiments.models
+    "openedx.features.discounts.utils -> lms.djangoapps.courseware.utils",
+    "openedx.features.discounts.utils -> lms.djangoapps.experiments.models",
+    # cms.djangoapps.contentstore.signals.handlers
+    #  -> openedx.core.djangoapps.discussions.tasks
+    #  -> openedx.core.djangoapps.discussions.utils
+    #  -> lms.djangoapps.courseware.access
+    "openedx.core.djangoapps.discussions.utils -> lms.djangoapps.courseware.access",
+    # cms.djangoapps.contentstore.[various]
+    #  -> openedx.features.content_type_gating.partitions
+    #  -> openedx.features.discounts.utils
+    #  -> openedx.features.discounts.applicability
+    #  -> lms.djangoapps.courseware.toggles
+    #   & lms.djangoapps.courseware.utils
+    #   & lms.djangoapps.experiments.models
+    #   & lms.djangoapps.experiments.stable_bucketing
+    "openedx.features.discounts.applicability -> lms.djangoapps.courseware.*",
+    "openedx.features.discounts.applicability -> lms.djangoapps.experiments.*",
+    # cms.djangoapps.contentstore.[various]
+    #  -> openedx.core.djangoapps.content.learning_sequences.api
+    #  -> openedx.core.djangoapps.content.learning_sequences.api.outlines
+    #  -> openedx.core.djangoapps.content.learning_sequences.api.permissions
+    #  -> lms.djangoapps.courseware.access
+    "openedx.core.djangoapps.content.learning_sequences.api.permissions -> lms.djangoapps.courseware.access",
+    # cms.djangoapps.contentstore.[various]
+    #  -> openedx.features.content_type_gating.partitions
+    #  -> openedx.features.discounts.utils
+    #  -> openedx.features.discounts.applicability
+    #  -> openedx.features.enterprise_support.utils
+    "openedx.features.enterprise_support.utils -> lms.djangoapps.branding.api",
+    "cms.djangoapps.contentstore.rest_api.v1.views.settings -> lms.djangoapps.certificates.api",
+]
+
+[[tool.importlinter.contracts]]
+name = "Do not depend on non-public API of isolated apps."
+type = "isolated_apps"
+isolated_apps = [
+    "openedx.core.djangoapps.agreements",
+    "openedx.core.djangoapps.bookmarks",
+    "openedx.core.djangoapps.content_libraries",
+    "openedx.core.djangoapps.content_staging",
+    "openedx.core.djangoapps.olx_rest_api",
+    "openedx.core.djangoapps.xblock",
+    "openedx.core.lib.xblock_serializer",
+]
+allowed_modules = [
+    # Only imports from api.py are allowed elsewhere in the code
+    # See https://open-edx-proposals.readthedocs.io/en/latest/best-practices/oep-0049-django-app-patterns.html#api-py
+    "api ",
+]
+
+# Ruff
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py311"
+exclude = [
+    "envs",
+    "migrations",
+]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",  # pycodestyle
+]
+ignore= [
+    "E265",  # block comment should start with '# '
+    #   We ignore this because pep8 used to erroneously lump E266 into it also.
+    #   We should probably fix these now.
+
+    "E266",  # too many leading '#' for block comment
+    #   We have lots of comments that look like "##### HEADING #####" which violate
+    #   this rule, because they don't have a space after the first #. However,
+    #   they're still perfectly reasonable comments, so we disable this rule.
+
+    "E501",  # line too long
+
+    # Errors and warnings added since pep8/pycodestyle 1.5.7 that we haven't cleaned up yet
+    "E305",
+    "E402",
+    "E722",
+    "E731",
+    "E741",
+    "E743",
+
+    # Not implemented in ruff yet
+    #    "W503",
+    #    "W504",
+    #    "W602",  # deprecated form of raising exception
+    #   We do this in a few places to modify the exception message while preserving
+    #   the traceback. See this blog post for more info:
+    #   http://nedbatchelder.com/blog/200711/rethrowing_exceptions_in_python.html
+    #   It's a little unusual, but we have good reasons for doing so, so we disable
+    #   this rule.
+]
+exclude=[
+    "migrations",
+    ".pycharm_helpers",
+    ".tox",
+    "test_root/staticfiles",
+    "node_modules",
+]
+
+# pytest
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "lms.envs.test"
+addopts = "--nomigrations --reuse-db --durations=20 --json-report --json-report-omit keywords streams collectors log traceback tests --json-report-file=none"
+# Enable default handling for all warnings, including those that are ignored by default;
+# but hide rate-limit warnings (because we deliberately don't throttle test user logins)
+# and field_data deprecation warnings (because fixing them requires a major low-priority refactoring)
+filterwarnings = [
+    "default",
+    "ignore:No request passed to the backend, unable to rate-limit:UserWarning",
+    "ignore::xblock.exceptions.FieldDataDeprecationWarning",
+    # Remove default_app_config warning after updating Django to 4.2
+    "ignore:.*You can remove default_app_config.*:PendingDeprecationWarning",
+    "ignore:Instead access HTTPResponse.headers directly.*:DeprecationWarning:elasticsearch",
+    # ABC deprecation Warning comes from libsass
+    "ignore:Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated.*:DeprecationWarning:sass",
+    # declare_namespace Warning comes from XBlock https://github.com/openedx/XBlock/issues/641
+    # and also due to dependency: https://github.com/PyFilesystem/pyfilesystem2
+    "ignore:Deprecated call to `pkg_resources.declare_namespace.*:DeprecationWarning",
+    "ignore:.*pkg_resources is deprecated as an API.*:DeprecationWarning",
+    "ignore:'etree' is deprecated. Use 'xml.etree.ElementTree' instead.:DeprecationWarning:wiki",
+]
+junit_family = "xunit2"
+norecursedirs = ".* *.egg build conf dist node_modules test_root cms/envs lms/envs"
+python_files = [
+    "tests.py",
+    "test_*.py",
+    "tests_*.py",
+    "*_tests.py",
+    "__init__.py",
+]
