@@ -260,7 +260,7 @@ class UnitTestLibraries(CourseTestCase):
         self.client.login(username=ns_user.username, password=password)
 
         auth.add_users(self.user, CourseStaffRole(self.course.id), ns_user)
-        self.assertTrue(auth.user_has_role(ns_user, CourseStaffRole(self.course.id)))
+        assert auth.user_has_role(ns_user, CourseStaffRole(self.course.id))
         response = self.client.ajax_post(LIBRARY_REST_URL, {
             'org': self.course.org, 'library': 'lib', 'display_name': "New Library",
         })

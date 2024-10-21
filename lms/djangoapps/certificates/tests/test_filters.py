@@ -119,7 +119,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
             course_id=self.course_run.id,
         )
 
-        self.assertTrue(cert_gen_task_created)
+        assert cert_gen_task_created
         self.assertEqual(CourseMode.NO_ID_PROFESSIONAL_MODE, certificate.mode)
 
     @override_settings(
@@ -169,7 +169,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
             course_id=self.course_run.id,
         )
 
-        self.assertTrue(cert_gen_task_created)
+        assert cert_gen_task_created
         self.assertEqual(CourseMode.HONOR, certificate.mode)
 
     @override_settings(

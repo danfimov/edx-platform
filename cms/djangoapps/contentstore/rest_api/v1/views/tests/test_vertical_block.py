@@ -155,7 +155,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["children"]), 2)
         self.assertFalse(response.data["is_published"])
-        self.assertTrue(response.data["can_paste_component"])
+        assert response.data["can_paste_component"]
 
     def test_xblock_is_published(self):
         """
@@ -164,7 +164,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         self.publish_item(self.store, self.vertical.location)
         url = self.get_reverse_url(self.vertical.location)
         response = self.client.get(url)
-        self.assertTrue(response.data["is_published"])
+        assert response.data["is_published"]
 
     def test_children_content(self):
         """

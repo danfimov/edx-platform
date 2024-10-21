@@ -69,8 +69,8 @@ class DiscussionAPIUtilsTestCase(ModuleStoreTestCase):
 
     def test_discussion_open_for_user(self):
         self.assertFalse(discussion_open_for_user(self.course, self.student))
-        self.assertTrue(discussion_open_for_user(self.course, self.moderator))
-        self.assertTrue(discussion_open_for_user(self.course, self.community_ta))
+        assert discussion_open_for_user(self.course, self.moderator)
+        assert discussion_open_for_user(self.course, self.community_ta)
 
     def test_course_staff_users_list(self):
         assert len(get_course_staff_users_list(self.course.id)) == 2
@@ -235,4 +235,4 @@ class TestBlackoutDates(ForumsEnableMixin, CommentsServiceMockMixin, ModuleStore
         self._set_discussion_blackouts(date_ranges)
 
         posting_allowed = self._check_posting_allowed(PostingRestriction.SCHEDULED)
-        self.assertTrue(posting_allowed)
+        assert posting_allowed

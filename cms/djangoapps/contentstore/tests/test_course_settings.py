@@ -336,10 +336,10 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         # fetch updated course to assert pre_requisite_courses has new values
         resp = self.client.get_json(url)
         course_detail_json = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(pre_requisite_course_keys, course_detail_json['pre_requisite_courses'])
+        assert pre_requisite_course_keys == course_detail_json['pre_requisite_courses']
 
-        self.assertTrue(milestones_helpers.any_unfulfilled_milestones(self.course.id, self.user.id),
-                        msg='Should have prerequisite courses')
+        # Should have prerequisite courses
+        assert milestones_helpers.any_unfulfilled_milestones(self.course.id, self.user.id)
 
         # remove pre requisite course
         course_detail_json['pre_requisite_courses'] = []
@@ -443,7 +443,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
                                     HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
+        assert course.entrance_exam_enabled
         self.assertEqual(course.entrance_exam_minimum_score_pct, .60)
 
         # Update the entrance exam
@@ -457,11 +457,11 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         )
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
-        self.assertEqual(course.entrance_exam_minimum_score_pct, .80)
+        assert course.entrance_exam_enabled
+        assert course.entrance_exam_minimum_score_pct == .80
 
-        self.assertTrue(milestones_helpers.any_unfulfilled_milestones(self.course.id, self.user.id),
-                        msg='The entrance exam should be required.')
+        # The entrance exam should be required
+        assert milestones_helpers.any_unfulfilled_milestones(self.course.id, self.user.id)
 
         # Delete the entrance exam
         data['entrance_exam_enabled'] = "false"
@@ -504,7 +504,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         )
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
+        assert course.entrance_exam_enabled
 
         # entrance_exam_minimum_score_pct is not present in the request so default value should be saved.
         self.assertEqual(course.entrance_exam_minimum_score_pct, .5)
@@ -530,7 +530,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         )
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
+        assert course.entrance_exam_enabled
         self.assertEqual(course.entrance_exam_minimum_score_pct, .5)
 
     @unittest.skipUnless(settings.FEATURES.get('ENTRANCE_EXAMS', False), True)
@@ -763,7 +763,7 @@ class CourseGradingTest(CourseTestCase):
             modulestore().get_course(self.course.id),
             course_grading_model.__dict__
         )
-        self.assertTrue(result)
+        assert result
 
     @override_waffle_flag(MATERIAL_RECOMPUTE_ONLY_FLAG, True)
     def test_must_fire_grading_event_and_signal_multiple_type_waffle_on(self):
@@ -812,7 +812,7 @@ class CourseGradingTest(CourseTestCase):
             modulestore().get_course(self.course.id),
             course_grading_model.__dict__
         )
-        self.assertTrue(result)
+        assert result
 
     @mock.patch('common.djangoapps.track.event_transaction_utils.uuid4')
     @mock.patch('cms.djangoapps.models.settings.course_grading.tracker')
@@ -1312,7 +1312,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(is_valid)
+        assert is_valid
         self.assertEqual(len(errors), 0)
         self.update_check(test_model)
 
@@ -1482,7 +1482,7 @@ class CourseMetadataEditingTest(CourseTestCase):
         )
 
         if staff_user:
-            self.assertTrue(did_validate)
+            assert did_validate
             self.assertEqual(len(errors), 0)
             self.assertIn(field_name, test_model)
         else:
@@ -1543,7 +1543,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
 
@@ -1591,7 +1591,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
         self.assertIn('proctoring_escalation_email', test_model)
@@ -1616,7 +1616,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('enable_proctored_exams', test_model)
 
@@ -1636,7 +1636,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
         self.assertIn('proctoring_escalation_email', test_model)
@@ -1662,7 +1662,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
         self.assertIn('proctoring_escalation_email', test_model)

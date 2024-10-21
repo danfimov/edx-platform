@@ -243,10 +243,10 @@ class TestCourseRunSerializer(LearnerDashboardBaseTest):
         Otherwise, it must point to the legacy progress page.
         """
         mock_course_home_mfe_progress_tab_is_active.return_value = True
-        self.assertTrue(self.is_progress_url_matching_course_home_mfe_progress_tab_is_active())
+        assert self.is_progress_url_matching_course_home_mfe_progress_tab_is_active()
 
         mock_course_home_mfe_progress_tab_is_active.return_value = False
-        self.assertTrue(self.is_progress_url_matching_course_home_mfe_progress_tab_is_active())
+        assert self.is_progress_url_matching_course_home_mfe_progress_tab_is_active()
 
 
 @ddt.ddt
@@ -453,7 +453,7 @@ class TestEnrollmentSerializer(LearnerDashboardBaseTest):
 
         # If I have a resume URL, "hasStarted" should be True, otherwise False
         if resume_url:
-            self.assertTrue(output["hasStarted"])
+            assert output["hasStarted"]
         else:
             self.assertFalse(output["hasStarted"])
 

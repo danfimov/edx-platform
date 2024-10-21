@@ -187,7 +187,7 @@ class EnrollmentFiltersTest(ModuleStoreTestCase):
         enrollment = CourseEnrollment.enroll(self.user, self.course.id, mode='audit')
 
         self.assertEqual('audit', enrollment.mode)
-        self.assertTrue(CourseEnrollment.is_enrolled(self.user, self.course.id))
+        assert CourseEnrollment.is_enrolled(self.user, self.course.id)
 
 
 @skip_unless_lms

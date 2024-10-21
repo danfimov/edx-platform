@@ -316,12 +316,10 @@ class PaginationTestCase(AssetsTestCase):
                 for content_type in content_types:
                     # content_type is either not any defined type (i.e. OTHER) or is a defined type (if multiple
                     # parameters including OTHER are used)
-                    self.assertTrue(
-                        content_type in requested_file_extensions or content_type not in all_file_extensions
-                    )
+                    assert content_type in requested_file_extensions or content_type not in all_file_extensions
             else:
                 for content_type in content_types:
-                    self.assertIn(content_type, requested_file_extensions)
+                    assert content_type in requested_file_extensions
 
     def assert_invalid_parameters_error(self, url, filter_type, filter_value):
         """
@@ -504,7 +502,7 @@ class LockAssetTestCase(AssetsTestCase):
 
         # Lock the asset
         resp_asset = post_asset_update(True, course)
-        self.assertTrue(resp_asset['locked'])
+        assert resp_asset['locked']
         verify_asset_locked_state(True)
 
         # Unlock the asset

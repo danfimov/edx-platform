@@ -45,9 +45,9 @@ class TestHandlerUrl(TestCase):
         return urlparse(handler_url(self.block, handler_name, suffix=suffix)).path
 
     def test_suffix(self):
-        self.assertTrue(self._parsed_path(suffix="foo").endswith('foo'))
-        self.assertTrue(self._parsed_path(suffix="foo/bar").endswith('foo/bar'))
-        self.assertTrue(self._parsed_path(suffix="/foo/bar").endswith('/foo/bar'))
+        assert self._parsed_path(suffix="foo").endswith('foo')
+        assert self._parsed_path(suffix="foo/bar").endswith('foo/bar')
+        assert self._parsed_path(suffix="/foo/bar").endswith('/foo/bar')
 
     def test_handler_name(self):
         self.assertIn('handler1', self._parsed_path('handler1'))

@@ -548,7 +548,7 @@ class CourseModeViewTest(CatalogIntegrationMixin, UrlResetMixin, ModuleStoreTest
                 self.assertContains(response, search_courses_url)
                 self.assertContains(response, '<span>Explore all courses</span>')
             else:
-                self.assertTrue(CourseEnrollment.is_enrollment_closed(self.user, self.course))
+                assert CourseEnrollment.is_enrollment_closed(self.user, self.course)
 
     def _assert_fbe_page(self, response, min_price=None, **_):
         """

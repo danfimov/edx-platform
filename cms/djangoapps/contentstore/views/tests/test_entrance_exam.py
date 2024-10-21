@@ -65,7 +65,7 @@ class EntranceExamHandlerTests(CourseTestCase, MilestonesTestCaseMixin):
             str(created_block.location),
             self.milestone_relationship_types['FULFILLS']
         )
-        self.assertTrue(len(content_milestones))
+        assert bool(content_milestones)
         self.assertEqual(len(milestones_helpers.get_course_milestones(self.course.id)), 1)
 
     def test_entrance_exam_milestone_removal(self):
@@ -110,16 +110,16 @@ class EntranceExamHandlerTests(CourseTestCase, MilestonesTestCaseMixin):
         # Reload the test course now that the exam block has been added
         self.course = modulestore().get_course(self.course.id)
         metadata = CourseMetadata.fetch_all(self.course)
-        self.assertTrue(metadata['entrance_exam_enabled'])
+        assert metadata['entrance_exam_enabled']
         self.assertIsNotNone(metadata['entrance_exam_minimum_score_pct'])
         self.assertIsNotNone(metadata['entrance_exam_id']['value'])
-        self.assertTrue(len(milestones_helpers.get_course_milestones(str(self.course.id))))
+        assert bool(milestones_helpers.get_course_milestones(str(self.course.id)))
         content_milestones = milestones_helpers.get_course_content_milestones(
             str(self.course.id),
             metadata['entrance_exam_id']['value'],
             self.milestone_relationship_types['FULFILLS']
         )
-        self.assertTrue(len(content_milestones))
+        assert bool(content_milestones)
 
     def test_contentstore_views_entrance_exam_post_new_sequential_confirm_grader(self):
         """

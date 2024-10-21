@@ -71,10 +71,7 @@ class TestCourseAccess(ModuleStoreTestCase):
         """
         # first check the course creator.has explicit access (don't use has_access as is_staff
         # will trump the actual test)
-        self.assertTrue(
-            CourseInstructorRole(self.course_key).has_user(self.user),
-            "Didn't add creator as instructor."
-        )
+        assert CourseInstructorRole(self.course_key).has_user(self.user), "Didn't add creator as instructor"
         users = copy.copy(self.users)
         # doesn't use role.users_with_role b/c it's verifying the roles.py behavior
         user_by_role = {}
@@ -92,7 +89,7 @@ class TestCourseAccess(ModuleStoreTestCase):
             user = users.pop()
             group.add_users(user)
             user_by_role[role].append(user)
-            self.assertTrue(auth.has_course_author_access(user, self.course_key), f"{user} does not have access")  # lint-amnesty, pylint: disable=line-too-long
+            assert auth.has_course_author_access(user, self.course_key), f"{user} does not have access"  # lint-amnesty, pylint: disable=line-too-long
 
         course_team_url = reverse_course_url('course_team_handler', self.course_key)
         response = self.client.get_html(course_team_url)
@@ -125,7 +122,7 @@ class TestCourseAccess(ModuleStoreTestCase):
                 if hasattr(user, '_roles'):
                     del user._roles
 
-                self.assertTrue(auth.has_course_author_access(user, copy_course_key), f"{user} no copy access")
+                assert auth.has_course_author_access(user, copy_course_key), f"{user} no copy access"
                 if (role is OrgStaffRole) or (role is OrgInstructorRole):
                     auth.remove_users(self.user, role(self.course_key.org), user)
                 else:

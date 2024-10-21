@@ -142,7 +142,7 @@ class PostSavePhotoVerificationTest(ModuleStoreTestCase):
             photo_id_image_url=self.photo_id_image_url,
             photo_id_key=self.photo_id_key
         )
-        self.assertTrue(mock_signal.called)
+        assert mock_signal.called
         mock_signal.assert_called_with(
             sender='idv_update',
             attempt_id=attempt.id,
@@ -155,7 +155,7 @@ class PostSavePhotoVerificationTest(ModuleStoreTestCase):
 
         attempt.mark_ready()
 
-        self.assertTrue(mock_signal.called)
+        assert mock_signal.called
         mock_signal.assert_called_with(
             sender='idv_update',
             attempt_id=attempt.id,

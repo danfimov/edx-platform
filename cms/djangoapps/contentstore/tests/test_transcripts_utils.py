@@ -145,7 +145,7 @@ class TestSaveSubsToStore(SharedModuleStoreTestCase):
         item = Mock(location=Mock(course_key=self.course.id))
         transcripts_utils.save_subs_to_store(self.subs, self.subs_id, self.course)
         transcripts_utils.copy_or_rename_transcript(self.subs_copied_id, self.subs_id, item)
-        self.assertTrue(contentstore().find(self.content_copied_location))
+        assert contentstore().find(self.content_copied_location)
 
     def test_save_subs_to_store(self):
         with self.assertRaises(NotFoundError):
@@ -156,7 +156,7 @@ class TestSaveSubsToStore(SharedModuleStoreTestCase):
             self.subs_id,
             self.course)
 
-        self.assertTrue(contentstore().find(self.content_location))
+        assert contentstore().find(self.content_location)
         self.assertEqual(result_location, self.content_location)
 
     def test_save_unjsonable_subs_to_store(self):
@@ -242,7 +242,7 @@ class TestDownloadYoutubeSubs(TestYoutubeSubsBase):
             args, kwargs = mock_get.call_args_list[0]
             self.assertEqual(args[0], 'https://www.youtube.com/watch?v=good_id_2')
             args, kwargs = mock_get.call_args_list[1]
-            self.assertTrue(re.match(r"^https://www\.youtube\.com/api/timedtext.*", args[0]))
+            assert re.match(r"^https://www\.youtube\.com/api/timedtext.*", args[0])
 
     def test_subs_for_html5_vid_with_periods(self):
         """
@@ -288,7 +288,7 @@ class TestDownloadYoutubeSubs(TestYoutubeSubsBase):
             content_location = StaticContent.compute_location(
                 self.course.id, filename
             )
-            self.assertTrue(contentstore().find(content_location))
+            assert contentstore().find(content_location)
 
         self.clear_sub_content(good_youtube_sub)
 
@@ -323,7 +323,7 @@ class TestGenerateSubsFromSource(TestDownloadYoutubeSubs):  # lint-amnesty, pyli
             content_location = StaticContent.compute_location(
                 self.course.id, filename
             )
-            self.assertTrue(contentstore().find(content_location))
+            assert contentstore().find(content_location)
 
         self.clear_subs_content(youtube_subs)
 
@@ -380,7 +380,7 @@ class TestGenerateSrtFromSjson(TestDownloadYoutubeSubs):  # lint-amnesty, pylint
             ]
         }
         srt_subs = transcripts_utils.generate_srt_from_sjson(sjson_subs, 1)
-        self.assertTrue(srt_subs)
+        assert srt_subs
         expected_subs = [
             '00:00:00,100 --> 00:00:00,200\nsubs #1',
             '00:00:00,200 --> 00:00:00,240\nsubs #2',
@@ -405,7 +405,7 @@ class TestGenerateSrtFromSjson(TestDownloadYoutubeSubs):  # lint-amnesty, pylint
             ]
         }
         srt_subs = transcripts_utils.generate_srt_from_sjson(sjson_subs, 0.5)
-        self.assertTrue(srt_subs)
+        assert srt_subs
         expected_subs = [
             '00:00:00,050 --> 00:00:00,100\nsubs #1',
             '00:00:00,100 --> 00:00:00,120\nsubs #2',
@@ -429,7 +429,7 @@ class TestGenerateSrtFromSjson(TestDownloadYoutubeSubs):  # lint-amnesty, pylint
             ]
         }
         srt_subs = transcripts_utils.generate_srt_from_sjson(sjson_subs, 2)
-        self.assertTrue(srt_subs)
+        assert srt_subs
 
         expected_subs = [
             '00:00:00,200 --> 00:00:00,400\nsubs #1',
@@ -501,7 +501,7 @@ class TestYoutubeTranscripts(unittest.TestCase):
         args, kwargs = mock_get.call_args_list[0]
         self.assertEqual(args[0], f'https://www.youtube.com/watch?v={youtube_id}')
         args, kwargs = mock_get.call_args_list[1]
-        self.assertTrue(re.match(r"^https://www\.youtube\.com/api/timedtext.*", args[0]))
+        assert re.match(r"^https://www\.youtube\.com/api/timedtext.*", args[0])
 
 
 class TestTranscript(unittest.TestCase):

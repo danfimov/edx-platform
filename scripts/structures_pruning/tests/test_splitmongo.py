@@ -231,7 +231,7 @@ class TestSplitMongoBackendHelpers(unittest.TestCase):
             original_structure,
             Structure(id=str_id(1), original_id=str_id(1), previous_id=None)
         )
-        self.assertTrue(original_structure.is_original())
+        assert original_structure.is_original()
 
         other_structure = SplitMongoBackend.parse_structure_doc(
             {

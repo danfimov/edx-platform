@@ -52,10 +52,7 @@ class TestCreateCourse(ModuleStoreTestCase):
             "org", "course", "run", "dummy-course-name"
         )
         new_key = modulestore().make_course_key("org", "course", "run")
-        self.assertTrue(
-            modulestore().has_course(new_key),
-            f"Could not find course in {ModuleStoreEnum.Type.split}"
-        )
+        assert modulestore().has_course(new_key), f"Could not find course in {ModuleStoreEnum.Type.split}"
         # pylint: disable=protected-access
         self.assertEqual(
             ModuleStoreEnum.Type.split,

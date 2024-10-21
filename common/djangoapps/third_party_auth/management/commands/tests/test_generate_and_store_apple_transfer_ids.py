@@ -77,8 +77,9 @@ class TestGenerateAndStoreTransferIds(TestCase):
         with mock.patch.object(AppleIdAuth, 'name', self.slug):
             call_command(self.command, 'sample_team_id')
 
-        self.assertTrue(AppleMigrationUserIdInfo.objects.filter(
-            old_apple_id='sample_old_apple_id').exists())
+        assert AppleMigrationUserIdInfo.objects.filter(
+            old_apple_id='sample_old_apple_id'
+        ).exists()
         expected_transfer_sub = 'sample_transfer_sub'
         actual_transfer_sub = AppleMigrationUserIdInfo.objects.filter(
             old_apple_id='sample_old_apple_id').first().transfer_id

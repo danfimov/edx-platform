@@ -69,7 +69,7 @@ class CourseSettingsViewTest(CourseTestCase, PermissionAccessMixin):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("credit_requirements", response.data)
-        self.assertTrue(response.data["is_credit_course"])
+        assert response.data["is_credit_course"]
 
     @patch.dict(
         "django.conf.settings.FEATURES",

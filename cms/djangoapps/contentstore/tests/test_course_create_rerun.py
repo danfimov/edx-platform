@@ -127,7 +127,7 @@ class TestCourseListing(ModuleStoreTestCase):
         data = parse_json(response)
         new_course_key = CourseKey.from_string(data['course_key'])
         course = self.store.get_course(new_course_key)
-        self.assertTrue(course.cert_html_view_enabled)
+        assert course.cert_html_view_enabled
 
     def test_course_creation_for_unknown_organization_relaxed(self):
         """
@@ -368,7 +368,7 @@ class TestCourseListing(ModuleStoreTestCase):
 
         # ... and our setting got enabled appropriately on our new course
         if mock_toggle_state:
-            self.assertTrue(dest_course.force_on_flexible_peer_openassessments)
+            assert dest_course.force_on_flexible_peer_openassessments
         # ... or preserved if the default enable setting is not on
         else:
             self.assertEqual(

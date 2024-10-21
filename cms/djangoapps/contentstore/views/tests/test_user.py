@@ -59,7 +59,7 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertEqual(resp.status_code, 200)
         result = json.loads(resp.content.decode('utf-8'))
         self.assertEqual(result["role"], None)
-        self.assertTrue(result["active"])
+        assert result["active"]
 
     def test_detail_inactive(self):
         resp = self.client.get(self.inactive_detail_url)
@@ -96,7 +96,7 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertEqual(resp.status_code, 204)
         # reload user from DB
         ext_user = User.objects.get(email=self.ext_user.email)
-        self.assertTrue(auth.user_has_role(ext_user, CourseStaffRole(self.course.id)))
+        assert auth.user_has_role(ext_user, CourseStaffRole(self.course.id))
         self.assertFalse(auth.user_has_role(ext_user, CourseInstructorRole(self.course.id)))
         self.assert_enrolled()
 
@@ -112,12 +112,12 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertEqual(resp.status_code, 204)
         # reload user from DB
         ext_user = User.objects.get(email=self.ext_user.email)
-        self.assertTrue(auth.user_has_role(ext_user, CourseStaffRole(self.course.id)))
+        assert auth.user_has_role(ext_user, CourseStaffRole(self.course.id))
         self.assertFalse(auth.user_has_role(ext_user, CourseInstructorRole(self.course.id)))
         self.assert_enrolled()
         # check that other user is unchanged
         user = User.objects.get(email=self.user.email)
-        self.assertTrue(auth.user_has_role(user, CourseInstructorRole(self.course.id)))
+        assert auth.user_has_role(user, CourseInstructorRole(self.course.id))
         self.assertFalse(CourseStaffRole(self.course.id).has_user(user))
 
     def test_detail_post_instructor(self):
@@ -130,7 +130,7 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertEqual(resp.status_code, 204)
         # reload user from DB
         ext_user = User.objects.get(email=self.ext_user.email)
-        self.assertTrue(auth.user_has_role(ext_user, CourseInstructorRole(self.course.id)))
+        assert auth.user_has_role(ext_user, CourseInstructorRole(self.course.id))
         self.assertFalse(CourseStaffRole(self.course.id).has_user(ext_user))
         self.assert_enrolled()
 
@@ -155,7 +155,7 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertEqual(resp.status_code, 204)
         # reload user from DB
         ext_user = User.objects.get(email=self.ext_user.email)
-        self.assertTrue(auth.user_has_role(ext_user, CourseStaffRole(self.course.id)))
+        assert auth.user_has_role(ext_user, CourseStaffRole(self.course.id))
         self.assertFalse(auth.user_has_role(ext_user, CourseInstructorRole(self.course.id)))
         self.assert_enrolled()
 
@@ -195,7 +195,7 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertIn("error", result)
         # reload user from DB
         ext_user = User.objects.get(email=self.ext_user.email)
-        self.assertTrue(auth.user_has_role(ext_user, CourseInstructorRole(self.course.id)))
+        assert auth.user_has_role(ext_user, CourseInstructorRole(self.course.id))
 
     def test_post_last_instructor(self):
         auth.add_users(self.user, CourseInstructorRole(self.course.id), self.ext_user)
@@ -210,7 +210,7 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertIn("error", result)
         # reload user from DB
         ext_user = User.objects.get(email=self.ext_user.email)
-        self.assertTrue(auth.user_has_role(ext_user, CourseInstructorRole(self.course.id)))
+        assert auth.user_has_role(ext_user, CourseInstructorRole(self.course.id))
 
     def test_permission_denied_self(self):
         auth.add_users(self.user, CourseStaffRole(self.course.id), self.user)
@@ -266,7 +266,7 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
         self.assertIn("error", result)
         # reload user from DB
         ext_user = User.objects.get(email=self.ext_user.email)
-        self.assertTrue(auth.user_has_role(ext_user, CourseStaffRole(self.course.id)))
+        assert auth.user_has_role(ext_user, CourseStaffRole(self.course.id))
 
     def test_user_not_initially_enrolled(self):
         # Verify that ext_user is not enrolled in the new course before being added as a staff member.
@@ -310,14 +310,10 @@ class UsersTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=missing-cl
 
     def assert_not_enrolled(self):
         """ Asserts that self.ext_user is not enrolled in self.course. """
-        self.assertFalse(
-            CourseEnrollment.is_enrolled(self.ext_user, self.course.id),
-            'Did not expect ext_user to be enrolled in course'
-        )
+        # Did not expect ext_user to be enrolled in course
+        assert not CourseEnrollment.is_enrolled(self.ext_user, self.course.id)
 
     def assert_enrolled(self):
         """ Asserts that self.ext_user is enrolled in self.course. """
-        self.assertTrue(
-            CourseEnrollment.is_enrolled(self.ext_user, self.course.id),
-            'User ext_user should have been enrolled in the course'
-        )
+        # User ext_user should have been enrolled in the course
+        assert CourseEnrollment.is_enrolled(self.ext_user, self.course.id)

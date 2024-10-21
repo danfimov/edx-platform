@@ -82,7 +82,7 @@ class RegistrationEventTest(UserAPITestCase, OpenEdxEventsTestMixin):
         self.client.post(self.url, self.user_info)
 
         user = User.objects.get(username=self.user_info.get("username"))
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         self.assertDictContainsSubset(
             {
                 "signal": STUDENT_REGISTRATION_COMPLETED,
@@ -164,7 +164,7 @@ class LoginSessionEventTest(UserAPITestCase, OpenEdxEventsTestMixin):
         self.client.post(self.url, data)
 
         user = User.objects.get(username=self.user.username)
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         self.assertDictContainsSubset(
             {
                 "signal": SESSION_LOGIN_COMPLETED,

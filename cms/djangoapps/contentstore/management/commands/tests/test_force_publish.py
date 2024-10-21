@@ -85,7 +85,7 @@ class TestForcePublishModifications(ModuleStoreTestCase):
         )
 
         # verify that course has changes.
-        self.assertTrue(self.store.has_changes(self.store.get_item(self.course.location)))
+        assert self.store.has_changes(self.store.get_item(self.course.location))
 
         # get draft and publish branch versions
         versions = get_course_versions(str(self.course.id))

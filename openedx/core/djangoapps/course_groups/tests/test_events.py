@@ -83,7 +83,7 @@ class CohortEventTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
             user=self.user,
         )
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         self.assertDictContainsSubset(
             {
                 "signal": COHORT_MEMBERSHIP_CHANGED,

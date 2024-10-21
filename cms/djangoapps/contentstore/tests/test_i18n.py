@@ -162,7 +162,7 @@ class TestXBlockI18nService(ModuleStoreTestCase):
         """
         Test: i18n service should be callable in studio.
         """
-        self.assertTrue(callable(self.block.runtime._services.get('i18n')))  # pylint: disable=protected-access
+        assert callable(self.block.runtime._services.get('i18n'))  # pylint: disable=protected-access
 
 
 class InternationalizationTest(ModuleStoreTestCase):

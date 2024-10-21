@@ -130,7 +130,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer=issuer,
             client_id=client_id)
-        self.assertTrue(authorized)
+        assert authorized
 
 
 class LtiProfileTest(TestCase):
@@ -178,7 +178,7 @@ class LtiProfileTest(TestCase):
             platform_id=iss,
             client_id=aud,
             subject_id=sub)
-        self.assertEqual(expected_url, profile.subject_url)
+        assert expected_url == profile.subject_url
 
     def test_create_with_user(self):
         """
@@ -194,9 +194,8 @@ class LtiProfileTest(TestCase):
             platform_id=iss,
             client_id=aud,
             subject_id=sub)
-        self.assertIsNotNone(profile.user)
-        self.assertTrue(
-            profile.user.username.startswith('urn:openedx:content_libraries:username:'))
+        assert profile.user is not None
+        assert profile.user.username.startswith('urn:openedx:content_libraries:username:')
 
     def test_get_or_create_from_claims(self):
         """

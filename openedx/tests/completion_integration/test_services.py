@@ -191,7 +191,7 @@ class CompletionServiceTestCase(CompletionWaffleTestMixin, SharedModuleStoreTest
             source_library_id=str(library.location.library_key),
             user_id=self.user.id,
         )
-        self.assertTrue(self.completion_service.can_mark_block_complete_on_view(library_content_block))
+        assert self.completion_service.can_mark_block_complete_on_view(library_content_block)
 
     def test_vertical_completion_with_library_content(self):
         library = LibraryFactory.create(modulestore=self.store)

@@ -547,6 +547,6 @@ class PersistentCourseGradesTest(GradesModelTestCase):
         another_user_grade = PersistentCourseGrade.read(other_user_params['user_id'], self.course_key)
         self.assertIsNotNone(another_user_grade)
 
-        self.assertTrue(PersistentCourseGrade.objects.filter(
-            user_id=self.params['user_id'], course_id=other_course_key).exists()
-        )
+        assert PersistentCourseGrade.objects.filter(
+            user_id=self.params['user_id'], course_id=other_course_key
+        ).exists()

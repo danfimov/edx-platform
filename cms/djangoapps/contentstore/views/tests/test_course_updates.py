@@ -262,7 +262,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         self.post_course_update()
 
         updates_location = self.course.id.make_usage_key('course_info', 'updates')
-        self.assertTrue(isinstance(updates_location, UsageKey))
+        assert isinstance(updates_location, UsageKey)
         self.assertEqual(updates_location.block_id, 'updates')
 
         # check posting on handouts
@@ -288,7 +288,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         self.post_course_update()
 
         updates_location = self.course.id.make_usage_key('course_info', 'updates')
-        self.assertTrue(isinstance(updates_location, UsageKey))
+        assert isinstance(updates_location, UsageKey)
         self.assertEqual(updates_location.block_id, 'updates')
 
         course_updates = modulestore().get_item(updates_location)

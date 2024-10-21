@@ -16,7 +16,7 @@ class TestNameAffirmationAPIUtils(TestCase):
     @patch('openedx.features.name_affirmation_api.utils.PluginManager')
     def test_name_affirmation_installed(self, mock_manager):
         mock_manager.get_plugin.return_value = 'mock plugin'
-        self.assertTrue(is_name_affirmation_installed())
+        assert is_name_affirmation_installed()
 
     @patch('openedx.features.name_affirmation_api.utils.PluginManager')
     def test_name_affirmation_not_installed(self, mock_manager):

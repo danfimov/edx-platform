@@ -1184,7 +1184,7 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
 
         with patch(settings.SEARCH_ENGINE + '.index') as mock_index:
             self.reindex_course(self.store)
-            self.assertTrue(mock_index.called)
+            assert mock_index.called
             indexed_content = self._get_index_values_from_call_args(mock_index)
             self.assertIn(self._html_group_result(self.html_unit1, [1]), indexed_content)
             self.assertIn(self._html_experiment_group_result(self.html_unit4, [str(2)]), indexed_content)
@@ -1234,7 +1234,7 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
 
         with patch(settings.SEARCH_ENGINE + '.index') as mock_index:
             self.reindex_course(self.store)
-            self.assertTrue(mock_index.called)
+            assert mock_index.called
             indexed_content = self._get_index_values_from_call_args(mock_index)
             self.assertIn(self._html_nogroup_result(self.html_unit1), indexed_content)
             mock_index.reset_mock()
@@ -1254,7 +1254,7 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
         # Checking group indexed correctly
         with patch(settings.SEARCH_ENGINE + '.index') as mock_index:
             self.reindex_course(self.store)
-            self.assertTrue(mock_index.called)
+            assert mock_index.called
             indexed_content = self._get_index_values_from_call_args(mock_index)
             self.assertIn(self._html_group_result(self.html_unit1, [1]), indexed_content)
             mock_index.reset_mock()
@@ -1271,7 +1271,7 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
         # Checking group removed and not indexed any more
         with patch(settings.SEARCH_ENGINE + '.index') as mock_index:
             self.reindex_course(self.store)
-            self.assertTrue(mock_index.called)
+            assert mock_index.called
             indexed_content = self._get_index_values_from_call_args(mock_index)
             self.assertIn(self._html_nogroup_result(self.html_unit1), indexed_content)
             mock_index.reset_mock()
@@ -1288,7 +1288,7 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
 
         with patch(settings.SEARCH_ENGINE + '.index') as mock_index:
             self.reindex_course(self.store)
-            self.assertTrue(mock_index.called)
+            assert mock_index.called
             indexed_content = self._get_index_values_from_call_args(mock_index)
             self.assertIn(self._html_group_result(self.html_unit1, [1]), indexed_content)
             self.assertIn(self._html_nogroup_result(self.html_unit2), indexed_content)
@@ -1313,7 +1313,7 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
 
         with patch(settings.SEARCH_ENGINE + '.index') as mock_index:
             self.reindex_course(self.store)
-            self.assertTrue(mock_index.called)
+            assert mock_index.called
             indexed_content = self._get_index_values_from_call_args(mock_index)
             self.assertIn(self._html_group_result(self.html_unit1, [1]), indexed_content)
             self.assertIn(self._html_group_result(self.html_unit2, [0]), indexed_content)
@@ -1342,7 +1342,7 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
 
         with patch(settings.SEARCH_ENGINE + '.index') as mock_index:
             self.reindex_course(self.store)
-            self.assertTrue(mock_index.called)
+            assert mock_index.called
             indexed_content = self._get_index_values_from_call_args(mock_index)
             self.assertIn(self._html_group_result(self.html_unit2, [1]), indexed_content)
             self.assertIn(self._html_group_result(self.html_unit3, [0]), indexed_content)

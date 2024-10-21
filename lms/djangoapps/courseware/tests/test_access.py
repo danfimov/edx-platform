@@ -554,7 +554,7 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
 
         # User can enroll in the course if it is not just invitation only.
         course = self._mock_course_with_invitation(invitation=False)
-        self.assertTrue(access._has_access_course(user, 'enroll', course))
+        assert access._has_access_course(user, 'enroll', course)
 
     @override_settings(COURSES_INVITE_ONLY=True)
     def test__course_default_invite_only_flag_true(self):

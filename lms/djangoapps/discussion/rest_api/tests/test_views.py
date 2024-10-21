@@ -3302,8 +3302,10 @@ class CourseDiscussionRolesAPIViewTest(APITestCase, UrlResetMixin, ModuleStoreTe
         response = self.post(role, user.username, action)
         assert response.status_code == 200
         content = json.loads(response.content.decode('utf-8'))
-        assertion = self.assertTrue if action == 'allow' else self.assertFalse
-        assertion(any(user.username in x['username'] for x in content['results']))
+        if action == 'allow':
+            assert any(user.username in x['username'] for x in content['results'])
+        else:
+            assert not any(user.username in x['username'] for x in content['results'])
 
 
 @ddt.ddt

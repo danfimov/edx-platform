@@ -57,10 +57,7 @@ class TestCourseExportOlx(TaggedCourseMixin, ModuleStoreTestCase):
     def create_dummy_course(self, store_type):
         """Create small course."""
         course = CourseFactory.create(default_store=store_type)
-        self.assertTrue(
-            modulestore().has_course(course.id),
-            f"Could not find course in {store_type}"
-        )
+        assert modulestore().has_course(course.id), f"Could not find course in {store_type}"
         return course.id
 
     def check_export_file(self, tar_file, course_key, with_tags=False):

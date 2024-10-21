@@ -169,7 +169,7 @@ class TestCourseIndex(CourseTestCase):
         self.assertEqual(json_response['category'], 'course')
         self.assertEqual(json_response['id'], str(self.course.location))
         self.assertEqual(json_response['display_name'], self.course.display_name)
-        self.assertTrue(json_response['published'])
+        assert json_response['published']
         self.assertIsNone(json_response['visibility_state'])
 
         # Now verify the first child
@@ -179,7 +179,7 @@ class TestCourseIndex(CourseTestCase):
         self.assertEqual(first_child_response['category'], 'chapter')
         self.assertEqual(first_child_response['id'], str(chapter.location))
         self.assertEqual(first_child_response['display_name'], 'Week 1')
-        self.assertTrue(json_response['published'])
+        assert json_response['published']
         self.assertEqual(first_child_response['visibility_state'], VisibilityState.unscheduled)
         self.assertGreater(len(first_child_response['child_info']['children']), 0)
 
@@ -266,7 +266,7 @@ class TestCourseIndex(CourseTestCase):
         self.assertIsNotNone(json_response['display_name'])
         self.assertIsNotNone(json_response['id'])
         self.assertIsNotNone(json_response['category'])
-        self.assertTrue(json_response['published'])
+        assert json_response['published']
         if json_response.get('child_info', None):
             for child_response in json_response['child_info']['children']:
                 self.assert_correct_json_response(child_response)
@@ -398,7 +398,7 @@ class TestCourseIndexArchived(CourseTestCase):
         )
 
         # Base user has global staff access
-        self.assertTrue(GlobalStaff().has_user(self.user))
+        assert GlobalStaff().has_user(self.user)
 
         # Staff user just has course staff access
         self.staff, self.staff_password = self.create_non_staff_user()

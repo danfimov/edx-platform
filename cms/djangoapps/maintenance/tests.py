@@ -31,7 +31,7 @@ class TestMaintenanceIndex(ModuleStoreTestCase):
         super().setUp()
         self.user = AdminFactory()
         login_success = self.client.login(username=self.user.username, password=self.TEST_PASSWORD)
-        self.assertTrue(login_success)
+        assert login_success
         self.view_url = reverse('maintenance:maintenance_index')
 
     def test_maintenance_index(self):
@@ -57,7 +57,7 @@ class MaintenanceViewTestCase(ModuleStoreTestCase):
         super().setUp()
         self.user = AdminFactory()
         login_success = self.client.login(username=self.user.username, password=self.TEST_PASSWORD)
-        self.assertTrue(login_success)
+        assert login_success
 
     def verify_error_message(self, data, error_message):
         """
@@ -112,7 +112,7 @@ class MaintenanceViewAccessTests(MaintenanceViewTestCase):
         """
         user = UserFactory(username='test', email='test@example.com', password=self.TEST_PASSWORD)
         login_success = self.client.login(username=user.username, password=self.TEST_PASSWORD)
-        self.assertTrue(login_success)
+        assert login_success
 
         response = self.client.get(url)
         self.assertContains(
@@ -149,7 +149,7 @@ class TestForcePublish(MaintenanceViewTestCase):
             block_id='html_component'
         )
         # verify that course has changes.
-        self.assertTrue(self.store.has_changes(self.store.get_item(course.location)))
+        assert self.store.has_changes(self.store.get_item(course.location))
         return course
 
     @ddt.data(
@@ -228,7 +228,7 @@ class TestForcePublish(MaintenanceViewTestCase):
         self.assertIn('current_versions', response)
 
         # verify that course still has changes as we just dry ran force publish course.
-        self.assertTrue(self.store.has_changes(self.store.get_item(course.location)))
+        assert self.store.has_changes(self.store.get_item(course.location))
 
         # verify that both branch versions are still different
         self.verify_versions_are_different(course)
@@ -269,7 +269,7 @@ class TestAnnouncementsViews(MaintenanceViewTestCase):
         url = reverse("maintenance:announcement_create")
         self.client.post(url, {"content": "Test Create Announcement", "active": True})
         result = Announcement.objects.filter(content="Test Create Announcement").exists()
-        self.assertTrue(result)
+        assert result
 
     def test_edit(self):
         """

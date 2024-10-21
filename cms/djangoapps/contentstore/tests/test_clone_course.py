@@ -115,7 +115,7 @@ class CloneCourseTest(CourseTestCase):
         result = rerun_course.delay(str(split_course.id), str(split_course3_id), self.user.id,
                                     json.dumps(fields, cls=EdxJSONEncoder))
         self.assertEqual(result.get(), "succeeded")
-        self.assertTrue(has_course_author_access(self.user, split_course3_id), "Didn't grant access")
+        assert has_course_author_access(self.user, split_course3_id), "Didn't grant access"
         rerun_state = CourseRerunState.objects.find_first(course_key=split_course3_id)
         self.assertEqual(rerun_state.state, CourseRerunUIStateManager.State.SUCCEEDED)
 

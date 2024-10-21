@@ -49,10 +49,7 @@ class TestCourseExport(ModuleStoreTestCase):
         """
         course = CourseFactory.create(default_store=ModuleStoreEnum.Type.split)
         course_id = str(course.id)
-        self.assertTrue(
-            modulestore().has_course(course.id),
-            f"Could not find course in {ModuleStoreEnum.Type.split}"
-        )
+        assert modulestore().has_course(course.id), f"Could not find course in {ModuleStoreEnum.Type.split}"
         # Test `export` management command with invalid course_id
         errstring = "Invalid course_key: 'InvalidCourseID'."
         with self.assertRaisesRegex(CommandError, errstring):

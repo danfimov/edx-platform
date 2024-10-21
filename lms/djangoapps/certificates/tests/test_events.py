@@ -93,7 +93,7 @@ class CertificateEventTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
             download_url="https://certificate.pdf"
         )
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         self.assertDictContainsSubset(
             {
                 "signal": CERTIFICATE_CREATED,
@@ -146,7 +146,7 @@ class CertificateEventTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
         certificate.grade = "50"
         certificate.save()
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         self.assertDictContainsSubset(
             {
                 "signal": CERTIFICATE_CHANGED,
@@ -198,7 +198,7 @@ class CertificateEventTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
 
         certificate.invalidate()
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         self.assertDictContainsSubset(
             {
                 "signal": CERTIFICATE_REVOKED,

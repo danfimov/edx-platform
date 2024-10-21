@@ -67,7 +67,7 @@ class TestNewCommentGrouper(unittest.TestCase):
         self.assertIn('replier_name_list', updated_context)
         self.assertIn('grouped_count', updated_context)
         self.assertEqual(updated_context['grouped_count'], 2)
-        self.assertTrue(updated_context['grouped'])
+        assert updated_context['grouped']
 
     def test_group_appends_to_existing_grouping(self):
         """
@@ -122,7 +122,7 @@ class TestGroupUserNotifications(unittest.TestCase):
         group_user_notifications(new_notification, old_notification)
 
         mock_grouper.group.assert_called_once_with(new_notification, old_notification)
-        self.assertTrue(old_notification.save.called)
+        assert old_notification.save.called
         self.assertIsNone(old_notification.last_read)
         self.assertIsNone(old_notification.last_seen)
         self.assertIsNotNone(old_notification.created)

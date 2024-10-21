@@ -81,7 +81,7 @@ class ContentStoreTestCase(ModuleStoreTestCase):
         resp = self._activate_user(email)
         self.assertEqual(resp.status_code, 200)
         # Now make sure that the user is now actually activated
-        self.assertTrue(user(email).is_active)
+        assert user(email).is_active
 
 
 @ddt
@@ -209,7 +209,7 @@ class ForumTestCase(CourseTestCase):
             (now + datetime.timedelta(days=24), now + datetime.timedelta(days=30))
         ]
         self.set_blackout_dates(times1)
-        self.assertTrue(self.course.forum_posts_allowed)
+        assert self.course.forum_posts_allowed
         times2 = [
             (now - datetime.timedelta(days=14), now + datetime.timedelta(days=2)),
             (now + datetime.timedelta(days=24), now + datetime.timedelta(days=30))
@@ -222,7 +222,7 @@ class ForumTestCase(CourseTestCase):
             now + datetime.timedelta(days=24),
             now + datetime.timedelta(days=30)
         ]
-        self.assertTrue(self.course.forum_posts_allowed)
+        assert self.course.forum_posts_allowed
 
         # Single date set for restricted forum posts.
         self.course.discussion_blackouts = [
@@ -233,7 +233,7 @@ class ForumTestCase(CourseTestCase):
 
         # test if user gives empty blackout date it should return true for forum_posts_allowed
         self.course.discussion_blackouts = [[]]
-        self.assertTrue(self.course.forum_posts_allowed)
+        assert self.course.forum_posts_allowed
 
 
 @ddt

@@ -227,4 +227,4 @@ class InstructorDashboardFiltersTest(ModuleStoreTestCase):
         )
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertTrue(matches)
+        assert matches

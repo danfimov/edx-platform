@@ -172,7 +172,7 @@ class CourseCreatorAdminTest(TestCase):
         """
         Tests that only staff can change entries
         """
-        self.assertTrue(self.creator_admin.has_change_permission(self.request))
+        assert self.creator_admin.has_change_permission(self.request)
 
         self.request.user = self.user
         self.assertFalse(self.creator_admin.has_change_permission(self.request))
