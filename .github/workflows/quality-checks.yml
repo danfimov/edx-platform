@@ -7,6 +7,9 @@ on:
       - master
       - open-release/lilac.master
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 jobs:
   run_tests:
     name: Quality Others
@@ -42,18 +45,13 @@ jobs:
       - name: Setup npm
         run: npm i -g npm@8.5.x
 
-      - name: Get pip cache dir
-        id: pip-cache-dir
-        run: |
-          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache pip dependencies
-        id: cache-dependencies
-        uses: actions/cache@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
         with:
-          path: ${{ steps.pip-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/edx/testing.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
+          version: "0.4.15"
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements/edx/testing.txt
 
       - name: Install Required Python Dependencies
         env:

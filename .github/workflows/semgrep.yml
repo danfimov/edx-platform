@@ -11,6 +11,9 @@ on:
     branches:
       - master
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 jobs:
   run_semgrep:
     name: Semgrep analysis
@@ -30,10 +33,17 @@ jobs:
         with:
           python-version: "${{ matrix.python-version }}"
 
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.15"
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements/edx/semgrep.txt
+
       - name: Install semgrep
         run: |
-          make pre-requirements
-          pip-sync requirements/edx/semgrep.txt
+          uv pip install -r requirements/edx/semgrep.txt
 
       - name: Run semgrep
         env:

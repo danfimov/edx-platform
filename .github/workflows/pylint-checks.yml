@@ -6,6 +6,9 @@ on:
     branches:
       - master
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 jobs:
   run-pylint:
     runs-on: ubuntu-22.04
@@ -41,18 +44,13 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: Get pip cache dir
-        id: pip-cache-dir
-        run: |
-          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache pip dependencies
-        id: cache-dependencies
-        uses: actions/cache@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
         with:
-          path: ${{ steps.pip-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/edx/development.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
+          version: "0.4.15"
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements/edx/development.txt
 
       - name: Install required Python dependencies
         run: |
@@ -60,8 +58,6 @@ jobs:
           # trip over some dev-only things like django-debug-toolbar
           # (import debug_toolbar) that aren't in testing.txt.
           make dev-requirements
-          # After all requirements are installed, check that they're consistent with each other
-          pip check
 
       - name: Run quality tests
         run: |

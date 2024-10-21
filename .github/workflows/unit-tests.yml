@@ -12,6 +12,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 jobs:
   run-tests:
     name: ${{ matrix.shard_name }}(py=${{ matrix.python-version }},dj=${{ matrix.django-version }},mongo=${{ matrix.mongo-version }})
@@ -68,8 +71,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install libmysqlclient-dev libxmlsec1-dev lynx openssl
 
-      # This is needed until the ENABLE_BLAKE2B_HASHING can be removed and we
-      # can stop using MD4 by default.
+      # This is needed until the ENABLE_BLAKE2B_HASHING can be removed, and we can stop using MD4 by default.
       - name: enable md4 hashing in libssl
         run: |
           cat <<EOF | sudo tee /etc/ssl/openssl.cnf
@@ -104,10 +106,18 @@ jobs:
           sudo chmod -R a+rw /data/db
           mongod &
 
-      - name: Setup Python
+      - name: setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.15"
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements/edx/testing.txt
 
       - name: install requirements
         run: |
@@ -116,10 +126,6 @@ jobs:
             pip install "django~=${{ matrix.django-version }}.0"
             pip check # fail if this test-reqs/Django combination is broken
           fi
-
-      - name: list installed package versions
-        run: |
-          pip freeze
 
       - name: set settings path
         shell: bash
@@ -175,6 +181,14 @@ jobs:
       - name: install system requirements
         run: |
           sudo apt-get update && sudo apt-get install libxmlsec1-dev
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.15"
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements/edx/testing.txt
 
       - name: install requirements
         run: |
@@ -310,9 +324,17 @@ jobs:
           merge-multiple: true
           path: reports
 
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.15"
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements/edx/coverage.txt
+
       - name: Install Python dependencies
         run: |
-          pip install -r requirements/edx/coverage.txt
+          uv pip install -r requirements/edx/coverage.txt
 
       - name: Run coverage
         run: |

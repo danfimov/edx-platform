@@ -71,25 +71,24 @@ pull: ## update the Docker image used by "make shell"
 	docker pull edxops/edxapp:latest
 
 pre-requirements: ## install Python requirements for running pip-tools
-	pip install -r requirements/pip.txt
-	pip install -r requirements/pip-tools.txt
+	uv version
+	uv pip install -r requirements/pip.txt
+	uv pip install -r requirements/pip-tools.txt
 
 local-requirements:
 # 	edx-platform installs some Python projects from within the edx-platform repo itself.
 	pip install -e .
 
 dev-requirements: pre-requirements
-	@# The "$(wildcard..)" is to include private.txt if it exists, and make no mention
-	@# of it if it does not.  Shell wildcarding can't do that with default options.
-	pip-sync requirements/edx/development.txt $(wildcard requirements/edx/private.txt)
+	uv pip install -r requirements/edx/development.txt
 	make local-requirements
 
 base-requirements: pre-requirements
-	pip-sync requirements/edx/base.txt
+	uv pip install -r requirements/edx/base.txt
 	make local-requirements
 
 test-requirements: pre-requirements
-	pip-sync --pip-args="--exists-action=w" requirements/edx/testing.txt
+	uv pip install -r requirements/edx/testing.txt
 	make local-requirements
 
 requirements: dev-requirements ## install development environment requirements
@@ -140,10 +139,10 @@ compile-requirements: pre-requirements $(COMMON_CONSTRAINTS_TXT) ## Re-compile *
 	sed 's/event-tracking<2.4.1//g' requirements/common_constraints.txt > requirements/common_constraints.tmp
 	mv requirements/common_constraints.tmp requirements/common_constraints.txt
 	pip-compile -v --allow-unsafe ${COMPILE_OPTS} -o requirements/pip.txt requirements/pip.in
-	pip install -r requirements/pip.txt
+	uv pip install -r requirements/pip.txt
 
 	pip-compile -v ${COMPILE_OPTS} -o requirements/pip-tools.txt requirements/pip-tools.in
-	pip install -r requirements/pip-tools.txt
+	uv pip install -r requirements/pip-tools.txt
 
 	@ export REBUILD='--rebuild'; \
 	for f in $(REQ_FILES); do \

@@ -12,6 +12,9 @@ defaults:
   run:
     shell: bash # strict bash
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 jobs:
   check-requirements:
     name: Compile requirements
@@ -41,6 +44,13 @@ jobs:
         if: ${{ env.RELEVANT == 'true' }}
         with:
           python-version: '3.11'
+
+      - name: Setup uv
+        if: ${{ env.RELEVANT == 'true' }}
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.15"
+          enable-cache: false
 
       - name: "Recompile requirements"
         if: ${{ env.RELEVANT == 'true' }}

@@ -6,6 +6,9 @@ on:
     branches:
       - master
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 jobs:
   static_assets_check:
     name: static-assets-check
@@ -55,22 +58,17 @@ jobs:
       - name: Setup npm
         run: npm i -g npm@${{ matrix.npm-version }}
 
-      - name: Get pip cache dir
-        id: pip-cache-dir
-        run: |
-          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache pip dependencies
-        id: cache-dependencies
-        uses: actions/cache@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
         with:
-          path: ${{ steps.pip-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/edx/development.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
+          version: "0.4.15"
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements/edx/assets.txt
 
       - name: Install Limited Python Deps for Build
         run: |
-          pip install -r requirements/edx/assets.txt
+          uv pip install -r requirements/edx/assets.txt
 
       - name: Add node_modules bin to $Path
         run: echo $GITHUB_WORKSPACE/node_modules/.bin >> $GITHUB_PATH
@@ -91,7 +89,7 @@ jobs:
 
       - name: Install Full Python Deps for Collection
         run: |
-          pip install -r requirements/edx/base.txt -e .
+          uv pip install -r requirements/edx/base.txt -e .
 
       - name: Check Assets Collection
         env:
