@@ -173,7 +173,7 @@ class ImportRequiredTestCases(ContentStoreTestCase):
 
         # Verify that asset have been overwritten during export.
         self.assertEqual(len(exported_static_files), 1)
-        self.assertTrue(filesystem.exists(expected_displayname))
+        assert filesystem.exists(expected_displayname)
         self.assertEqual(exported_static_files[0], expected_displayname)
 
         # Remove exported course
@@ -247,8 +247,8 @@ class ImportRequiredTestCases(ContentStoreTestCase):
 
         # check that course which is imported has files 'updates.html' and 'updates.items.json'
         filesystem = OSFS(str(data_dir + '/course_info_updates/info'))
-        self.assertTrue(filesystem.exists('updates.html'))
-        self.assertTrue(filesystem.exists('updates.items.json'))
+        assert filesystem.exists('updates.html')
+        assert filesystem.exists('updates.items.json')
 
         # verify that course info update module has same data content as in data file from which it is imported
         # check 'data' field content
@@ -269,8 +269,8 @@ class ImportRequiredTestCases(ContentStoreTestCase):
 
         # check that exported course has files 'updates.html' and 'updates.items.json'
         filesystem = OSFS(str(root_dir / 'test_export/info'))
-        self.assertTrue(filesystem.exists('updates.html'))
-        self.assertTrue(filesystem.exists('updates.items.json'))
+        assert filesystem.exists('updates.html')
+        assert filesystem.exists('updates.items.json')
 
         # verify that exported course has same data content as in course_info_update module
         with filesystem.open('updates.html', 'r') as grading_policy:
@@ -302,13 +302,13 @@ class ImportRequiredTestCases(ContentStoreTestCase):
 
     def verify_content_existence(self, store, root_dir, course_id, dirname, category_name, filename_suffix=''):  # lint-amnesty, pylint: disable=missing-function-docstring
         filesystem = OSFS(root_dir / 'test_export')
-        self.assertTrue(filesystem.exists(dirname))
+        assert filesystem.exists(dirname)
 
         items = store.get_items(course_id, qualifiers={'category': category_name})
 
         for item in items:
             filesystem = OSFS(root_dir / ('test_export/' + dirname))
-            self.assertTrue(filesystem.exists(item.location.block_id + filename_suffix))
+            assert filesystem.exists(item.location.block_id + filename_suffix)
 
     def test_export_course_with_metadata_only_video(self):
         content_store = contentstore()
@@ -503,7 +503,7 @@ class ImportRequiredTestCases(ContentStoreTestCase):
         )
 
         # note that it has no `xml_attributes` attribute
-        self.assertFalse(hasattr(draft_open_assessment, "xml_attributes"))
+        assert not hasattr(draft_open_assessment, "xml_attributes")
 
         # export should still complete successfully
         root_dir = path(mkdtemp_clean())
@@ -632,7 +632,7 @@ class MiscCourseTests(ContentStoreTestCase):
         exported_static_files = filesystem.listdir('/')
 
         # Verify that only single asset has been exported with the expected asset name.
-        self.assertTrue(filesystem.exists(exported_asset_name))
+        assert filesystem.exists(exported_asset_name)
         self.assertEqual(len(exported_static_files), 1)
 
         # Remove tempdir
@@ -691,7 +691,7 @@ class MiscCourseTests(ContentStoreTestCase):
         # Verify that asset have been overwritten during export.
         filesystem = OSFS(root_dir / 'test_export/static')
         exported_static_files = filesystem.listdir('/')
-        self.assertTrue(filesystem.exists(asset_displayname))
+        assert filesystem.exists(asset_displayname)
         self.assertEqual(len(exported_static_files), 1)
 
         # Remove tempdir
@@ -1068,7 +1068,7 @@ class ContentStoreTest(ContentStoreTestCase):
         course_key = _get_course_id(self.store, test_course_data)
         _create_course(self, course_key, test_course_data)
         # Verify that the creator is now registered in the course.
-        self.assertTrue(CourseEnrollment.is_enrolled(self.user, course_key))
+        assert CourseEnrollment.is_enrolled(self.user, course_key)
         return test_course_data
 
     def assert_create_course_failed(self, error_message):
@@ -1146,13 +1146,13 @@ class ContentStoreTest(ContentStoreTestCase):
     def test_create_course_check_forum_seeding(self):
         """Test new course creation and verify forum seeding """
         test_course_data = self.assert_created_course(number_suffix=uuid4().hex)
-        self.assertTrue(are_permissions_roles_seeded(_get_course_id(self.store, test_course_data)))
+        assert are_permissions_roles_seeded(_get_course_id(self.store, test_course_data))
 
     def test_forum_unseeding_on_delete(self):
         """Test new course creation and verify forum unseeding """
         test_course_data = self.assert_created_course(number_suffix=uuid4().hex)
         course_id = _get_course_id(self.store, test_course_data)
-        self.assertTrue(are_permissions_roles_seeded(course_id))
+        assert are_permissions_roles_seeded(course_id)
         delete_course(course_id, self.user.id)
         # should raise an exception for checking permissions on deleted course
         with self.assertRaises(ItemNotFoundError):
@@ -1172,7 +1172,7 @@ class ContentStoreTest(ContentStoreTestCase):
 
         second_course_id = _get_course_id(self.store, second_course_data)
         # permissions should still be there for the other course
-        self.assertTrue(are_permissions_roles_seeded(second_course_id))
+        assert are_permissions_roles_seeded(second_course_id)
 
     def test_course_enrollments_and_roles_on_delete(self):
         """
@@ -1182,14 +1182,14 @@ class ContentStoreTest(ContentStoreTestCase):
         course_id = _get_course_id(self.store, test_course_data)
 
         # test that a user gets his enrollment and its 'student' role as default on creating a course
-        self.assertTrue(CourseEnrollment.is_enrolled(self.user, course_id))
-        self.assertTrue(self.user.roles.filter(name="Student", course_id=course_id))
+        assert CourseEnrollment.is_enrolled(self.user, course_id)
+        assert self.user.roles.filter(name="Student", course_id=course_id)
 
         delete_course(course_id, self.user.id)
         # check that user's enrollment for this course is not deleted
-        self.assertTrue(CourseEnrollment.is_enrolled(self.user, course_id))
+        assert CourseEnrollment.is_enrolled(self.user, course_id)
         # check that user has form role "Student" for this course even after deleting it
-        self.assertTrue(self.user.roles.filter(name="Student", course_id=course_id))
+        assert self.user.roles.filter(name="Student", course_id=course_id)
 
     def test_course_access_groups_on_delete(self):
         """
@@ -1212,7 +1212,7 @@ class ContentStoreTest(ContentStoreTestCase):
         # Update our cached user since its roles have changed
         self.user = User.objects.get_by_natural_key(self.user.natural_key()[0])
 
-        self.assertFalse(instructor_role.has_user(self.user))
+        assert not instructor_role.has_user(self.user)
         self.assertEqual(len(instructor_role.users_with_role()), 0)
 
     def test_delete_course_with_keep_instructors(self):
@@ -1226,14 +1226,14 @@ class ContentStoreTest(ContentStoreTestCase):
         # Add and verify instructor role for the course
         instructor_role = CourseInstructorRole(course_id)
         instructor_role.add_users(self.user)
-        self.assertTrue(instructor_role.has_user(self.user))
+        assert instructor_role.has_user(self.user)
 
         delete_course(course_id, self.user.id, keep_instructors=True)
 
         # Update our cached user so if any change in roles can be captured
         self.user = User.objects.get_by_natural_key(self.user.natural_key()[0])
 
-        self.assertTrue(instructor_role.has_user(self.user))
+        assert instructor_role.has_user(self.user)
 
     def test_create_course_after_delete(self):
         """
@@ -1619,7 +1619,7 @@ class ContentStoreTest(ContentStoreTestCase):
             pass
 
         # make sure we found the item (e.g. it didn't error while loading)
-        self.assertTrue(did_load_item)
+        assert did_load_item
 
     def test_forum_id_generation(self):
         """
@@ -1882,7 +1882,7 @@ class RerunCourseTest(ContentStoreTestCase):
             self.assertEqual(getattr(rerun_state, field_name), expected_value)
 
         # Verify that the creator is now enrolled in the course.
-        self.assertTrue(CourseEnrollment.is_enrolled(self.user, destination_course_key))
+        assert CourseEnrollment.is_enrolled(self.user, destination_course_key)
 
         # Verify both courses are in the course listing section
         self.assertInCourseListing(source_course_key)
@@ -1979,7 +1979,7 @@ class RerunCourseTest(ContentStoreTestCase):
         self.assertIn("Cannot find a course at", rerun_state.message)
 
         # Verify that the creator is not enrolled in the course.
-        self.assertFalse(CourseEnrollment.is_enrolled(self.user, non_existent_course_key))
+        assert not CourseEnrollment.is_enrolled(self.user, non_existent_course_key)
 
         # Verify that the existing course continues to be in the course listings
         self.assertInCourseListing(existent_course_key)
@@ -2043,7 +2043,7 @@ class RerunCourseTest(ContentStoreTestCase):
                 destination_course_key = self.post_rerun_request(source_course.id)
             rerun_state = CourseRerunState.objects.find_first(course_key=destination_course_key)
             self.assertEqual(rerun_state.state, CourseRerunUIStateManager.State.FAILED)
-            self.assertTrue(rerun_state.message.endswith("traceback"))
+            assert rerun_state.message.endswith("traceback")
             self.assertEqual(len(rerun_state.message), CourseRerunState.MAX_MESSAGE_LENGTH)
 
     def test_rerun_course_wiki_slug(self):

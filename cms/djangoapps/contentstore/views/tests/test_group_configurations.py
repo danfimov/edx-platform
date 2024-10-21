@@ -486,7 +486,7 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
         )
         self.assertEqual(response.status_code, 400)
         content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue(content['error'])
+        assert content['error']
         self.reload_course()
         # Verify that user_partitions and groups are still the same.
         user_partititons = self.course.user_partitions
@@ -628,7 +628,7 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
         )
         self.assertEqual(response.status_code, 400)
         content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue(content['error'])
+        assert content['error']
         self.reload_course()
         # Verify that user_partitions is still the same.
         user_partititons = self.course.user_partitions

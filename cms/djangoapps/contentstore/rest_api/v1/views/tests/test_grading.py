@@ -66,8 +66,8 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
         _ = CreditCourseFactory(course_key=self.course.id, enabled=True)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.data["show_credit_eligibility"])
-        self.assertTrue(response.data["is_credit_course"])
+        assert response.data["show_credit_eligibility"]
+        assert response.data["is_credit_course"]
 
     def test_post_permissions_unauthenticated(self):
         """

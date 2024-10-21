@@ -116,7 +116,7 @@ class TestOrphan(TestOrphanBase):
 
         # make sure that any children with one orphan parent and one non-orphan
         # parent are not deleted
-        self.assertTrue(self.store.has_item(course.id.make_usage_key('html', "multi_parent_html")))
+        assert self.store.has_item(course.id.make_usage_key('html', "multi_parent_html"))
 
     def test_not_permitted(self):
         """

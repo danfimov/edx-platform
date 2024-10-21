@@ -64,7 +64,7 @@ class ContentStoreTestCase(ModuleStoreTestCase):
         self.assertEqual(json_data['success'], True)
 
         # Check both that the user is created, and inactive
-        self.assertFalse(user(email).is_active)
+        assert not user(email).is_active
 
         return resp
 
@@ -81,7 +81,7 @@ class ContentStoreTestCase(ModuleStoreTestCase):
         resp = self._activate_user(email)
         self.assertEqual(resp.status_code, 200)
         # Now make sure that the user is now actually activated
-        self.assertTrue(user(email).is_active)
+        assert user(email).is_active
 
 
 @ddt
@@ -209,31 +209,31 @@ class ForumTestCase(CourseTestCase):
             (now + datetime.timedelta(days=24), now + datetime.timedelta(days=30))
         ]
         self.set_blackout_dates(times1)
-        self.assertTrue(self.course.forum_posts_allowed)
+        assert self.course.forum_posts_allowed
         times2 = [
             (now - datetime.timedelta(days=14), now + datetime.timedelta(days=2)),
             (now + datetime.timedelta(days=24), now + datetime.timedelta(days=30))
         ]
         self.set_blackout_dates(times2)
-        self.assertFalse(self.course.forum_posts_allowed)
+        assert not self.course.forum_posts_allowed
 
         # Single date set for allowed forum posts.
         self.course.discussion_blackouts = [
             now + datetime.timedelta(days=24),
             now + datetime.timedelta(days=30)
         ]
-        self.assertTrue(self.course.forum_posts_allowed)
+        assert self.course.forum_posts_allowed
 
         # Single date set for restricted forum posts.
         self.course.discussion_blackouts = [
             now - datetime.timedelta(days=24),
             now + datetime.timedelta(days=30)
         ]
-        self.assertFalse(self.course.forum_posts_allowed)
+        assert not self.course.forum_posts_allowed
 
         # test if user gives empty blackout date it should return true for forum_posts_allowed
         self.course.discussion_blackouts = [[]]
-        self.assertTrue(self.course.forum_posts_allowed)
+        assert self.course.forum_posts_allowed
 
 
 @ddt

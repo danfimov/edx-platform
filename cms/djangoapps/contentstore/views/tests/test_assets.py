@@ -415,7 +415,7 @@ class DownloadTestCase(AssetsTestCase):
         """
         patched_find_asset_metadata.return_value = None
         self.client.get(self.uploaded_url, HTTP_ACCEPT='text/html')
-        self.assertFalse(patched_find_asset_metadata.called)
+        assert not patched_find_asset_metadata.called
 
 
 class AssetToJsonTestCase(AssetsTestCase):
@@ -504,12 +504,12 @@ class LockAssetTestCase(AssetsTestCase):
 
         # Lock the asset
         resp_asset = post_asset_update(True, course)
-        self.assertTrue(resp_asset['locked'])
+        assert resp_asset['locked']
         verify_asset_locked_state(True)
 
         # Unlock the asset
         resp_asset = post_asset_update(False, course)
-        self.assertFalse(resp_asset['locked'])
+        assert not resp_asset['locked']
         verify_asset_locked_state(False)
 
 

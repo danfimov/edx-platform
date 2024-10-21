@@ -152,7 +152,7 @@ class XBlockVisibilityTestCase(SharedModuleStoreTestCase):
         vertical.start = self.future
         modulestore().update_item(vertical, self.dummy_user)
 
-        self.assertTrue(utils.is_currently_visible_to_students(vertical))
+        assert utils.is_currently_visible_to_students(vertical)
 
     def _test_visible_to_students(self, expected_visible_without_lock, name, start_date, publish=False):
         """
@@ -166,7 +166,7 @@ class XBlockVisibilityTestCase(SharedModuleStoreTestCase):
         staff_lock = self._create_xblock_with_start_date(
             name + "_locked", start_date, publish, visible_to_staff_only=True
         )
-        self.assertFalse(utils.is_currently_visible_to_students(staff_lock))
+        assert not utils.is_currently_visible_to_students(staff_lock)
 
     def _create_xblock_with_start_date(self, name, start_date, publish=False, visible_to_staff_only=False):
         """Helper to create an xblock with a start date, optionally publishing it"""
@@ -282,7 +282,7 @@ class StaffLockSourceTest(StaffLockTest):
         """Helper to verify that the staff lock source of a given item matches the expected source"""
         source = utils.find_staff_lock_source(item)
         self.assertEqual(source.location, expected_source.location)
-        self.assertTrue(source.visible_to_staff_only)
+        assert source.visible_to_staff_only
 
     def test_chapter_source_for_vertical(self):
         """Tests a vertical's staff lock being set by its chapter"""
@@ -321,27 +321,27 @@ class InheritedStaffLockTest(StaffLockTest):
     def test_no_inheritance(self):
         """Tests that a locked or unlocked vertical with no locked ancestors does not have an inherited lock"""
         self._update_staff_locks(False, False, False)
-        self.assertFalse(utils.ancestor_has_staff_lock(self.vertical))
+        assert not utils.ancestor_has_staff_lock(self.vertical)
         self._update_staff_locks(False, False, True)
-        self.assertFalse(utils.ancestor_has_staff_lock(self.vertical))
+        assert not utils.ancestor_has_staff_lock(self.vertical)
 
     def test_inheritance_in_locked_section(self):
         """Tests that a locked or unlocked vertical in a locked section has an inherited lock"""
         self._update_staff_locks(True, False, False)
-        self.assertTrue(utils.ancestor_has_staff_lock(self.vertical))
+        assert utils.ancestor_has_staff_lock(self.vertical)
         self._update_staff_locks(True, False, True)
-        self.assertTrue(utils.ancestor_has_staff_lock(self.vertical))
+        assert utils.ancestor_has_staff_lock(self.vertical)
 
     def test_inheritance_in_locked_subsection(self):
         """Tests that a locked or unlocked vertical in a locked subsection has an inherited lock"""
         self._update_staff_locks(False, True, False)
-        self.assertTrue(utils.ancestor_has_staff_lock(self.vertical))
+        assert utils.ancestor_has_staff_lock(self.vertical)
         self._update_staff_locks(False, True, True)
-        self.assertTrue(utils.ancestor_has_staff_lock(self.vertical))
+        assert utils.ancestor_has_staff_lock(self.vertical)
 
     def test_no_inheritance_for_orphan(self):
         """Tests that an orphaned xblock does not inherit staff lock"""
-        self.assertFalse(utils.ancestor_has_staff_lock(self.orphan))
+        assert not utils.ancestor_has_staff_lock(self.orphan)
 
 
 class GroupVisibilityTest(CourseTestCase):
@@ -413,8 +413,8 @@ class GroupVisibilityTest(CourseTestCase):
         def verify_all_components_visible_to_all():
             """ Verifies when group_access has not been set on anything. """
             for item in (self.sequential, self.vertical, self.html, self.problem):
-                self.assertFalse(utils.has_children_visible_to_specific_partition_groups(item))
-                self.assertFalse(utils.is_visible_to_specific_partition_groups(item))
+                assert not utils.has_children_visible_to_specific_partition_groups(item)
+                assert not utils.is_visible_to_specific_partition_groups(item)
 
         verify_all_components_visible_to_all()
 
@@ -436,15 +436,15 @@ class GroupVisibilityTest(CourseTestCase):
         self.problem = self.store.get_item(self.problem.location)
 
         # Note that "has_children_visible_to_specific_partition_groups" only checks immediate children.
-        self.assertFalse(utils.has_children_visible_to_specific_partition_groups(self.sequential))
-        self.assertTrue(utils.has_children_visible_to_specific_partition_groups(self.vertical))
-        self.assertFalse(utils.has_children_visible_to_specific_partition_groups(self.html))
-        self.assertFalse(utils.has_children_visible_to_specific_partition_groups(self.problem))
+        assert not utils.has_children_visible_to_specific_partition_groups(self.sequential)
+        assert utils.has_children_visible_to_specific_partition_groups(self.vertical)
+        assert not utils.has_children_visible_to_specific_partition_groups(self.html)
+        assert not utils.has_children_visible_to_specific_partition_groups(self.problem)
 
-        self.assertTrue(utils.is_visible_to_specific_partition_groups(self.sequential))
-        self.assertFalse(utils.is_visible_to_specific_partition_groups(self.vertical))
-        self.assertFalse(utils.is_visible_to_specific_partition_groups(self.html))
-        self.assertTrue(utils.is_visible_to_specific_partition_groups(self.problem))
+        assert utils.is_visible_to_specific_partition_groups(self.sequential)
+        assert not utils.is_visible_to_specific_partition_groups(self.vertical)
+        assert not utils.is_visible_to_specific_partition_groups(self.html)
+        assert utils.is_visible_to_specific_partition_groups(self.problem)
 
 
 class GetUserPartitionInfoTest(ModuleStoreTestCase):
@@ -662,24 +662,24 @@ class ValidateCourseOlxTests(CourseTestCase):
         Tests that olx is validation is skipped with library locator.
         """
         library_key = LibraryLocator(org='TestOrg', library='TestProbs')
-        self.assertTrue(validate_course_olx(library_key, self.toy_course_path, self.status))
-        self.assertFalse(mock_olxcleaner_validate.called)
+        assert validate_course_olx(library_key, self.toy_course_path, self.status)
+        assert not mock_olxcleaner_validate.called
 
     def test_config_settings_enabled(self, mock_olxcleaner_validate):
         """
         Tests olx validation with config setting is disabled.
         """
         with patch.dict(settings.FEATURES, ENABLE_COURSE_OLX_VALIDATION=False):
-            self.assertTrue(validate_course_olx(self.course.id, self.toy_course_path, self.status))
-            self.assertFalse(mock_olxcleaner_validate.called)
+            assert validate_course_olx(self.course.id, self.toy_course_path, self.status)
+            assert not mock_olxcleaner_validate.called
 
     def test_config_settings_disabled(self, mock_olxcleaner_validate):
         """
         Tests olx validation with config setting is enabled.
         """
         with patch.dict(settings.FEATURES, ENABLE_COURSE_OLX_VALIDATION=True):
-            self.assertTrue(validate_course_olx(self.course.id, self.toy_course_path, self.status))
-            self.assertTrue(mock_olxcleaner_validate.called)
+            assert validate_course_olx(self.course.id, self.toy_course_path, self.status)
+            assert mock_olxcleaner_validate.called
 
     def test_exception_during_validation(self, mock_olxcleaner_validate):
         """
@@ -690,8 +690,8 @@ class ValidateCourseOlxTests(CourseTestCase):
         """
         mock_olxcleaner_validate.side_effect = Exception
         with mock.patch(self.LOGGER) as patched_log:
-            self.assertTrue(validate_course_olx(self.course.id, self.toy_course_path, self.status))
-            self.assertTrue(mock_olxcleaner_validate.called)
+            assert validate_course_olx(self.course.id, self.toy_course_path, self.status)
+            assert mock_olxcleaner_validate.called
             patched_log.exception.assert_called_once_with(
                 f'Course import {self.course.id}: CourseOlx could not be validated')
 
@@ -705,10 +705,10 @@ class ValidateCourseOlxTests(CourseTestCase):
             Mock(errors=[], return_error=Mock(return_value=False)),
             Mock()
         ]
-        self.assertTrue(validate_course_olx(self.course.id, self.toy_course_path, self.status))
+        assert validate_course_olx(self.course.id, self.toy_course_path, self.status)
         task_artifact = UserTaskArtifact.objects.filter(status=self.status, name='OLX_VALIDATION_ERROR').first()
         self.assertIsNone(task_artifact)
-        self.assertTrue(mock_olxcleaner_validate.called)
+        assert mock_olxcleaner_validate.called
 
     @mock.patch('cms.djangoapps.contentstore.tasks.report_error_summary')
     @mock.patch('cms.djangoapps.contentstore.tasks.report_errors')
@@ -729,7 +729,7 @@ class ValidateCourseOlxTests(CourseTestCase):
         mock_report_error_summary.return_value = [f'Errors: {len(errors)}']
 
         with patch(self.LOGGER) as patched_log:
-            self.assertFalse(validate_course_olx(self.course.id, self.toy_course_path, self.status))
+            assert not validate_course_olx(self.course.id, self.toy_course_path, self.status)
             patched_log.error.assert_called_once_with(
                 f'Course import {self.course.id}: CourseOlx validation failed.')
 

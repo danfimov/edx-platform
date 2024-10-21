@@ -127,7 +127,7 @@ class TestCourseListing(ModuleStoreTestCase):
         data = parse_json(response)
         new_course_key = CourseKey.from_string(data['course_key'])
         course = self.store.get_course(new_course_key)
-        self.assertTrue(course.cert_html_view_enabled)
+        assert course.cert_html_view_enabled
 
     def test_course_creation_for_unknown_organization_relaxed(self):
         """
@@ -251,7 +251,7 @@ class TestCourseListing(ModuleStoreTestCase):
         self.course_creator_entry.state = CourseCreator.GRANTED
         self.creator_admin.save_model(self.request, self.course_creator_entry, None, True)
         self.assertIn(self.source_course_key.org, get_allowed_organizations(self.user))
-        self.assertFalse(user_can_create_organizations(self.user))
+        assert not user_can_create_organizations(self.user)
         response = self.client.ajax_post(self.course_create_rerun_url, {
             'org': self.source_course_key.org,
             'number': 'CS101',
@@ -280,7 +280,7 @@ class TestCourseListing(ModuleStoreTestCase):
         dc_org_object = Organization.objects.get(name='Test Organization')
         self.course_creator_entry.organizations.add(dc_org_object)
         self.assertIn(self.source_course_key.org, get_allowed_organizations(self.user))
-        self.assertFalse(user_can_create_organizations(self.user))
+        assert not user_can_create_organizations(self.user)
         response = self.client.ajax_post(self.course_create_rerun_url, {
             'org': self.source_course_key.org,
             'number': 'CS101',
@@ -316,7 +316,7 @@ class TestCourseListing(ModuleStoreTestCase):
         dc_org_object = Organization.objects.get(name='DC')
         self.course_creator_entry.organizations.add(dc_org_object)
         self.assertNotIn(self.source_course_key.org, get_allowed_organizations(self.user))
-        self.assertFalse(user_can_create_organizations(self.user))
+        assert not user_can_create_organizations(self.user)
         response = self.client.ajax_post(self.course_create_rerun_url, {
             'org': self.source_course_key.org,
             'number': 'CS101',
@@ -368,7 +368,7 @@ class TestCourseListing(ModuleStoreTestCase):
 
         # ... and our setting got enabled appropriately on our new course
         if mock_toggle_state:
-            self.assertTrue(dest_course.force_on_flexible_peer_openassessments)
+            assert dest_course.force_on_flexible_peer_openassessments
         # ... or preserved if the default enable setting is not on
         else:
             self.assertEqual(

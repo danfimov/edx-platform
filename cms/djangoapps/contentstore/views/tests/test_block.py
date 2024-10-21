@@ -178,7 +178,7 @@ class GetItemTest(ItemTest):
         self.assertEqual(resp.status_code, 200)
         resp_content = json.loads(resp.content.decode("utf-8"))
         html = resp_content["html"]
-        self.assertTrue(html)
+        assert html
         resources = resp_content["resources"]
         self.assertIsNotNone(resources)
         return html, resources
@@ -1754,13 +1754,13 @@ class TestMoveItem(ItemTest):
                 old_parent_loc, revision=ModuleStoreEnum.RevisionOption.published_only
             )
         )
-        self.assertFalse(self.store.has_changes(self.store.get_item(old_parent_loc)))
+        assert not self.store.has_changes(self.store.get_item(old_parent_loc))
 
         # Move component html_usage_key in vert2_usage_key
         self.assert_move_item(self.html_usage_key, self.vert2_usage_key)
 
         # Check old_parent_loc becomes in draft mode now.
-        self.assertTrue(self.store.has_changes(self.store.get_item(old_parent_loc)))
+        assert self.store.has_changes(self.store.get_item(old_parent_loc))
 
         # Now discard changes in old_parent_loc
         self.client.ajax_post(
@@ -1774,7 +1774,7 @@ class TestMoveItem(ItemTest):
                 old_parent_loc, revision=ModuleStoreEnum.RevisionOption.published_only
             )
         )
-        self.assertFalse(self.store.has_changes(self.store.get_item(old_parent_loc)))
+        assert not self.store.has_changes(self.store.get_item(old_parent_loc))
 
         # Now source item should be back in the old parent.
         source_item = self.get_item_from_modulestore(self.html_usage_key)
@@ -2186,20 +2186,20 @@ class TestEditItem(TestEditItemSetup):
         """
         Verifies the item with given location has a published version and no draft (unpublished changes).
         """
-        self.assertTrue(self._is_location_published(location))
-        self.assertFalse(modulestore().has_changes(modulestore().get_item(location)))
+        assert self._is_location_published(location)
+        assert not modulestore().has_changes(modulestore().get_item(location))
 
     def _verify_published_with_draft(self, location):
         """
         Verifies the item with given location has a published version and also a draft version (unpublished changes).
         """
-        self.assertTrue(self._is_location_published(location))
-        self.assertTrue(modulestore().has_changes(modulestore().get_item(location)))
+        assert self._is_location_published(location)
+        assert modulestore().has_changes(modulestore().get_item(location))
 
     def test_make_public(self):
         """Test making a private problem public (publishing it)."""
         # When the problem is first created, it is only in draft (because of its category).
-        self.assertFalse(self._is_location_published(self.problem_usage_key))
+        assert not self._is_location_published(self.problem_usage_key)
         self.client.ajax_post(self.problem_update_url, data={"publish": "make_public"})
         self._verify_published_with_no_draft(self.problem_usage_key)
 
@@ -2225,7 +2225,7 @@ class TestEditItem(TestEditItemSetup):
         new_display_name = "New Display Name"
 
         # When the problem is first created, it is only in draft (because of its category).
-        self.assertFalse(self._is_location_published(self.problem_usage_key))
+        assert not self._is_location_published(self.problem_usage_key)
 
         # Republishing when only in draft will update the draft but not cause a public item to be created.
         self.client.ajax_post(
@@ -2235,7 +2235,7 @@ class TestEditItem(TestEditItemSetup):
                 "metadata": {"display_name": new_display_name},
             },
         )
-        self.assertFalse(self._is_location_published(self.problem_usage_key))
+        assert not self._is_location_published(self.problem_usage_key)
         draft = self.get_item_from_modulestore(self.problem_usage_key)
         self.assertEqual(draft.display_name, new_display_name)
 
@@ -2376,8 +2376,8 @@ class TestEditItem(TestEditItemSetup):
 
         # The unit and its children should be private initially
         unit_update_url = reverse_usage_url("xblock_handler", unit_usage_key)
-        self.assertFalse(self._is_location_published(unit_usage_key))
-        self.assertFalse(self._is_location_published(html_usage_key))
+        assert not self._is_location_published(unit_usage_key)
+        assert not self._is_location_published(html_usage_key)
 
         # Make the unit public and verify that the problem is also made public
         resp = self.client.ajax_post(unit_update_url, data={"publish": "make_public"})
@@ -3420,7 +3420,7 @@ class TestXBlockInfo(ItemTest):
         self.course.highlights_enabled_for_messaging = True
         self.store.update_item(self.course, None)
         course_xblock_info = create_xblock_info(self.course)
-        self.assertTrue(course_xblock_info["highlights_enabled_for_messaging"])
+        assert course_xblock_info["highlights_enabled_for_messaging"]
 
     def test_xblock_public_video_sharing_enabled(self):
         """
@@ -3430,7 +3430,7 @@ class TestXBlockInfo(ItemTest):
         with patch.object(PUBLIC_VIDEO_SHARE, "is_enabled", return_value=True):
             self.store.update_item(self.course, None)
             course_xblock_info = create_xblock_info(self.course)
-            self.assertTrue(course_xblock_info["video_sharing_enabled"])
+            assert course_xblock_info["video_sharing_enabled"]
             self.assertEqual(course_xblock_info["video_sharing_options"], "all-on")
 
     def test_xblock_public_video_sharing_disabled(self):
@@ -3453,8 +3453,8 @@ class TestXBlockInfo(ItemTest):
         self.assertEqual(xblock_info["category"], "course")
         self.assertEqual(xblock_info["id"], str(self.course.location))
         self.assertEqual(xblock_info["display_name"], self.course.display_name)
-        self.assertTrue(xblock_info["published"])
-        self.assertFalse(xblock_info["highlights_enabled_for_messaging"])
+        assert xblock_info["published"]
+        assert not xblock_info["highlights_enabled_for_messaging"]
 
         # Finally, validate the entire response for consistency
         self.validate_xblock_info_consistency(
@@ -3468,7 +3468,7 @@ class TestXBlockInfo(ItemTest):
         self.assertEqual(xblock_info["category"], "chapter")
         self.assertEqual(xblock_info["id"], str(self.chapter.location))
         self.assertEqual(xblock_info["display_name"], "Week 1")
-        self.assertTrue(xblock_info["published"])
+        assert xblock_info["published"]
         self.assertIsNone(xblock_info.get("edited_by", None))
         self.assertEqual(
             xblock_info["course_graders"],
@@ -3479,7 +3479,7 @@ class TestXBlockInfo(ItemTest):
         self.assertEqual(xblock_info["due"], None)
         self.assertEqual(xblock_info["format"], None)
         self.assertEqual(xblock_info["highlights"], self.chapter.highlights)
-        self.assertTrue(xblock_info["highlights_enabled"])
+        assert xblock_info["highlights_enabled"]
 
         # Finally, validate the entire response for consistency
         self.validate_xblock_info_consistency(
@@ -3493,7 +3493,7 @@ class TestXBlockInfo(ItemTest):
         self.assertEqual(xblock_info["category"], "sequential")
         self.assertEqual(xblock_info["id"], str(self.sequential.location))
         self.assertEqual(xblock_info["display_name"], "Lesson 1")
-        self.assertTrue(xblock_info["published"])
+        assert xblock_info["published"]
         self.assertIsNone(xblock_info.get("edited_by", None))
 
         # Finally, validate the entire response for consistency
@@ -3508,7 +3508,7 @@ class TestXBlockInfo(ItemTest):
         self.assertEqual(xblock_info["category"], "vertical")
         self.assertEqual(xblock_info["id"], str(self.vertical.location))
         self.assertEqual(xblock_info["display_name"], "Unit 1")
-        self.assertTrue(xblock_info["published"])
+        assert xblock_info["published"]
         self.assertEqual(xblock_info["edited_by"], "testuser")
 
         # Validate that the correct ancestor info has been included
@@ -3532,7 +3532,7 @@ class TestXBlockInfo(ItemTest):
         self.assertEqual(xblock_info["category"], "video")
         self.assertEqual(xblock_info["id"], str(self.video.location))
         self.assertEqual(xblock_info["display_name"], "My Video")
-        self.assertTrue(xblock_info["published"])
+        assert xblock_info["published"]
         self.assertIsNone(xblock_info.get("edited_by", None))
 
         # Finally, validate the entire response for consistency
@@ -3551,7 +3551,7 @@ class TestXBlockInfo(ItemTest):
         self.assertIsNotNone(xblock_info["display_name"])
         self.assertIsNotNone(xblock_info["id"])
         self.assertIsNotNone(xblock_info["category"])
-        self.assertTrue(xblock_info["published"])
+        assert xblock_info["published"]
         if has_ancestor_info:
             self.assertIsNotNone(xblock_info.get("ancestor_info", None))
             ancestors = xblock_info["ancestor_info"]["ancestors"]
@@ -3885,7 +3885,7 @@ class TestLibraryXBlockCreation(ItemTest):
             parent_usage_key=lib.location, display_name="Test", category="html"
         )
         lib = self.store.get_library(lib.location.library_key)
-        self.assertTrue(lib.children)
+        assert lib.children
         xblock_locator = lib.children[0]
         self.assertEqual(self.store.get_item(xblock_locator).display_name, "Test")
 
@@ -3899,7 +3899,7 @@ class TestLibraryXBlockCreation(ItemTest):
         )
         self.assertEqual(response.status_code, 400)
         lib = self.store.get_library(lib.location.library_key)
-        self.assertFalse(lib.children)
+        assert not lib.children
 
     def test_no_add_advanced(self):
         lib = LibraryFactory.create()
@@ -3910,7 +3910,7 @@ class TestLibraryXBlockCreation(ItemTest):
         )
         self.assertEqual(response.status_code, 400)
         lib = self.store.get_library(lib.location.library_key)
-        self.assertFalse(lib.children)
+        assert not lib.children
 
 
 @ddt.ddt
@@ -4398,12 +4398,12 @@ class TestXBlockPublishingInfo(ItemTest):
         # Check that chapter has scheduled state
         xblock_info = self._get_xblock_info(chapter.location)
         self._verify_visibility_state(xblock_info, VisibilityState.ready)
-        self.assertFalse(course.self_paced)
+        assert not course.self_paced
 
         # Change course pacing to self paced
         course.self_paced = True
         self.store.update_item(course, self.user.id)
-        self.assertTrue(course.self_paced)
+        assert course.self_paced
 
         # Check that in self paced course content has live state now
         xblock_info = self._get_xblock_info(chapter.location)

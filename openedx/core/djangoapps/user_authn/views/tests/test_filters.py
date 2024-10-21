@@ -137,7 +137,7 @@ class RegistrationFiltersTest(UserAPITestCase):
         self.client.post(self.url, self.user_info)
 
         user = User.objects.filter(username=f"{self.user_info.get('username')}-OpenEdx-Test")
-        self.assertTrue(user)
+        assert user
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -174,7 +174,7 @@ class RegistrationFiltersTest(UserAPITestCase):
         self.client.post(self.url, self.user_info)
 
         user = User.objects.filter(username=f"{self.user_info.get('username')}")
-        self.assertTrue(user)
+        assert user
 
 
 @skip_unless_lms

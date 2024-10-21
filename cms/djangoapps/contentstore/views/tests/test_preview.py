@@ -169,7 +169,7 @@ class GetPreviewHtmlTestCase(ModuleStoreTestCase):
         )
         response = client.post(url)
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(modulestore().has_changes(modulestore().get_item(block.location)))
+        assert not modulestore().has_changes(modulestore().get_item(block.location))
 
 
 @XBlock.needs("i18n")

@@ -1877,13 +1877,13 @@ class TestInheritance(SplitModuleTest):
         assert not orphan_problem.visible_to_staff_only
         parented_problem = modulestore().create_child(self.user_id, chapter.location.version_agnostic(), 'problem')  # lint-amnesty, pylint: disable=unused-variable
         # FIXME LMS-11376
-#         self.assertTrue(parented_problem.visible_to_staff_only)
+#         assert parented_problem.visible_to_staff_only
 
         orphan_problem = modulestore().create_xblock(chapter.runtime, course_key, 'problem')
         assert not orphan_problem.visible_to_staff_only
         parented_problem = modulestore().create_xblock(chapter.runtime, course_key, 'problem', parent_xblock=chapter)
         # FIXME LMS-11376
-#         self.assertTrue(parented_problem.visible_to_staff_only)
+#         assert parented_problem.visible_to_staff_only
 
 
 class TestPublish(SplitModuleTest):

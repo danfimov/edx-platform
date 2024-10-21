@@ -192,10 +192,10 @@ class UserDiscussionsToursViewTestCase(TestCase):
         # Check that the returned data is correct
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['tour_name'], 'Test Tour')
-        self.assertFalse(response.data[0]['show_tour'])
+        assert not response.data[0]['show_tour']
 
         self.assertEqual(response.data[1]['tour_name'], 'not_responded_filter')
-        self.assertTrue(response.data[1]['show_tour'])
+        assert response.data[1]['show_tour']
 
         # Test that the view can be disabled by a waffle flag.
         with override_waffle_flag(USER_TOURS_DISABLED, active=True):

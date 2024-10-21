@@ -550,11 +550,11 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
 
         # User cannot enroll in the course if it is just invitation only.
         course = self._mock_course_with_invitation(invitation=True)
-        self.assertFalse(access._has_access_course(user, 'enroll', course))
+        assert not access._has_access_course(user, 'enroll', course)
 
         # User can enroll in the course if it is not just invitation only.
         course = self._mock_course_with_invitation(invitation=False)
-        self.assertTrue(access._has_access_course(user, 'enroll', course))
+        assert access._has_access_course(user, 'enroll', course)
 
     @override_settings(COURSES_INVITE_ONLY=True)
     def test__course_default_invite_only_flag_true(self):
@@ -566,11 +566,11 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
 
         # User cannot enroll in the course if it is just invitation only and COURSES_INVITE_ONLY is also set.
         course = self._mock_course_with_invitation(invitation=True)
-        self.assertFalse(access._has_access_course(user, 'enroll', course))
+        assert not access._has_access_course(user, 'enroll', course)
 
         # User cannot enroll in the course if COURSES_INVITE_ONLY is set despite of the course invitation_only value.
         course = self._mock_course_with_invitation(invitation=False)
-        self.assertFalse(access._has_access_course(user, 'enroll', course))
+        assert not access._has_access_course(user, 'enroll', course)
 
     @ddt.data(True, False)
     def test_old_mongo_is_invite_only(self, old_mongo):

@@ -429,7 +429,7 @@ class TestExportImportTags(TaggedCourseMixin):
 
         file_path = os.path.join(file_dir_name, file_name)
 
-        self.assertTrue(os.path.exists(file_path))
+        assert os.path.exists(file_path)
 
         with open(file_path, 'r') as f:
             content = f.read()

@@ -415,10 +415,6 @@ def watch_assets(options):
 
 
 @task
-@needs(
-    'pavelib.prereqs.install_node_prereqs',
-    'pavelib.prereqs.install_python_prereqs',
-)
 @consume_args
 @timed
 def update_assets(args):

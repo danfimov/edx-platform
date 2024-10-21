@@ -174,7 +174,7 @@ class TestCourseListing(ModuleStoreTestCase):
 
         # Assign & verify staff role to the user
         GlobalStaff().add_users(self.user)
-        self.assertTrue(GlobalStaff().has_user(self.user))
+        assert GlobalStaff().has_user(self.user)
 
         # Create few courses
         for num in range(TOTAL_COURSES_COUNT):
@@ -189,11 +189,11 @@ class TestCourseListing(ModuleStoreTestCase):
         with override_settings(FEATURES=FEATURES_WITH_HOME_PAGE_COURSE_V2_API):
             # Verify fetched accessible courses list is a list of CourseOverview instances when home page course v2
             # api is enabled.
-            self.assertTrue(all(isinstance(course, CourseOverview) for course in courses_list_by_staff))
+            assert all(isinstance(course, CourseOverview) for course in courses_list_by_staff)
 
         with override_settings(FEATURES=FEATURES_WITHOUT_HOME_PAGE_COURSE_V2_API):
             # Verify fetched accessible courses list is a list of CourseSummery instances
-            self.assertTrue(all(isinstance(course, CourseSummary) for course in courses_list_by_staff))
+            assert all(isinstance(course, CourseSummary) for course in courses_list_by_staff)
 
             # Now count the db queries for staff
             with check_mongo_calls(2):
@@ -217,7 +217,7 @@ class TestCourseListing(ModuleStoreTestCase):
             # api is enabled.
             courses_summary_iter, __ = _accessible_courses_summary_iter(self.request)
             courses_summary_list = list(courses_summary_iter)
-            self.assertTrue(all(isinstance(course, CourseOverview) for course in courses_summary_list))
+            assert all(isinstance(course, CourseOverview) for course in courses_summary_list)
             self.assertEqual(len(courses_summary_list), 1)
 
         with override_settings(FEATURES=FEATURES_WITHOUT_HOME_PAGE_COURSE_V2_API):
@@ -225,7 +225,7 @@ class TestCourseListing(ModuleStoreTestCase):
             # is returned
             courses_summary_iter, __ = _accessible_courses_summary_iter(self.request)
             courses_summary_list = list(courses_summary_iter)
-            self.assertTrue(all(isinstance(course, CourseSummary) for course in courses_summary_list))
+            assert all(isinstance(course, CourseSummary) for course in courses_summary_list)
             self.assertEqual(len(courses_summary_list), 1)
 
         # get courses by reversing group name formats
@@ -344,7 +344,7 @@ class TestCourseListing(ModuleStoreTestCase):
         # Verify fetched accessible courses list is a list of CourseSummery instances and test expacted
         # course count is returned
         self.assertEqual(len(list(courses_list)), 2)
-        self.assertTrue(all(isinstance(course, CourseOverview) for course in courses_list))
+        assert all(isinstance(course, CourseOverview) for course in courses_list)
 
     @ddt.data(OrgStaffRole(), OrgInstructorRole())
     def test_course_listing_org_permissions_exception(self, role):

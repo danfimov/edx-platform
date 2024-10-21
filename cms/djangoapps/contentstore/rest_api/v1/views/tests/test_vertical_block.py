@@ -152,8 +152,8 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["children"]), 2)
-        self.assertFalse(response.data["is_published"])
-        self.assertTrue(response.data["can_paste_component"])
+        assert not response.data["is_published"]
+        assert response.data["can_paste_component"]
 
     def test_xblock_is_published(self):
         """
@@ -162,7 +162,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         self.publish_item(self.store, self.vertical.location)
         url = self.get_reverse_url(self.vertical.location)
         response = self.client.get(url)
-        self.assertTrue(response.data["is_published"])
+        assert response.data["is_published"]
 
     def test_children_content(self):
         """
@@ -245,7 +245,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         url = self.get_reverse_url(self.vertical.location)
         response = self.client.get(url)
         for children in response.data["children"]:
-            self.assertFalse(children["actions"]["can_manage_tags"])
+            assert not children["actions"]["can_manage_tags"]
 
     def test_validation_errors(self):
         """
@@ -284,4 +284,4 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         self.assertEqual(children_response[0]["validation_messages"][0]["type"], ValidationMessage.ERROR)
 
         # Verify that html_unit_second has no validation messages.
-        self.assertFalse(children_response[1]["validation_messages"])
+        assert not children_response[1]["validation_messages"]

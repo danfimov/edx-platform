@@ -19,17 +19,17 @@ class TestHandlerUrl(TestCase):
         self.block = Mock()
 
     def test_trailing_characters(self):
-        self.assertFalse(handler_url(self.block, 'handler').endswith('?'))
-        self.assertFalse(handler_url(self.block, 'handler').endswith('/'))
+        assert not handler_url(self.block, 'handler').endswith('?')
+        assert not handler_url(self.block, 'handler').endswith('/')
 
-        self.assertFalse(handler_url(self.block, 'handler', 'suffix').endswith('?'))
-        self.assertFalse(handler_url(self.block, 'handler', 'suffix').endswith('/'))
+        assert not handler_url(self.block, 'handler', 'suffix').endswith('?')
+        assert not handler_url(self.block, 'handler', 'suffix').endswith('/')
 
-        self.assertFalse(handler_url(self.block, 'handler', 'suffix', 'query').endswith('?'))
-        self.assertFalse(handler_url(self.block, 'handler', 'suffix', 'query').endswith('/'))
+        assert not handler_url(self.block, 'handler', 'suffix', 'query').endswith('?')
+        assert not handler_url(self.block, 'handler', 'suffix', 'query').endswith('/')
 
-        self.assertFalse(handler_url(self.block, 'handler', query='query').endswith('?'))
-        self.assertFalse(handler_url(self.block, 'handler', query='query').endswith('/'))
+        assert not handler_url(self.block, 'handler', query='query').endswith('?')
+        assert not handler_url(self.block, 'handler', query='query').endswith('/')
 
     def _parsed_query(self, query_string):
         """Return the parsed query string from a handler_url generated with the supplied query_string"""
@@ -45,9 +45,9 @@ class TestHandlerUrl(TestCase):
         return urlparse(handler_url(self.block, handler_name, suffix=suffix)).path
 
     def test_suffix(self):
-        self.assertTrue(self._parsed_path(suffix="foo").endswith('foo'))
-        self.assertTrue(self._parsed_path(suffix="foo/bar").endswith('foo/bar'))
-        self.assertTrue(self._parsed_path(suffix="/foo/bar").endswith('/foo/bar'))
+        assert self._parsed_path(suffix="foo").endswith('foo')
+        assert self._parsed_path(suffix="foo/bar").endswith('foo/bar')
+        assert self._parsed_path(suffix="/foo/bar").endswith('/foo/bar')
 
     def test_handler_name(self):
         self.assertIn('handler1', self._parsed_path('handler1'))

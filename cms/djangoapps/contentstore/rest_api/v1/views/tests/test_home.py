@@ -71,7 +71,7 @@ class HomePageViewTest(CourseTestCase):
 
     def test_taxonomy_list_link(self):
         response = self.client.get(self.url)
-        self.assertTrue(response.data['taxonomies_enabled'])
+        assert response.data['taxonomies_enabled']
         self.assertEqual(
             response.data['taxonomy_list_mfe_url'],
             f'{settings.COURSE_AUTHORING_MICROFRONTEND_URL}/taxonomies'

@@ -32,10 +32,10 @@ class TestPaverQualityViolations(unittest.TestCase):
         self.f.close()
         self.addCleanup(os.remove, self.f.name)
 
-    def test_pep8_parser(self):
+    def test_ruff_parser(self):
         with open(self.f.name, 'w') as f:
             f.write("hello\nhithere")
-        num = len(pavelib.quality._pep8_violations(f.name))  # pylint: disable=protected-access
+        num = len(pavelib.quality._ruff_violations(f.name))  # pylint: disable=protected-access
         assert num == 2
 
 

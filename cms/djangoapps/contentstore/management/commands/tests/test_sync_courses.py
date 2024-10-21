@@ -34,7 +34,7 @@ class TestSyncCoursesCommand(ModuleStoreTestCase):
     def _validate_courses(self):
         for run in self.catalog_course_runs:
             course_key = CourseKey.from_string(run.get('key'))  # lint-amnesty, pylint: disable=no-member
-            self.assertTrue(modulestore().has_course(course_key))
+            assert modulestore().has_course(course_key)
             CourseOverview.objects.get(id=run.get('key'))  # lint-amnesty, pylint: disable=no-member
 
     def test_courses_sync(self, mock_catalog_course_runs):

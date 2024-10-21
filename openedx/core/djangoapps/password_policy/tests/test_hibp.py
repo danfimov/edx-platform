@@ -57,7 +57,7 @@ class PwnedPasswordsAPITest(TestCase):
 
     def test_provided_string_is_sha1_or_not(self):
         hashed_password = '8BB6118F8FD6935AD0876A3BE34A717D32708FFD'
-        self.assertTrue(PwnedPasswordsAPI.is_sha1(hashed_password))
+        assert PwnedPasswordsAPI.is_sha1(hashed_password)
 
         raw_password = 'testpassword'
-        self.assertFalse(PwnedPasswordsAPI.is_sha1(raw_password))
+        assert not PwnedPasswordsAPI.is_sha1(raw_password)

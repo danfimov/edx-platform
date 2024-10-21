@@ -149,7 +149,7 @@ class PythonAPITests(SharedModuleStoreTestCase):
     def test_private_discussion_visible_by_user(self):
         assert teams_api.discussion_visible_by_user(DISCUSSION_TOPIC_ID, self.user1)
         assert teams_api.discussion_visible_by_user(DISCUSSION_TOPIC_ID, self.user2)
-        # self.assertFalse(teams_api.discussion_visible_by_user(DISCUSSION_TOPIC_ID, self.user3))
+        # assert not teams_api.discussion_visible_by_user(DISCUSSION_TOPIC_ID, self.user3)
 
     def test_public_discussion_visible_by_user(self):
         assert teams_api.discussion_visible_by_user(self.team2.discussion_topic_id, self.user1)

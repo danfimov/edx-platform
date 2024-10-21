@@ -89,7 +89,7 @@ class CourseVideosViewTest(CourseTestCase, PermissionAccessMixin):
 
         imageSettings = response.data["video_image_settings"]
         self.assertIn("video_image_upload_enabled", imageSettings)
-        self.assertTrue(imageSettings["video_image_upload_enabled"])
+        assert imageSettings["video_image_upload_enabled"]
 
     def test_VideoTranscriptEnabledFlag_enabled(self):
         """
@@ -99,7 +99,7 @@ class CourseVideosViewTest(CourseTestCase, PermissionAccessMixin):
             feature.return_value = True
             response = self.client.get(self.url)
             self.assertIn("is_video_transcript_enabled", response.data)
-            self.assertTrue(response.data["is_video_transcript_enabled"])
+            assert response.data["is_video_transcript_enabled"]
 
             expect_active_preferences = get_transcript_preferences(str(self.course.id))
             self.assertIn("active_transcript_preferences", response.data)
@@ -134,4 +134,4 @@ class CourseVideosViewTest(CourseTestCase, PermissionAccessMixin):
             xpertTranslationfeature.return_value = True
             response = self.client.get(self.url)
             self.assertIn("is_ai_translations_enabled", response.data)
-            self.assertTrue(response.data["is_ai_translations_enabled"])
+            assert response.data["is_ai_translations_enabled"]

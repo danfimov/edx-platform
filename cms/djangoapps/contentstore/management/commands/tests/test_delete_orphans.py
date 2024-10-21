@@ -28,10 +28,10 @@ class TestDeleteOrphan(TestOrphanBase):
         """
         course = self.create_course_with_orphans(ModuleStoreEnum.Type.split)
         call_command('delete_orphans', str(course.id))
-        self.assertTrue(self.store.has_item(course.id.make_usage_key('html', 'multi_parent_html')))
-        self.assertTrue(self.store.has_item(course.id.make_usage_key('vertical', 'OrphanVert')))
-        self.assertTrue(self.store.has_item(course.id.make_usage_key('chapter', 'OrphanChapter')))
-        self.assertTrue(self.store.has_item(course.id.make_usage_key('html', 'OrphanHtml')))
+        assert self.store.has_item(course.id.make_usage_key('html', 'multi_parent_html'))
+        assert self.store.has_item(course.id.make_usage_key('vertical', 'OrphanVert'))
+        assert self.store.has_item(course.id.make_usage_key('chapter', 'OrphanChapter'))
+        assert self.store.has_item(course.id.make_usage_key('html', 'OrphanHtml'))
 
     def test_delete_orphans_commit(self):
         """
@@ -43,12 +43,12 @@ class TestDeleteOrphan(TestOrphanBase):
         call_command('delete_orphans', str(course.id), '--commit')
 
         # make sure this block wasn't deleted
-        self.assertTrue(self.store.has_item(course.id.make_usage_key('html', 'multi_parent_html')))
+        assert self.store.has_item(course.id.make_usage_key('html', 'multi_parent_html'))
 
         # and make sure that these were
-        self.assertFalse(self.store.has_item(course.id.make_usage_key('vertical', 'OrphanVert')))
-        self.assertFalse(self.store.has_item(course.id.make_usage_key('chapter', 'OrphanChapter')))
-        self.assertFalse(self.store.has_item(course.id.make_usage_key('html', 'OrphanHtml')))
+        assert not self.store.has_item(course.id.make_usage_key('vertical', 'OrphanVert'))
+        assert not self.store.has_item(course.id.make_usage_key('chapter', 'OrphanChapter'))
+        assert not self.store.has_item(course.id.make_usage_key('html', 'OrphanHtml'))
 
     def test_delete_orphans_published_branch_split(self):
         """

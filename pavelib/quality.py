@@ -142,7 +142,6 @@ def run_ruff(options):  # pylint: disable=unused-argument
 
 @task
 @needs(
-    'pavelib.prereqs.install_node_prereqs',
     'pavelib.utils.test.utils.ensure_clean_package_lock',
 )
 @cmdopts([
@@ -222,7 +221,6 @@ def _get_stylelint_violations():
 
 
 @task
-@needs('pavelib.prereqs.install_node_prereqs')
 @cmdopts([
     ("limit=", "l", "limit for number of acceptable violations"),
 ])
@@ -252,7 +250,6 @@ def run_stylelint(options):
 
 
 @task
-@needs('pavelib.prereqs.install_python_prereqs')
 @cmdopts([
     ("thresholds=", "t", "json containing limit for number of acceptable violations per rule"),
 ])
@@ -509,7 +506,6 @@ def _extract_missing_pii_annotations(filename):
 
 
 @task
-@needs('pavelib.prereqs.install_python_prereqs')
 @cmdopts([
     ("report-dir=", "r", "Directory in which to put PII reports"),
 ])
@@ -566,7 +562,6 @@ def run_pii_check(options):
 
 
 @task
-@needs('pavelib.prereqs.install_python_prereqs')
 @timed
 def check_keywords():
     """

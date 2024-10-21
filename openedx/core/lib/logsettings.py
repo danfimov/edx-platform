@@ -126,12 +126,6 @@ def log_python_warnings():
     warnings.filterwarnings('ignore', 'Setting _field_data is deprecated')
     warnings.filterwarnings('ignore', 'Setting _field_data via the constructor is deprecated')
     warnings.filterwarnings('ignore', '.*unclosed.*', category=ResourceWarning)
-    # Remove default_app_config warning after updating Django to 4.2
-    warnings.filterwarnings(
-        'ignore',
-        '.*You can remove default_app_config.*',
-        category=PendingDeprecationWarning
-    )
     warnings.filterwarnings(
         'ignore',
         'Instead access HTTPResponse.headers directly.*',

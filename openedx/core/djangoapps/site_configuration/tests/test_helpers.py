@@ -173,7 +173,7 @@ class TestHelpers(TestCase):
         Test get_current_site_configuration_values helper function
         """
         site_values = configuration_helpers.get_current_site_configuration_values()
-        self.assertTrue(isinstance(site_values, dict))
+        assert isinstance(site_values, dict)
 
         # without any site configuration it should return empty dict
         self.assertEqual(site_values, {})

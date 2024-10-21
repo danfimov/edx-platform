@@ -7,12 +7,12 @@ from paver import tasks
 
 from pavelib.utils.envs import Env
 from pavelib.utils.test import utils as test_utils
-from pavelib.utils.test.suites.suite import TestSuite
+from pavelib.utils.test.suites.suite import Suite
 
 __test__ = False  # do not collect
 
 
-class JsTestSuite(TestSuite):
+class JsTestSuite(Suite):
     """
     A class for running JavaScript tests.
     """
@@ -46,7 +46,7 @@ class JsTestSuite(TestSuite):
         return [JsTestSubSuite(test_id, **self.opts) for test_id in Env.JS_TEST_ID_KEYS if test_id != 'jest-snapshot']
 
 
-class JsTestSubSuite(TestSuite):
+class JsTestSubSuite(Suite):
     """
     Class for JS suites like cms, cms-squire, lms, common,
     common-requirejs and xmodule
@@ -97,7 +97,7 @@ class JsTestSubSuite(TestSuite):
         return cmd
 
 
-class JestSnapshotTestSuite(TestSuite):
+class JestSnapshotTestSuite(Suite):
     """
     A class for running Jest Snapshot tests.
     """

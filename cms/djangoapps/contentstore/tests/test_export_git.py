@@ -136,7 +136,7 @@ class TestExportGit(CourseTestCase):
         )
         test_file = os.path.join(repo_dir, 'test.txt')
         open(test_file, 'a').close()
-        self.assertTrue(os.path.isfile(test_file))
+        assert os.path.isfile(test_file)
         git_export_utils.export_to_git(self.course.id,
                                        self.course_block.giturl, self.user)
-        self.assertFalse(os.path.isfile(test_file))
+        assert not os.path.isfile(test_file)

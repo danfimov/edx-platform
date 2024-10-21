@@ -63,6 +63,8 @@ from xmodule.data import CertificatesDisplayBehaviors
 from xmodule.modulestore.tests.django_utils import SharedModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
 
+import pytest
+
 
 class LearnerDashboardBaseTest(SharedModuleStoreTestCase):
     """Base class for common setup"""
@@ -243,10 +245,10 @@ class TestCourseRunSerializer(LearnerDashboardBaseTest):
         Otherwise, it must point to the legacy progress page.
         """
         mock_course_home_mfe_progress_tab_is_active.return_value = True
-        self.assertTrue(self.is_progress_url_matching_course_home_mfe_progress_tab_is_active())
+        assert self.is_progress_url_matching_course_home_mfe_progress_tab_is_active()
 
         mock_course_home_mfe_progress_tab_is_active.return_value = False
-        self.assertTrue(self.is_progress_url_matching_course_home_mfe_progress_tab_is_active())
+        assert self.is_progress_url_matching_course_home_mfe_progress_tab_is_active()
 
 
 @ddt.ddt
@@ -432,7 +434,7 @@ class TestEnrollmentSerializer(LearnerDashboardBaseTest):
 
         # Then I correctly return whether or not the user can upgrade
         # (If any of the payment page, upsell, or sku aren't provided, this is False)
-        self.assertEqual(output["canUpgrade"], expected_can_upgrade)
+        assert output["canUpgrade"] == expected_can_upgrade
 
     @ddt.data(None, "", "some_url")
     def test_has_started(self, resume_url):
@@ -453,9 +455,9 @@ class TestEnrollmentSerializer(LearnerDashboardBaseTest):
 
         # If I have a resume URL, "hasStarted" should be True, otherwise False
         if resume_url:
-            self.assertTrue(output["hasStarted"])
+            assert output["hasStarted"]
         else:
-            self.assertFalse(output["hasStarted"])
+            assert not output["hasStarted"]
 
 
 @ddt.ddt

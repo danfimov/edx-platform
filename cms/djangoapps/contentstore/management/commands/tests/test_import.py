@@ -53,9 +53,9 @@ class TestImport(ModuleStoreTestCase):
         """
         Tests that forum roles were created with import.
         """
-        self.assertFalse(are_permissions_roles_seeded(self.base_course_key))
+        assert not are_permissions_roles_seeded(self.base_course_key)
         call_command('import', self.content_dir, self.good_dir)
-        self.assertTrue(are_permissions_roles_seeded(self.base_course_key))
+        assert are_permissions_roles_seeded(self.base_course_key)
 
     def test_truncated_course_with_url(self):
         """

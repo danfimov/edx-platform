@@ -187,7 +187,7 @@ class EnrollmentFiltersTest(ModuleStoreTestCase):
         enrollment = CourseEnrollment.enroll(self.user, self.course.id, mode='audit')
 
         self.assertEqual('audit', enrollment.mode)
-        self.assertTrue(CourseEnrollment.is_enrolled(self.user, self.course.id))
+        assert CourseEnrollment.is_enrolled(self.user, self.course.id)
 
 
 @skip_unless_lms
@@ -233,7 +233,7 @@ class UnenrollmentFiltersTest(ModuleStoreTestCase):
 
         CourseEnrollment.unenroll(self.user, self.course.id)
 
-        self.assertFalse(CourseEnrollment.is_enrolled(self.user, self.course.id))
+        assert not CourseEnrollment.is_enrolled(self.user, self.course.id)
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -271,7 +271,7 @@ class UnenrollmentFiltersTest(ModuleStoreTestCase):
 
         CourseEnrollment.unenroll(self.user, self.course.id)
 
-        self.assertFalse(CourseEnrollment.is_enrolled(self.user, self.course.id))
+        assert not CourseEnrollment.is_enrolled(self.user, self.course.id)
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={

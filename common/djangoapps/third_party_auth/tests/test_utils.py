@@ -128,7 +128,7 @@ class TestUtils(TestCase):
                 self.assertEqual(user_is_active_resonse, user_is_active)
             else:
                 self.assertIsNone(association_response)
-                self.assertFalse(user_is_active_resonse)
+                assert not user_is_active_resonse
 
     def test_parse_metadata_uses_signing_cert(self):
         entity_id = 'http://testid'

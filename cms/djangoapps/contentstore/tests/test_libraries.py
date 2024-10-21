@@ -564,10 +564,10 @@ class TestLibraryAccess(LibraryTestCase):
         The user that creates a library should have instructor (admin) and staff permissions
         """
         # self.library has been auto-created by the staff user.
-        self.assertTrue(has_studio_write_access(self.user, self.lib_key))
-        self.assertTrue(has_studio_read_access(self.user, self.lib_key))
+        assert has_studio_write_access(self.user, self.lib_key)
+        assert has_studio_read_access(self.user, self.lib_key)
         # Make sure the user was actually assigned the instructor role and not just using is_staff superpowers:
-        self.assertTrue(CourseInstructorRole(self.lib_key).has_user(self.user))
+        assert CourseInstructorRole(self.lib_key).has_user(self.user)
 
         # Now log out and ensure we are forbidden from creating a library:
         self.client.logout()
@@ -603,8 +603,8 @@ class TestLibraryAccess(LibraryTestCase):
         # non_staff_user shouldn't be able to access any libraries:
         lib_list = self._list_libraries()
         self.assertEqual(len(lib_list), 0)
-        self.assertFalse(self._can_access_library(self.library))
-        self.assertFalse(self._can_access_library(library2_key))
+        assert not self._can_access_library(self.library)
+        assert not self._can_access_library(library2_key)
 
         # Now manually intervene to give non_staff_user access to library2_key:
         access_role(library2_key).add_users(self.non_staff_user)
@@ -613,8 +613,8 @@ class TestLibraryAccess(LibraryTestCase):
         lib_list = self._list_libraries()
         self.assertEqual(len(lib_list), 1)
         self.assertEqual(lib_list[0]["library_key"], str(library2_key))
-        self.assertTrue(self._can_access_library(library2_key))
-        self.assertFalse(self._can_access_library(self.library))
+        assert self._can_access_library(library2_key)
+        assert not self._can_access_library(self.library)
 
     @ddt.data(
         OrgStaffRole,
@@ -640,9 +640,9 @@ class TestLibraryAccess(LibraryTestCase):
         lib_list = self._list_libraries()
         self.assertEqual(len(lib_list), 1)
         self.assertEqual(lib_list[0]["library_key"], str(lib_key_pacific))
-        self.assertTrue(self._can_access_library(lib_key_pacific))
-        self.assertFalse(self._can_access_library(lib_key_atlantic))
-        self.assertFalse(self._can_access_library(self.lib_key))
+        assert self._can_access_library(lib_key_pacific)
+        assert not self._can_access_library(lib_key_atlantic)
+        assert not self._can_access_library(self.lib_key)
 
     @ddt.data(True, False)
     def test_read_only_role(self, use_org_level_role):
@@ -654,7 +654,7 @@ class TestLibraryAccess(LibraryTestCase):
 
         # Login as a non_staff_user:
         self._login_as_non_staff_user()
-        self.assertFalse(self._can_access_library(self.library))
+        assert not self._can_access_library(self.library)
 
         block_url = reverse_usage_url('xblock_handler', block.location)
 
@@ -694,11 +694,11 @@ class TestLibraryAccess(LibraryTestCase):
             return response.status_code == 200
 
         # Check that we do not have read or write access to block:
-        self.assertFalse(can_read_block())
-        self.assertFalse(can_edit_block())
-        self.assertFalse(can_delete_block())
-        self.assertFalse(can_copy_block())
-        self.assertFalse(can_create_block())
+        assert not can_read_block()
+        assert not can_edit_block()
+        assert not can_delete_block()
+        assert not can_copy_block()
+        assert not can_create_block()
 
         # Give non_staff_user read-only permission:
         if use_org_level_role:
@@ -706,12 +706,12 @@ class TestLibraryAccess(LibraryTestCase):
         else:
             LibraryUserRole(self.lib_key).add_users(self.non_staff_user)
 
-        self.assertTrue(self._can_access_library(self.library))
-        self.assertTrue(can_read_block())
-        self.assertFalse(can_edit_block())
-        self.assertFalse(can_delete_block())
-        self.assertFalse(can_copy_block())
-        self.assertFalse(can_create_block())
+        assert self._can_access_library(self.library)
+        assert can_read_block()
+        assert not can_edit_block()
+        assert not can_delete_block()
+        assert not can_copy_block()
+        assert not can_create_block()
 
     @ddt.data(
         (LibraryUserRole, CourseStaffRole, True),
@@ -1019,7 +1019,7 @@ class TestOverrides(LibraryTestCase):
             duplicate_block(self.course.location, self.lc_block.location, self.user)
         )
         # The duplicate should have identical children to the original:
-        self.assertTrue(self.lc_block.source_library_version)
+        assert self.lc_block.source_library_version
         self.assertEqual(self.lc_block.source_library_version, duplicate.source_library_version)
         self.assertEqual(len(duplicate.children), 1)
         problem2_in_course = store.get_item(duplicate.children[0])

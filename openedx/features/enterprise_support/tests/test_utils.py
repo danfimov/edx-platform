@@ -630,4 +630,4 @@ class TestCourseAccessed(SharedModuleStoreTestCase, CompletionWaffleTestMixin):
 
         self.complete_sequential(self.course, vertical1)
         course_accessed = is_course_accessed(self.user, str(self.course.id))
-        self.assertTrue(course_accessed)
+        assert course_accessed

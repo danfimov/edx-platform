@@ -151,7 +151,7 @@ class UnitTestLibraries(CourseTestCase):
         Ensure that `DISABLE_COURSE_CREATION` feature works with libraries as well.
         """
         nostaff_client, nostaff_user = self.create_non_staff_authed_user_client()
-        self.assertFalse(user_can_create_library(nostaff_user, 'SomEOrg'))
+        assert not user_can_create_library(nostaff_user, 'SomEOrg')
 
         # To be explicit, this user can GET, but not POST
         get_response = nostaff_client.get_json(LIBRARY_REST_URL)
@@ -260,7 +260,7 @@ class UnitTestLibraries(CourseTestCase):
         self.client.login(username=ns_user.username, password=password)
 
         auth.add_users(self.user, CourseStaffRole(self.course.id), ns_user)
-        self.assertTrue(auth.user_has_role(ns_user, CourseStaffRole(self.course.id)))
+        assert auth.user_has_role(ns_user, CourseStaffRole(self.course.id))
         response = self.client.ajax_post(LIBRARY_REST_URL, {
             'org': self.course.org, 'library': 'lib', 'display_name': "New Library",
         })

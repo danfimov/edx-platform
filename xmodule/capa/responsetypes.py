@@ -3899,22 +3899,20 @@ class ChoiceTextResponse(LoncapaResponse):
 # TEMPORARY: List of all response subclasses
 # FIXME: To be replaced by auto-registration
 
-# pylint: disable=invalid-all-object
 __all__ = [
-    CodeResponse,
-    NumericalResponse,
-    FormulaResponse,
-    CustomResponse,
-    SchematicResponse,
-    ExternalResponse,
-    ImageResponse,
-    OptionResponse,
-    SymbolicResponse,
-    StringResponse,
-    ChoiceResponse,
-    MultipleChoiceResponse,
-    TrueFalseResponse,
-    AnnotationResponse,
-    ChoiceTextResponse,
+    'CodeResponse',
+    'NumericalResponse',
+    'FormulaResponse',
+    'CustomResponse',
+    'SchematicResponse',
+    'ExternalResponse',
+    'ImageResponse',
+    'OptionResponse',
+    'SymbolicResponse',
+    'StringResponse',
+    'ChoiceResponse',
+    'MultipleChoiceResponse',
+    'TrueFalseResponse',
+    'AnnotationResponse',
+    'ChoiceTextResponse',
 ]
-# pylint: enable=invalid-all-object

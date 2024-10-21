@@ -5654,11 +5654,6 @@ bundled = [
     { name = "xblock-google-drive" },
     { name = "xblock-poll" },
 ]
-dev = [
-    { name = "click" },
-    { name = "django-debug-toolbar" },
-    { name = "nodeenv" },
-]
 paver = [
     { name = "lazy" },
     { name = "libsass" },
@@ -5707,6 +5702,13 @@ testing = [
     { name = "tox" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "click" },
+    { name = "django-debug-toolbar" },
+    { name = "nodeenv" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "acid-xblock", specifier = ">=0.3.1" },
@@ -5718,7 +5720,6 @@ requires-dist = [
     { name = "bridgekeeper", specifier = ">=0.9" },
     { name = "celery", specifier = ">=5.4.0,<6.0.0" },
     { name = "chem", specifier = ">=1.3.0" },
-    { name = "click", marker = "extra == 'dev'", specifier = ">=8.1.7" },
     { name = "code-annotations", marker = "extra == 'testing'", specifier = ">=1.8.0" },
     { name = "codejail-includes", specifier = ">=1.0.0" },
     { name = "crowdsourcehinter-xblock", marker = "extra == 'bundled'", specifier = ">=0.7" },
@@ -5727,13 +5728,13 @@ requires-dist = [
     { name = "ddt", marker = "extra == 'testing'", specifier = ">=1.7.2" },
     { name = "defusedxml", specifier = ">=0.7.1" },
     { name = "diff-cover", marker = "extra == 'testing'", specifier = ">=9.2.0" },
+    { name = "django", specifier = "==4.2.16" },
     { name = "django", specifier = ">=4.2.16,<5.0" },
     { name = "django-celery-results", specifier = ">=2.5.1" },
     { name = "django-config-models", specifier = ">=2.7.0" },
     { name = "django-cors-headers", specifier = ">=4.4.0" },
     { name = "django-countries", specifier = ">=7.6.1" },
     { name = "django-crum", specifier = ">=0.7.9" },
-    { name = "django-debug-toolbar", marker = "extra == 'dev'", specifier = ">=4.4.6" },
     { name = "django-filter", specifier = ">=24.3" },
     { name = "django-ipware", specifier = ">=7.0.1" },
     { name = "django-method-override", specifier = ">=1.0.4" },
@@ -5816,7 +5817,6 @@ requires-dist = [
     { name = "mysqlclient", specifier = ">=2.2.4" },
     { name = "nh3", specifier = "==0.2.17" },
     { name = "nodeenv", specifier = ">=1.9.1" },
-    { name = "nodeenv", marker = "extra == 'dev'", specifier = ">=1.9.1" },
     { name = "oauthlib", specifier = ">=3.2.2" },
     { name = "olxcleaner", specifier = ">=0.3.0" },
     { name = "openedx-atlas", specifier = ">=0.6.2" },
@@ -5897,6 +5897,13 @@ requires-dist = [
     { name = "xblock-google-drive", marker = "extra == 'bundled'", specifier = ">=0.7.0" },
     { name = "xblock-poll", marker = "extra == 'bundled'", specifier = ">=1.14.0" },
     { name = "xss-utils", specifier = ">=0.6.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "click", specifier = ">=8.1.7" },
+    { name = "django-debug-toolbar", specifier = ">=4.4.6" },
+    { name = "nodeenv", specifier = ">=1.9.1" },
 ]
 
 [[package]]

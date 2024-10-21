@@ -270,7 +270,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
 
         enrollment = CourseEnrollment.enroll(self.user, self.course.id)
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": COURSE_ENROLLMENT_CREATED,
                 "sender": None,
@@ -310,7 +310,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
 
         enrollment.update_enrollment(mode="verified")
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": COURSE_ENROLLMENT_CHANGED,
                 "sender": None,
@@ -350,7 +350,7 @@ class EnrollmentEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixin):
 
         CourseEnrollment.unenroll(self.user, self.course.id)
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": COURSE_UNENROLLMENT_COMPLETED,
                 "sender": None,
@@ -420,7 +420,7 @@ class TestCourseAccessRoleEvents(TestCase, OpenEdxEventsTestMixin):
         role = AccessRole(self.course_key)
         role.add_users(self.user)
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": COURSE_ACCESS_ROLE_ADDED,
                 "sender": None,
@@ -455,7 +455,7 @@ class TestCourseAccessRoleEvents(TestCase, OpenEdxEventsTestMixin):
         COURSE_ACCESS_ROLE_REMOVED.connect(event_receiver)
         role.remove_users(self.user)
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": COURSE_ACCESS_ROLE_REMOVED,
                 "sender": None,

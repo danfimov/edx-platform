@@ -127,16 +127,16 @@ class ImportEntranceExamTestCase(CourseTestCase, MilestonesTestCaseMixin):
         # Reload the test course now that the exam block has been added
         self.course = modulestore().get_course(self.course.id)
         metadata = CourseMetadata.fetch_all(self.course)
-        self.assertTrue(metadata['entrance_exam_enabled'])
+        assert metadata['entrance_exam_enabled']
         self.assertIsNotNone(metadata['entrance_exam_minimum_score_pct'])
         self.assertEqual(metadata['entrance_exam_minimum_score_pct']['value'], 0.5)
-        self.assertTrue(len(milestones_helpers.get_course_milestones(str(self.course.id))))
+        assert len(milestones_helpers.get_course_milestones(str(self.course.id)))
         content_milestones = milestones_helpers.get_course_content_milestones(
             str(self.course.id),
             metadata['entrance_exam_id']['value'],
             milestones_helpers.get_milestone_relationship_types()['FULFILLS']
         )
-        self.assertTrue(len(content_milestones))
+        assert len(content_milestones)
 
         # Now import entrance exam course
         with open(self.entrance_exam_tar, 'rb') as gtar:  # lint-amnesty, pylint: disable=bad-option-value, open-builtin
@@ -309,8 +309,8 @@ class ImportTestCase(CourseTestCase):
         self.assertNotEqual(display_name_before_import, display_name_after_import)
 
         # Now check that non_staff user has his same role
-        self.assertFalse(CourseInstructorRole(self.course.id).has_user(nonstaff_user))
-        self.assertTrue(CourseStaffRole(self.course.id).has_user(nonstaff_user))
+        assert not CourseInstructorRole(self.course.id).has_user(nonstaff_user)
+        assert CourseStaffRole(self.course.id).has_user(nonstaff_user)
 
         # Now course staff user can also successfully import course
         self.client.login(username=nonstaff_user.username, password='foo')
@@ -318,8 +318,8 @@ class ImportTestCase(CourseTestCase):
         self.assertEqual(resp.status_code, 200)
 
         # Now check that non_staff user has his same role
-        self.assertFalse(CourseInstructorRole(self.course.id).has_user(nonstaff_user))
-        self.assertTrue(CourseStaffRole(self.course.id).has_user(nonstaff_user))
+        assert not CourseInstructorRole(self.course.id).has_user(nonstaff_user)
+        assert CourseStaffRole(self.course.id).has_user(nonstaff_user)
 
     ## Unsafe tar methods #####################################################
     # Each of these methods creates a tarfile with a single type of unsafe
@@ -787,7 +787,7 @@ class ExportTestCase(CourseTestCase):
     def _verify_export_succeeded(self, resp):
         """ Export success helper method. """
         self.assertEqual(resp.status_code, 200)
-        self.assertTrue(resp.get('Content-Disposition').startswith('attachment'))
+        assert resp.get('Content-Disposition').startswith('attachment')
 
     def test_unknown_xblock_top_level(self):
         """
@@ -815,7 +815,7 @@ class ExportTestCase(CourseTestCase):
         unknown_elem = course_elem[0]
         self.assertEqual(unknown_elem.tag, 'not_a_real_block_type')
         # Non empty url_name attribute (the generated ID)
-        self.assertTrue(unknown_elem.attrib['url_name'])
+        assert unknown_elem.attrib['url_name']
 
         # But there should be no file exported for our fake block type. Without
         # the XBlock installed, we don't know how to serialize it properly.
@@ -866,7 +866,7 @@ class ExportTestCase(CourseTestCase):
         unknown_elem = vert_elem[0]
         self.assertEqual(unknown_elem.tag, 'not_a_real_block_type')
         # Non empty url_name attribute (the generated ID)
-        self.assertTrue(unknown_elem.attrib['url_name'])
+        assert unknown_elem.attrib['url_name']
 
         # There should be no file exported for our fake block type
         assert not any(

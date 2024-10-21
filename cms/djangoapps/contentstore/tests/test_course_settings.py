@@ -443,7 +443,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
                                     HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
+        assert course.entrance_exam_enabled
         self.assertEqual(course.entrance_exam_minimum_score_pct, .60)
 
         # Update the entrance exam
@@ -457,7 +457,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         )
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
+        assert course.entrance_exam_enabled
         self.assertEqual(course.entrance_exam_minimum_score_pct, .80)
 
         self.assertTrue(milestones_helpers.any_unfulfilled_milestones(self.course.id, self.user.id),
@@ -473,7 +473,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         )
         course = modulestore().get_course(self.course.id)
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(course.entrance_exam_enabled)
+        assert not course.entrance_exam_enabled
         self.assertEqual(course.entrance_exam_minimum_score_pct, None)
 
         self.assertFalse(milestones_helpers.any_unfulfilled_milestones(self.course.id, self.user.id),
@@ -504,7 +504,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         )
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
+        assert course.entrance_exam_enabled
 
         # entrance_exam_minimum_score_pct is not present in the request so default value should be saved.
         self.assertEqual(course.entrance_exam_minimum_score_pct, .5)
@@ -530,7 +530,7 @@ class CourseDetailsViewTest(CourseTestCase, MilestonesTestCaseMixin):
         )
         self.assertEqual(response.status_code, 200)
         course = modulestore().get_course(self.course.id)
-        self.assertTrue(course.entrance_exam_enabled)
+        assert course.entrance_exam_enabled
         self.assertEqual(course.entrance_exam_minimum_score_pct, .5)
 
     @unittest.skipUnless(settings.FEATURES.get('ENTRANCE_EXAMS', False), True)
@@ -763,7 +763,7 @@ class CourseGradingTest(CourseTestCase):
             modulestore().get_course(self.course.id),
             course_grading_model.__dict__
         )
-        self.assertTrue(result)
+        assert result
 
     @override_waffle_flag(MATERIAL_RECOMPUTE_ONLY_FLAG, True)
     def test_must_fire_grading_event_and_signal_multiple_type_waffle_on(self):
@@ -788,7 +788,7 @@ class CourseGradingTest(CourseTestCase):
             modulestore().get_course(self.course.id),
             course_grading_model.__dict__
         )
-        self.assertFalse(result)
+        assert not result
 
     def test_must_fire_grading_event_and_signal_return_true(self):
         """
@@ -812,7 +812,7 @@ class CourseGradingTest(CourseTestCase):
             modulestore().get_course(self.course.id),
             course_grading_model.__dict__
         )
-        self.assertTrue(result)
+        assert result
 
     @mock.patch('common.djangoapps.track.event_transaction_utils.uuid4')
     @mock.patch('cms.djangoapps.models.settings.course_grading.tracker')
@@ -1312,7 +1312,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(is_valid)
+        assert is_valid
         self.assertEqual(len(errors), 0)
         self.update_check(test_model)
 
@@ -1334,9 +1334,9 @@ class CourseMetadataEditingTest(CourseTestCase):
         )
 
         # Check valid results from validate_and_update_from_json
-        self.assertFalse(is_valid)
+        assert not is_valid
         self.assertEqual(len(errors), 3)
-        self.assertFalse(test_model)
+        assert not test_model
 
         error_keys = {error_obj['model']['display_name'] for error_obj in errors}
         test_keys = {'Advanced Module List', 'Course Advertised Start Date', 'Days Early for Beta Users'}
@@ -1482,11 +1482,11 @@ class CourseMetadataEditingTest(CourseTestCase):
         )
 
         if staff_user:
-            self.assertTrue(did_validate)
+            assert did_validate
             self.assertEqual(len(errors), 0)
             self.assertIn(field_name, test_model)
         else:
-            self.assertFalse(did_validate)
+            assert not did_validate
             self.assertEqual(len(errors), 1)
             self.assertEqual(
                 errors[0].get('message'),
@@ -1520,7 +1520,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             json_data,
             user=self.user
         )
-        self.assertFalse(did_validate)
+        assert not did_validate
         self.assertEqual(len(errors), 1)
         self.assertIsNone(test_model)
         self.assertEqual(
@@ -1543,7 +1543,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
 
@@ -1568,7 +1568,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertFalse(did_validate)
+        assert not did_validate
         self.assertEqual(len(errors), 1)
         self.assertIsNone(test_model)
         self.assertEqual(
@@ -1591,7 +1591,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
         self.assertIn('proctoring_escalation_email', test_model)
@@ -1616,7 +1616,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('enable_proctored_exams', test_model)
 
@@ -1636,7 +1636,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
         self.assertIn('proctoring_escalation_email', test_model)
@@ -1662,7 +1662,7 @@ class CourseMetadataEditingTest(CourseTestCase):
             },
             user=self.user
         )
-        self.assertTrue(did_validate)
+        assert did_validate
         self.assertEqual(len(errors), 0)
         self.assertIn('proctoring_provider', test_model)
         self.assertIn('proctoring_escalation_email', test_model)

@@ -89,7 +89,7 @@ class PersistentGradeEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTestMixi
 
         PERSISTENT_GRADE_SUMMARY_CHANGED.connect(event_receiver)
         grade = PersistentCourseGrade.update_or_create(**self.params)
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": PERSISTENT_GRADE_SUMMARY_CHANGED,
                 "sender": None,
@@ -147,7 +147,7 @@ class CoursePassingStatusEventsTest(SharedModuleStoreTestCase, OpenEdxEventsTest
         with mock_passing_grade():
             grade_factory.update(self.user, self.course)
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": COURSE_PASSING_STATUS_UPDATED,
                 "sender": None,
@@ -217,7 +217,7 @@ class CCXCoursePassingStatusEventsTest(
         with mock_passing_grade():
             grade_factory.update(self.user, self.store.get_course(self.ccx_locator))
 
-        self.assertTrue(self.receiver_called)
+        assert self.receiver_called
         assert {
                 "signal": CCX_COURSE_PASSING_STATUS_UPDATED,
                 "sender": None,

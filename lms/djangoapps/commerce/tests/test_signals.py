@@ -309,7 +309,7 @@ class TestRefundSignal(ModuleStoreTestCase):
                 f'{ZENDESK_USER}/token:{ZENDESK_API_KEY}'.encode('utf8')).decode('utf8')
             )
         }
-        assert expected.items() <= last_request.headers.items()
+        assert expected.items() <= dict(last_request.headers).items()
 
         # Verify the content
         expected = {

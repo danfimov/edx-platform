@@ -34,7 +34,7 @@ class TestGenerateCourses(ModuleStoreTestCase):
         arg = json.dumps(settings)
         call_command("generate_courses", arg)
         key = modulestore().make_course_key("test-course-generator", "1", "1")
-        self.assertTrue(modulestore().has_course(key))
+        assert modulestore().has_course(key)
         mock_logger.info.assert_any_call("Created course-v1:test-course-generator+1+1")
         mock_logger.info.assert_any_call("announcement has been set to 2010-04-20T20:08:21.634121")
         mock_logger.info.assert_any_call("display_name has been set to test-course")

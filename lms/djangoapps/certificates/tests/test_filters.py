@@ -119,7 +119,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
             course_id=self.course_run.id,
         )
 
-        self.assertTrue(cert_gen_task_created)
+        assert cert_gen_task_created
         self.assertEqual(CourseMode.NO_ID_PROFESSIONAL_MODE, certificate.mode)
 
     @override_settings(
@@ -169,7 +169,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
             course_id=self.course_run.id,
         )
 
-        self.assertTrue(cert_gen_task_created)
+        assert cert_gen_task_created
         self.assertEqual(CourseMode.HONOR, certificate.mode)
 
     @override_settings(
@@ -195,7 +195,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
 
         certificate_generated = generate_allowlist_certificate_task(self.user, self.course_run.id)
 
-        self.assertFalse(certificate_generated)
+        assert not certificate_generated
         self.assertFalse(
             GeneratedCertificate.objects.filter(
                 user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
@@ -250,7 +250,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         """
         signal_result = listen_for_passing_grade(None, self.user, self.course_run.id)
 
-        self.assertFalse(signal_result)
+        assert not signal_result
         self.assertFalse(
             GeneratedCertificate.objects.filter(
                 user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
@@ -308,7 +308,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         """
         signal_result = _listen_for_enrollment_mode_change(None, self.user, self.course_run.id, CourseMode.HONOR)
 
-        self.assertFalse(signal_result)
+        assert not signal_result
         self.assertFalse(
             GeneratedCertificate.objects.filter(
                 user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,

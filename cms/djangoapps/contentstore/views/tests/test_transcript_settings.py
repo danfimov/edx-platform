@@ -498,8 +498,8 @@ class TranscriptDeleteTest(CourseTestCase):
         self.user.save()
 
         # Assert the user's role
-        self.assertFalse(self.user.is_staff)
-        self.assertFalse(CourseStaffRole(self.course.id).has_user(self.user))
+        assert not self.user.is_staff
+        assert not CourseStaffRole(self.course.id).has_user(self.user)
 
         # Now, Make request to deletion handler
         transcript_delete_url = self.get_url_for_course_key(self.course.id, edx_video_id='test_id', language_code='en')
@@ -553,7 +553,7 @@ class TranscriptDeleteTest(CourseTestCase):
             language_code=language_code
         ))
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(api.get_video_transcript_data(video_id=video_id, language_code=language_code))
+        assert not api.get_video_transcript_data(video_id=video_id, language_code=language_code)
 
 
 @ddt.ddt

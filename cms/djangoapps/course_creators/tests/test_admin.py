@@ -87,7 +87,7 @@ class CourseCreatorAdminTest(TestCase):
         with mock.patch.dict('django.conf.settings.FEATURES', self.enable_creator_group_patch):
 
             # User is initially unrequested.
-            self.assertFalse(auth.user_has_role(self.user, CourseCreatorRole()))
+            assert not auth.user_has_role(self.user, CourseCreatorRole())
 
             change_state_and_verify_email(CourseCreator.GRANTED, True)
 
@@ -160,19 +160,19 @@ class CourseCreatorAdminTest(TestCase):
         """
         Tests that staff cannot add entries
         """
-        self.assertFalse(self.creator_admin.has_add_permission(self.request))
+        assert not self.creator_admin.has_add_permission(self.request)
 
     def test_delete_permission(self):
         """
         Tests that staff cannot delete entries
         """
-        self.assertFalse(self.creator_admin.has_delete_permission(self.request))
+        assert not self.creator_admin.has_delete_permission(self.request)
 
     def test_change_permission(self):
         """
         Tests that only staff can change entries
         """
-        self.assertTrue(self.creator_admin.has_change_permission(self.request))
+        assert self.creator_admin.has_change_permission(self.request)
 
         self.request.user = self.user
-        self.assertFalse(self.creator_admin.has_change_permission(self.request))
+        assert not self.creator_admin.has_change_permission(self.request)

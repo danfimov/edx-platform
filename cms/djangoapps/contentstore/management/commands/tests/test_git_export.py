@@ -107,14 +107,14 @@ class TestGitExport(CourseTestCase):
         Test invalid git repos
         """
         test_repo_path = f'{git_export_utils.GIT_REPO_EXPORT_DIR}/test_repo'
-        self.assertFalse(os.path.isdir(test_repo_path))
+        assert not os.path.isdir(test_repo_path)
         course_key = CourseLocator('foo', 'blah', '100-')
         # Test bad clones
         with self.assertRaisesRegex(GitExportError, str(GitExportError.CANNOT_PULL)):
             git_export_utils.export_to_git(
                 course_key,
                 'https://user:blah@example.com/test_repo.git')
-        self.assertFalse(os.path.isdir(test_repo_path))
+        assert not os.path.isdir(test_repo_path)
 
         # Setup good repo with bad course to test xml export
         with self.assertRaisesRegex(GitExportError, str(GitExportError.XML_EXPORT_FAIL)):

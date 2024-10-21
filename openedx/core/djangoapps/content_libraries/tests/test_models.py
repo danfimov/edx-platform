@@ -48,12 +48,12 @@ class ContentLibraryTest(TestCase):
         When authorize_lti_launch is called
         Then return False
         """
-        self.assertFalse(ContentLibrary.objects.exists())
+        assert not ContentLibrary.objects.exists()
         authorized = ContentLibrary.authorize_lti_launch(
             LibraryLocatorV2(org='foo', slug='foobar'),
             issuer='http://a-fake-issuer',
             client_id='a-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_null(self):
         """
@@ -66,7 +66,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer='http://a-fake-issuer',
             client_id='a-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_not_null(self):
         """
@@ -86,7 +86,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer='http://another-fake-issuer',
             client_id='another-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_not_null_and_inactive(self):
         """
@@ -108,7 +108,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer='http://another-fake-issuer',
             client_id='another-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_not_null_and_active(self):
         """
@@ -130,7 +130,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer=issuer,
             client_id=client_id)
-        self.assertTrue(authorized)
+        assert authorized
 
 
 class LtiProfileTest(TestCase):
@@ -208,7 +208,7 @@ class LtiProfileTest(TestCase):
         iss = 'http://foo.example.com/'
         sub = 'randomly-selected-sub-for-testing'
         aud = 'randomly-selected-aud-for-testing'
-        self.assertFalse(LtiProfile.objects.exists())
+        assert not LtiProfile.objects.exists()
         profile = LtiProfile.objects.get_or_create_from_claims(iss=iss, aud=aud, sub=sub)
         self.assertIsNotNone(profile.user)
         self.assertEqual(iss, profile.platform_id)
@@ -227,7 +227,7 @@ class LtiProfileTest(TestCase):
         aud = 'randomly-selected-aud-for-testing'
         sub_one = 'randomly-selected-sub-for-testing'
         sub_two = 'another-randomly-sub-for-testing'
-        self.assertFalse(LtiProfile.objects.exists())
+        assert not LtiProfile.objects.exists()
         LtiProfile.objects.get_or_create_from_claims(iss=iss, aud=aud, sub=sub_one)
         LtiProfile.objects.get_or_create_from_claims(iss=iss, aud=aud, sub=sub_two)
 

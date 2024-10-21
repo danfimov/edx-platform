@@ -1,8 +1,6 @@
 """
 A class used for defining and running test suites
 """
-
-
 import os
 import subprocess
 import sys
@@ -16,12 +14,10 @@ try:
 except ImportError:
     colorize = lambda color, text: text
 
-__test__ = False  # do not collect
 
-
-class TestSuite:
+class Suite:
     """
-    TestSuite is a class that defines how groups of tests run.
+    Suite is a class that defines how groups of tests run.
     """
     def __init__(self, *args, **kwargs):
         self.root = args[0]

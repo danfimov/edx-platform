@@ -257,7 +257,7 @@ class TestUserTaskStopped(APITestCase):
         msg = mail.outbox[0]
 
         # Verify olx validation is not enabled out of the box.
-        self.assertFalse(settings.FEATURES.get('ENABLE_COURSE_OLX_VALIDATION'))
+        assert not settings.FEATURES.get('ENABLE_COURSE_OLX_VALIDATION')
         self.assertEqual(len(mail.outbox), 1)
         self.assert_msg_subject(msg)
         self.assert_msg_body_fragments(msg, body_fragments)
@@ -322,7 +322,7 @@ class TestUserTaskStopped(APITestCase):
 
             with mock.patch('cms.djangoapps.cms_user_tasks.tasks.send_task_complete_email.retry') as mock_retry:
                 user_task_stopped.send(sender=UserTaskStatus, status=self.status)
-                self.assertTrue(mock_retry.called)
+                assert mock_retry.called
 
     def test_queue_email_failure(self):
         logger = logging.getLogger("cms.djangoapps.cms_user_tasks.signals")
@@ -334,5 +334,5 @@ class TestUserTaskStopped(APITestCase):
                 {'error_response': 'error occurred'}, {'operation_name': 'test'}
             )
             user_task_stopped.send(sender=UserTaskStatus, status=self.status)
-            self.assertTrue(mock_delay.called)
+            assert mock_delay.called
             self.assertEqual(hdlr.messages['error'][0], 'Unable to queue send_task_complete_email')

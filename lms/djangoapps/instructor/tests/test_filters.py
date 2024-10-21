@@ -137,7 +137,7 @@ class InstructorDashboardFiltersTest(ModuleStoreTestCase):
             response.content
         )
 
-        self.assertFalse(matches)
+        assert not matches
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -227,4 +227,4 @@ class InstructorDashboardFiltersTest(ModuleStoreTestCase):
         )
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertTrue(matches)
+        assert matches
