@@ -146,7 +146,7 @@ class GetPreviewHtmlTestCase(ModuleStoreTestCase):
             kwargs={'handler': 'xmodule_handler/conditional_get'}
         )
         response = client.post(url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     def test_block_branch_not_changed_by_preview_handler(self):
         """
@@ -168,8 +168,8 @@ class GetPreviewHtmlTestCase(ModuleStoreTestCase):
             kwargs={'handler': 'xmodule_handler/problem_check'}
         )
         response = client.post(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(modulestore().has_changes(modulestore().get_item(block.location)))
+        assert response.status_code == 200
+        assert not modulestore().has_changes(modulestore().get_item(block.location))
 
 
 @XBlock.needs("i18n")
@@ -213,7 +213,7 @@ class StudioXBlockServiceBindingTest(ModuleStoreTestCase):
         block = BlockFactory(category="pure", parent=self.course)
         _prepare_runtime_for_preview(self.request, block)
         service = block.runtime.service(block, expected_service)
-        self.assertIsNotNone(service)
+        assert service is not None
 
 
 class CmsModuleSystemShimTest(ModuleStoreTestCase):

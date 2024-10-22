@@ -187,20 +187,20 @@ class UserDiscussionsToursViewTestCase(TestCase):
         # Send a GET request to the view
         response = self.client.get(self.url, **headers)
         # Check that the response status code is correct
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
         # Check that the returned data is correct
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]['tour_name'], 'Test Tour')
-        self.assertFalse(response.data[0]['show_tour'])
+        assert len(response.data) == 2
+        assert response.data[0]['tour_name'] == 'Test Tour'
+        assert not response.data[0]['show_tour']
 
-        self.assertEqual(response.data[1]['tour_name'], 'not_responded_filter')
+        assert response.data[1]['tour_name'] == 'not_responded_filter'
         assert response.data[1]['show_tour']
 
         # Test that the view can be disabled by a waffle flag.
         with override_waffle_flag(USER_TOURS_DISABLED, active=True):
             response = self.client.get(self.url, **headers)
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+            assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_get_tours_unauthenticated(self):
         """
@@ -210,7 +210,7 @@ class UserDiscussionsToursViewTestCase(TestCase):
         response = self.client.get(self.url)
 
         # Check that the response status code is correct
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_update_tour(self):
         """
@@ -224,13 +224,13 @@ class UserDiscussionsToursViewTestCase(TestCase):
         response = self.client.put(url, updated_data, content_type='application/json', **headers)
 
         # Check that the response status code is correct
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
         # Check that the tour was updated in the database
         updated_tour = UserDiscussionsTours.objects.get(id=self.tour.id)
-        self.assertEqual(updated_tour.show_tour, False)
+        assert updated_tour.show_tour is False
 
         # Test that the view can be disabled by a waffle flag.
         with override_waffle_flag(USER_TOURS_DISABLED, active=True):
             response = self.client.put(url, updated_data, content_type='application/json', **headers)
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+            assert response.status_code == status.HTTP_403_FORBIDDEN

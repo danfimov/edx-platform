@@ -81,11 +81,11 @@ class TestReindexLibrary(ModuleStoreTestCase):
         with mock.patch(self.REINDEX_PATH_LOCATION) as patched_index, \
                 mock.patch(self.MODULESTORE_PATCH_LOCATION, mock.Mock(return_value=self.store)):
             call_command('reindex_library', str(self._get_lib_key(self.first_lib)))
-            self.assertEqual(patched_index.mock_calls, self._build_calls(self.first_lib))
+            assert patched_index.mock_calls == self._build_calls(self.first_lib)
             patched_index.reset_mock()
 
             call_command('reindex_library', str(self._get_lib_key(self.second_lib)))
-            self.assertEqual(patched_index.mock_calls, self._build_calls(self.second_lib))
+            assert patched_index.mock_calls == self._build_calls(self.second_lib)
             patched_index.reset_mock()
 
             call_command(
@@ -94,7 +94,7 @@ class TestReindexLibrary(ModuleStoreTestCase):
                 str(self._get_lib_key(self.second_lib))
             )
             expected_calls = self._build_calls(self.first_lib, self.second_lib)
-            self.assertEqual(patched_index.mock_calls, expected_calls)
+            assert patched_index.mock_calls == expected_calls
 
     def test_given_all_key_prompts_and_reindexes_all_libraries(self):
         """ Test that reindexes all libraries when --all key is given and confirmed """

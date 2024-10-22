@@ -104,10 +104,10 @@ class TestCreateCourse(ModuleStoreTestCase):
                 self.user.id
             )
             course = self.store.get_course(lowercase_course_id)
-            self.assertIsNotNone(course, 'Course not found using lowercase course key.')
-            self.assertEqual(str(course.id), str(lowercase_course_id))
+            assert course is not None, 'Course not found using lowercase course key'
+            assert str(course.id) == str(lowercase_course_id)
 
             # Verify store does not return course with different case.
             uppercase_course_id = self.store.make_course_key(org.upper(), number.upper(), run.upper())
             course = self.store.get_course(uppercase_course_id)
-            self.assertIsNone(course, 'Course should not be accessed with uppercase course id.')
+            assert course is None, 'Course should not be accessed with uppercase course id'

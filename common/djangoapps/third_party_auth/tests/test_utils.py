@@ -100,7 +100,7 @@ class TestUtils(TestCase):
         ) as get_from_pipeline:
             get_from_pipeline.return_value.provider_id = provider_id
 
-            self.assertEqual(is_oauth_provider('backend_name'), oauth_provider)
+            assert is_oauth_provider('backend_name') == oauth_provider
 
     @ddt.data(
         (None, False),
@@ -124,11 +124,11 @@ class TestUtils(TestCase):
                 backend=None, details=None, user=mock_user)
 
             if association_response:
-                self.assertEqual(association_response['user'](), user)
-                self.assertEqual(user_is_active_resonse, user_is_active)
+                assert association_response['user']() == user
+                assert user_is_active_resonse == user_is_active
             else:
-                self.assertIsNone(association_response)
-                self.assertFalse(user_is_active_resonse)
+                assert association_response is None
+                assert not user_is_active_resonse
 
     def test_parse_metadata_uses_signing_cert(self):
         entity_id = 'http://testid'

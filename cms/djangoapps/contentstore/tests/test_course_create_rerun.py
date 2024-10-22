@@ -99,19 +99,19 @@ class TestCourseListing(ModuleStoreTestCase):
             'org': self.source_course_key.org, 'course': self.source_course_key.course, 'run': 'copy',
             'display_name': 'not the same old name',
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         data = parse_json(response)
         dest_course_key = CourseKey.from_string(data['destination_course_key'])
 
-        self.assertEqual(dest_course_key.run, 'copy')
+        assert dest_course_key.run == 'copy'
         dest_course = self.store.get_course(dest_course_key)
-        self.assertEqual(dest_course.start, CourseFields.start.default)
-        self.assertEqual(dest_course.end, None)
-        self.assertEqual(dest_course.enrollment_start, None)
-        self.assertEqual(dest_course.enrollment_end, None)
+        assert dest_course.start == CourseFields.start.default
+        assert dest_course.end is None
+        assert dest_course.enrollment_start is None
+        assert dest_course.enrollment_end is None
         course_orgs = get_course_organizations(dest_course_key)
-        self.assertEqual(len(course_orgs), 1)
-        self.assertEqual(course_orgs[0]['short_name'], self.source_course_key.org)
+        assert len(course_orgs) == 1
+        assert course_orgs[0]['short_name'] == self.source_course_key.org
 
     def test_newly_created_course_has_web_certs_enabled(self):
         """
@@ -123,7 +123,7 @@ class TestCourseListing(ModuleStoreTestCase):
             'display_name': 'Course with web certs enabled',
             'run': '2015_T2'
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         data = parse_json(response)
         new_course_key = CourseKey.from_string(data['course_key'])
         course = self.store.get_course(new_course_key)
@@ -143,13 +143,13 @@ class TestCourseListing(ModuleStoreTestCase):
             'display_name': 'Course with web certs enabled',
             'run': '2015_T2'
         })
-        self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(get_organization_by_short_name("orgX"))
+        assert response.status_code == 200
+        assert get_organization_by_short_name("orgX") is not None
         data = parse_json(response)
         new_course_key = CourseKey.from_string(data['course_key'])
         course_orgs = get_course_organizations(new_course_key)
-        self.assertEqual(len(course_orgs), 1)
-        self.assertEqual(course_orgs[0]['short_name'], 'orgX')
+        assert len(course_orgs) == 1
+        assert course_orgs[0]['short_name'] == 'orgX'
 
     @override_settings(ORGANIZATIONS_AUTOCREATE=False)
     def test_course_creation_for_unknown_organization_strict(self):
@@ -163,7 +163,7 @@ class TestCourseListing(ModuleStoreTestCase):
             'display_name': 'Course with web certs enabled',
             'run': '2015_T2'
         })
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
         with self.assertRaises(InvalidOrganizationException):
             get_organization_by_short_name("orgX")
         data = parse_json(response)
@@ -186,12 +186,12 @@ class TestCourseListing(ModuleStoreTestCase):
                 'display_name': 'Course with web certs enabled',
                 'run': '2015_T2'
             })
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
             data = parse_json(response)
             new_course_key = CourseKey.from_string(data['course_key'])
             course_orgs = get_course_organizations(new_course_key)
-            self.assertEqual(len(course_orgs), 1)
-            self.assertEqual(course_orgs[0]['short_name'], 'orgX')
+            assert len(course_orgs) == 1
+            assert course_orgs[0]['short_name'] == 'orgX'
 
     @override_settings(FEATURES={'ENABLE_CREATOR_GROUP': True})
     def test_course_creation_when_user_not_in_org(self):
@@ -204,7 +204,7 @@ class TestCourseListing(ModuleStoreTestCase):
             'display_name': 'Course with web certs enabled',
             'run': '2021_T1'
         })
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     @override_settings(FEATURES={'ENABLE_CREATOR_GROUP': True})
     @mock.patch(
@@ -231,7 +231,7 @@ class TestCourseListing(ModuleStoreTestCase):
             'display_name': 'Course with web certs enabled',
             'run': '2021_T1'
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @override_settings(FEATURES={'ENABLE_CREATOR_GROUP': True})
     @mock.patch(
@@ -251,14 +251,14 @@ class TestCourseListing(ModuleStoreTestCase):
         self.course_creator_entry.state = CourseCreator.GRANTED
         self.creator_admin.save_model(self.request, self.course_creator_entry, None, True)
         self.assertIn(self.source_course_key.org, get_allowed_organizations(self.user))
-        self.assertFalse(user_can_create_organizations(self.user))
+        assert not user_can_create_organizations(self.user)
         response = self.client.ajax_post(self.course_create_rerun_url, {
             'org': self.source_course_key.org,
             'number': 'CS101',
             'display_name': 'Course with web certs enabled',
             'run': '2021_T1'
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @override_settings(FEATURES={'ENABLE_CREATOR_GROUP': True})
     @mock.patch(
@@ -280,14 +280,14 @@ class TestCourseListing(ModuleStoreTestCase):
         dc_org_object = Organization.objects.get(name='Test Organization')
         self.course_creator_entry.organizations.add(dc_org_object)
         self.assertIn(self.source_course_key.org, get_allowed_organizations(self.user))
-        self.assertFalse(user_can_create_organizations(self.user))
+        assert not user_can_create_organizations(self.user)
         response = self.client.ajax_post(self.course_create_rerun_url, {
             'org': self.source_course_key.org,
             'number': 'CS101',
             'display_name': 'Course with web certs enabled',
             'run': '2021_T1'
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @override_settings(FEATURES={'ENABLE_CREATOR_GROUP': True})
     @mock.patch(
@@ -316,14 +316,14 @@ class TestCourseListing(ModuleStoreTestCase):
         dc_org_object = Organization.objects.get(name='DC')
         self.course_creator_entry.organizations.add(dc_org_object)
         self.assertNotIn(self.source_course_key.org, get_allowed_organizations(self.user))
-        self.assertFalse(user_can_create_organizations(self.user))
+        assert not user_can_create_organizations(self.user)
         response = self.client.ajax_post(self.course_create_rerun_url, {
             'org': self.source_course_key.org,
             'number': 'CS101',
             'display_name': 'Course with web certs enabled',
             'run': '2021_T1'
         })
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     @ddt.data(*product([True, False], [True, False]))
     @ddt.unpack
@@ -360,7 +360,7 @@ class TestCourseListing(ModuleStoreTestCase):
         })
 
         # Then the process completes successfully
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         data = parse_json(response)
         dest_course_key = CourseKey.from_string(data['destination_course_key'])

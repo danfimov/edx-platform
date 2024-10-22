@@ -74,8 +74,8 @@ class TestXBlockI18nService(ModuleStoreTestCase):
         return the block i18n service.
         """
         i18n_service = self.block.runtime.service(block, 'i18n')
-        self.assertIsNotNone(i18n_service)
-        self.assertIsInstance(i18n_service, XBlockI18nService)
+        assert i18n_service is not None
+        assert isinstance(i18n_service, XBlockI18nService)
         return i18n_service
 
     def test_django_service_translation_works(self):
@@ -113,10 +113,10 @@ class TestXBlockI18nService(ModuleStoreTestCase):
 
             # wrap the ugettext functions so that 'XYZ ' will prefix each translation
             with wrap_ugettext_with_xyz(french_translation):
-                self.assertEqual(i18n_service.ugettext(self.test_language), 'XYZ dummy language')
+                assert i18n_service.ugettext(self.test_language) == 'XYZ dummy language'
 
             # Check that the old ugettext has been put back into place
-            self.assertEqual(i18n_service.ugettext(self.test_language), 'dummy language')
+            assert i18n_service.ugettext(self.test_language) == 'dummy language'
 
     @mock.patch('django.utils.translation.gettext', mock.Mock(return_value='XYZ-TEST-LANGUAGE'))
     def test_django_translator_in_use_with_empty_block(self):
@@ -124,7 +124,7 @@ class TestXBlockI18nService(ModuleStoreTestCase):
         Test: Django default translator should in use if we have an empty block
         """
         i18n_service = XBlockI18nService(None)
-        self.assertEqual(i18n_service.ugettext(self.test_language), 'XYZ-TEST-LANGUAGE')
+        assert i18n_service.ugettext(self.test_language) == 'XYZ-TEST-LANGUAGE'
 
     @mock.patch('django.utils.translation.gettext', mock.Mock(return_value='XYZ-TEST-LANGUAGE'))
     def test_message_catalog_translations(self):
@@ -142,13 +142,13 @@ class TestXBlockI18nService(ModuleStoreTestCase):
         with mock.patch('gettext.translation', return_value=_translator(domain='text', localedir=localedir,
                                                                         languages=[get_language()])):
             i18n_service = self.get_block_i18n_service(self.block)
-            self.assertEqual(i18n_service.ugettext('Hello'), 'es-hello-world')
+            assert i18n_service.ugettext('Hello') == 'es-hello-world'
 
         translation.activate("ar")
         with mock.patch('gettext.translation', return_value=_translator(domain='text', localedir=localedir,
                                                                         languages=[get_language()])):
             i18n_service = self.get_block_i18n_service(self.block)
-            self.assertEqual(i18n_service.gettext('Hello'), 'Hello')
+            assert i18n_service.gettext('Hello') == 'Hello'
             self.assertNotEqual(i18n_service.gettext('Hello'), 'fr-hello-world')
             self.assertNotEqual(i18n_service.gettext('Hello'), 'es-hello-world')
 
@@ -156,7 +156,7 @@ class TestXBlockI18nService(ModuleStoreTestCase):
         with mock.patch('gettext.translation', return_value=_translator(domain='text', localedir=localedir,
                                                                         languages=[get_language()])):
             i18n_service = self.get_block_i18n_service(self.block)
-            self.assertEqual(i18n_service.ugettext('Hello'), 'fr-hello-world')
+            assert i18n_service.ugettext('Hello') == 'fr-hello-world'
 
     def test_i18n_service_callable(self):
         """

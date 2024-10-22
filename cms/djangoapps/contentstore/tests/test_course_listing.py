@@ -111,20 +111,20 @@ class TestCourseListing(ModuleStoreTestCase):
         # get courses through iterating all courses
         courses_iter, __ = _accessible_courses_iter_for_tests(self.request)
         courses_list = list(courses_iter)
-        self.assertEqual(len(courses_list), 1)
+        assert len(courses_list) == 1
 
         courses_summary_list, __ = _accessible_courses_summary_iter(self.request)
-        self.assertEqual(len(list(courses_summary_list)), 1)
+        assert len(list(courses_summary_list)) == 1
 
         # get courses by reversing group name formats
         courses_list_by_groups, __ = _accessible_courses_list_from_groups(self.request)
-        self.assertEqual(len(courses_list_by_groups), 1)
+        assert len(courses_list_by_groups) == 1
 
         # check both course lists have same courses
         course_keys_in_course_list = [course.id for course in courses_list]
         course_keys_in_courses_list_by_groups = [course.id for course in courses_list_by_groups]
 
-        self.assertEqual(course_keys_in_course_list, course_keys_in_courses_list_by_groups)
+        assert course_keys_in_course_list == course_keys_in_courses_list_by_groups
 
     def test_courses_list_with_ccx_courses(self):
         """
@@ -140,7 +140,7 @@ class TestCourseListing(ModuleStoreTestCase):
 
         # Test that CCX courses are filtered out.
         courses_list, __ = _accessible_courses_list_from_groups(self.request)
-        self.assertEqual(len(courses_list), 1)
+        assert len(courses_list) == 1
         self.assertNotIn(
             ccx_course_key,
             [course.id for course in courses_list]
@@ -164,7 +164,7 @@ class TestCourseListing(ModuleStoreTestCase):
             return_value=[mocked_ccx_course],
         ):
             courses_iter, __ = _accessible_courses_iter_for_tests(self.request)
-            self.assertEqual(len(list(courses_iter)), 0)
+            assert len(list(courses_iter)) == 0
 
     def test_staff_course_listing(self):
         """
@@ -184,7 +184,7 @@ class TestCourseListing(ModuleStoreTestCase):
         # Fetch accessible courses list & verify their count
         courses_list_by_staff, __ = get_courses_accessible_to_user(self.request)
 
-        self.assertEqual(len(list(courses_list_by_staff)), TOTAL_COURSES_COUNT)
+        assert len(list(courses_list_by_staff)) == TOTAL_COURSES_COUNT
 
         with override_settings(FEATURES=FEATURES_WITH_HOME_PAGE_COURSE_V2_API):
             # Verify fetched accessible courses list is a list of CourseOverview instances when home page course v2
@@ -210,7 +210,7 @@ class TestCourseListing(ModuleStoreTestCase):
         # get courses through iterating all courses
         courses_iter, __ = _accessible_courses_iter_for_tests(self.request)
         courses_list = list(courses_iter)
-        self.assertEqual(len(courses_list), 1)
+        assert len(courses_list) == 1
 
         with override_settings(FEATURES=FEATURES_WITH_HOME_PAGE_COURSE_V2_API):
             # Verify fetched accessible courses list is a list of CourseOverview instances when home page course v2
@@ -218,7 +218,7 @@ class TestCourseListing(ModuleStoreTestCase):
             courses_summary_iter, __ = _accessible_courses_summary_iter(self.request)
             courses_summary_list = list(courses_summary_iter)
             assert all(isinstance(course, CourseOverview) for course in courses_summary_list)
-            self.assertEqual(len(courses_summary_list), 1)
+            assert len(courses_summary_list) == 1
 
         with override_settings(FEATURES=FEATURES_WITHOUT_HOME_PAGE_COURSE_V2_API):
             # Verify fetched accessible courses list is a list of CourseSummery instances and only one course
@@ -226,16 +226,16 @@ class TestCourseListing(ModuleStoreTestCase):
             courses_summary_iter, __ = _accessible_courses_summary_iter(self.request)
             courses_summary_list = list(courses_summary_iter)
             assert all(isinstance(course, CourseSummary) for course in courses_summary_list)
-            self.assertEqual(len(courses_summary_list), 1)
+            assert len(courses_summary_list) == 1
 
         # get courses by reversing group name formats
         courses_list_by_groups, __ = _accessible_courses_list_from_groups(self.request)
-        self.assertEqual(len(courses_list_by_groups), 1)
+        assert len(courses_list_by_groups) == 1
 
         course_keys_in_course_list = [course.id for course in courses_list]
         course_keys_in_courses_list_by_groups = [course.id for course in courses_list_by_groups]
         # check course lists have same courses
-        self.assertEqual(course_keys_in_course_list, course_keys_in_courses_list_by_groups)
+        assert course_keys_in_course_list == course_keys_in_courses_list_by_groups
         # now delete this course and re-add user to instructor group of this course
         delete_course(course_key, self.user.id)
         course.delete()
@@ -279,19 +279,19 @@ class TestCourseListing(ModuleStoreTestCase):
 
         # get courses by iterating through all courses
         courses_iter, __ = _accessible_courses_iter_for_tests(self.request)
-        self.assertEqual(len(list(courses_iter)), USER_COURSES_COUNT)
+        assert len(list(courses_iter)) == USER_COURSES_COUNT
 
         # again get courses by iterating through all courses
         courses_iter, __ = _accessible_courses_iter_for_tests(self.request)
-        self.assertEqual(len(list(courses_iter)), USER_COURSES_COUNT)
+        assert len(list(courses_iter)) == USER_COURSES_COUNT
 
         # get courses by reversing django groups
         courses_list, __ = _accessible_courses_list_from_groups(self.request)
-        self.assertEqual(len(courses_list), USER_COURSES_COUNT)
+        assert len(courses_list) == USER_COURSES_COUNT
 
         # again get courses by reversing django groups
         courses_list, __ = _accessible_courses_list_from_groups(self.request)
-        self.assertEqual(len(courses_list), USER_COURSES_COUNT)
+        assert len(courses_list) == USER_COURSES_COUNT
 
         with self.assertNumQueries(1, table_ignorelist=WAFFLE_TABLES):
             _accessible_courses_list_from_groups(self.request)
@@ -312,7 +312,7 @@ class TestCourseListing(ModuleStoreTestCase):
         course.delete()
 
         courses_list, __ = _accessible_courses_list_from_groups(self.request)
-        self.assertEqual(len(courses_list), 1, courses_list)
+        assert len(courses_list) == 1, courses_list
 
     @ddt.data(OrgStaffRole('AwesomeOrg'), OrgInstructorRole('AwesomeOrg'))
     def test_course_listing_org_permissions(self, role):
@@ -343,7 +343,7 @@ class TestCourseListing(ModuleStoreTestCase):
 
         # Verify fetched accessible courses list is a list of CourseSummery instances and test expacted
         # course count is returned
-        self.assertEqual(len(list(courses_list)), 2)
+        assert len(list(courses_list)) == 2
         assert all(isinstance(course, CourseOverview) for course in courses_list)
 
     @ddt.data(OrgStaffRole(), OrgInstructorRole())

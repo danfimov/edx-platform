@@ -131,7 +131,7 @@ class TestAccountSettingsFilters(SharedModuleStoreTestCase):
             - AccountSettingsRenderStarted is triggered and executes TestAccountSettingsRender
         """
         response = self.client.get(self.account_settings_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertContains(response, "This page left intentionally blank. Feel free to add your own content.")
 
     @override_settings(
@@ -177,7 +177,7 @@ class TestAccountSettingsFilters(SharedModuleStoreTestCase):
         """
         response = self.client.get(self.account_settings_url)
 
-        self.assertEqual(response.content, b"Here's the text of the web page.")
+        assert response.content == b"Here's the text of the web page."
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -199,8 +199,8 @@ class TestAccountSettingsFilters(SharedModuleStoreTestCase):
         """
         response = self.client.get(self.account_settings_url)
 
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
-        self.assertEqual('/courses', response.url)
+        assert response.status_code == status.HTTP_302_FOUND
+        assert '/courses' == response.url
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -222,8 +222,8 @@ class TestAccountSettingsFilters(SharedModuleStoreTestCase):
         """
         response = self.client.get(self.account_settings_url)
 
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
-        self.assertEqual(f"{reverse('dashboard')}", response.url)
+        assert response.status_code == status.HTTP_302_FOUND
+        assert f"{reverse('dashboard')}" == response.url
 
     @override_settings(OPEN_EDX_FILTERS_CONFIG={})
     def test_account_settings_render_without_filter_config(self):

@@ -439,7 +439,7 @@ class CourseApiTestViews(BaseCoursewareTests, MasqueradeMixin):
             response = self.client.get(self.url)
 
         learning_assistant_enabled = response.json()['learning_assistant_enabled']
-        self.assertEqual(learning_assistant_enabled, setting_enabled)
+        assert learning_assistant_enabled == setting_enabled
 
 
 @ddt.ddt

@@ -74,8 +74,7 @@ class GradesTransformerTestCase(CourseStructureTestCase):
         for field in expectations:
             # Append our custom message to the default assertEqual error message
             self.longMessage = True  # pylint: disable=invalid-name
-            assert expectations[field] == block_structure.get_xblock_field(usage_key, field),\
-                f'in field {repr(field)},'
+            assert expectations[field] == block_structure.get_xblock_field(usage_key, field), f'in field {repr(field)},'
         assert block_structure.get_xblock_field(usage_key, 'subtree_edited_on') is not None
 
     def assert_collected_transformer_block_fields(self, block_structure, usage_key, transformer_class, **expectations):

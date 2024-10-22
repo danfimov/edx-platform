@@ -53,7 +53,7 @@ class TestImport(ModuleStoreTestCase):
         """
         Tests that forum roles were created with import.
         """
-        self.assertFalse(are_permissions_roles_seeded(self.base_course_key))
+        assert not are_permissions_roles_seeded(self.base_course_key)
         call_command('import', self.content_dir, self.good_dir)
         assert are_permissions_roles_seeded(self.base_course_key)
 
@@ -67,8 +67,8 @@ class TestImport(ModuleStoreTestCase):
         # Load up base course and verify it is available
         call_command('import', self.content_dir, self.good_dir)
         store = modulestore()
-        self.assertIsNotNone(store.get_course(self.base_course_key))
+        assert store.get_course(self.base_course_key) is not None
 
         # Now load up the course with a similar course_id and verify it loads
         call_command('import', self.content_dir, self.course_dir)
-        self.assertIsNotNone(store.get_course(self.truncated_key))
+        assert store.get_course(self.truncated_key) is not None

@@ -123,7 +123,7 @@ class TranscriptsUtilsTest(TestCase):
             {language_code: CAPTION_URL_UTF8_DECODED_TEMPLATE.format(language_code)}
         )
 
-    @ mock.patch('requests.get')
+    @mock.patch('requests.get')
     @ddt.data(None)
     def test_get_caption_no_caption(self, language_code, mock_get):
         """
@@ -132,9 +132,9 @@ class TranscriptsUtilsTest(TestCase):
         mock_get.return_value = YoutubeVideoHTMLResponse.with_caption_track(language_code)
 
         english_language_caption_link = get_transcript_link_from_youtube(YOUTUBE_VIDEO_ID)
-        self.assertIsNone(english_language_caption_link)
+        assert english_language_caption_link is None
 
-    @ mock.patch('requests.get')
+    @mock.patch('requests.get')
     def test_get_caption_malformed_caption_locator(self, mock_get):
         """
         Caption track provided on video page for the selected language, but with broken syntax
@@ -143,4 +143,4 @@ class TranscriptsUtilsTest(TestCase):
         mock_get.return_value = YoutubeVideoHTMLResponse.with_malformed_caption_track(language_code)
 
         english_language_caption_link = get_transcript_link_from_youtube(YOUTUBE_VIDEO_ID)
-        self.assertIsNone(english_language_caption_link)
+        assert english_language_caption_link is None

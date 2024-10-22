@@ -2566,7 +2566,7 @@ class TestInstructorOra2Report(SharedModuleStoreTestCase):
                 mock_current_task.return_value = self.current_task
 
                 response = upload_func(None, None, self.course.id, None, 'generated')
-                self.assertEqual(response, UPDATE_STATUS_FAILED)
+                assert response == UPDATE_STATUS_FAILED
 
     def test_report_stores_results(self):
         with ExitStack() as stack:
@@ -2648,7 +2648,7 @@ class TestInstructorOra2AttachmentsExport(SharedModuleStoreTestCase):
                     key = self.course.id
                     filename = f'{key.org}_{key.course}_{key.run}_ORA_summary_{timestamp_str}.csv'
 
-                    self.assertEqual(return_val, UPDATE_STATUS_SUCCEEDED)
+                    assert return_val == UPDATE_STATUS_SUCCEEDED
                     mock_store_rows.assert_called_once_with(self.course.id, filename, [test_header] + test_rows, '')
 
     def test_export_fails_if_error_on_create_zip_step(self):

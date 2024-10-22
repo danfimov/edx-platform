@@ -34,4 +34,4 @@ class TestLearnerHomeWaffle(SharedModuleStoreTestCase):
         is_learner_home_enabled = learner_home_mfe_enabled()
 
         # Then I respects waffle setting.
-        self.assertEqual(is_learner_home_enabled, is_waffle_enabled)
+        assert is_learner_home_enabled == is_waffle_enabled

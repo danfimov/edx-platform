@@ -48,12 +48,12 @@ class ContentLibraryTest(TestCase):
         When authorize_lti_launch is called
         Then return False
         """
-        self.assertFalse(ContentLibrary.objects.exists())
+        assert not ContentLibrary.objects.exists()
         authorized = ContentLibrary.authorize_lti_launch(
             LibraryLocatorV2(org='foo', slug='foobar'),
             issuer='http://a-fake-issuer',
             client_id='a-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_null(self):
         """
@@ -66,7 +66,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer='http://a-fake-issuer',
             client_id='a-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_not_null(self):
         """
@@ -86,7 +86,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer='http://another-fake-issuer',
             client_id='another-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_not_null_and_inactive(self):
         """
@@ -108,7 +108,7 @@ class ContentLibraryTest(TestCase):
             library.library_key,
             issuer='http://another-fake-issuer',
             client_id='another-fake-client-id')
-        self.assertFalse(authorized)
+        assert not authorized
 
     def test_authorize_lti_launch_when_not_null_and_active(self):
         """
@@ -207,14 +207,14 @@ class LtiProfileTest(TestCase):
         iss = 'http://foo.example.com/'
         sub = 'randomly-selected-sub-for-testing'
         aud = 'randomly-selected-aud-for-testing'
-        self.assertFalse(LtiProfile.objects.exists())
+        assert not LtiProfile.objects.exists()
         profile = LtiProfile.objects.get_or_create_from_claims(iss=iss, aud=aud, sub=sub)
-        self.assertIsNotNone(profile.user)
-        self.assertEqual(iss, profile.platform_id)
-        self.assertEqual(sub, profile.subject_id)
+        assert profile.user is not None
+        assert iss == profile.platform_id
+        assert sub == profile.subject_id
 
         profile_two = LtiProfile.objects.get_or_create_from_claims(iss=iss, aud=aud, sub=sub)
-        self.assertEqual(profile_two, profile)
+        assert profile_two == profile
 
     def test_get_or_create_from_claims_twice(self):
         """
@@ -226,7 +226,7 @@ class LtiProfileTest(TestCase):
         aud = 'randomly-selected-aud-for-testing'
         sub_one = 'randomly-selected-sub-for-testing'
         sub_two = 'another-randomly-sub-for-testing'
-        self.assertFalse(LtiProfile.objects.exists())
+        assert not LtiProfile.objects.exists()
         LtiProfile.objects.get_or_create_from_claims(iss=iss, aud=aud, sub=sub_one)
         LtiProfile.objects.get_or_create_from_claims(iss=iss, aud=aud, sub=sub_two)
 
@@ -261,7 +261,7 @@ class LtiResourceTest(TestCase):
             iss=self.iss, aud=self.aud, sub=self.sub)
         LtiGradedResource.objects.create(profile=profile)
         resource = LtiGradedResource.objects.get_from_user_id(profile.user.pk)
-        self.assertEqual(profile, resource.profile)
+        assert profile == resource.profile
 
     def test_upsert_from_ags_launch(self):
         """
@@ -292,12 +292,12 @@ class LtiResourceTest(TestCase):
         res = LtiGradedResource.objects.upsert_from_ags_launch(
             profile.user, block_mock, resource_endpoint, resource_link)
 
-        self.assertEqual(resource_id, res.resource_id)
-        self.assertEqual(lineitem, res.ags_lineitem)
-        self.assertEqual(usage_key, str(res.usage_key))
-        self.assertEqual(profile, res.profile)
+        assert resource_id == res.resource_id
+        assert lineitem == res.ags_lineitem
+        assert usage_key == str(res.usage_key)
+        assert profile == res.profile
 
         res2 = LtiGradedResource.objects.upsert_from_ags_launch(
             profile.user, block_mock, resource_endpoint, resource_link)
 
-        self.assertEqual(res, res2)
+        assert res == res2

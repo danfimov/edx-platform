@@ -108,7 +108,7 @@ class TestMobileApiConfig(TestCase):
         """Test an empty video_profile"""
         MobileApiConfig(video_profiles="").save()
         video_profile_list = MobileApiConfig.get_video_profiles()
-        assert video_profile_list == []
+        assert not video_profile_list
 
 
 class TestMobileConfig(TestCase):

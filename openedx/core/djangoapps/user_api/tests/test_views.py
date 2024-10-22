@@ -79,7 +79,7 @@ class EmptyUserTestCase(UserAPITestCase):
         assert result['count'] == 0
         assert result['next'] is None
         assert result['previous'] is None
-        assert result['results'] == []
+        assert not result['results']
 
 
 @skip_unless_lms
@@ -94,7 +94,7 @@ class EmptyRoleTestCase(UserAPITestCase):
         assert result['count'] == 0
         assert result['next'] is None
         assert result['previous'] is None
-        assert result['results'] == []
+        assert not result['results']
 
 
 class UserApiTestCase(UserAPITestCase):
@@ -362,7 +362,7 @@ class UserPreferenceViewSetTest(CacheIsolationTestCase, UserApiTestCase):
     def test_get_list_filter_key_empty(self):
         result = self.get_json(self.LIST_URI, data={"key": "non-existent"})
         assert result['count'] == 0
-        assert result['results'] == []
+        assert not result['results']
 
     def test_get_list_filter_key_nonempty(self):
         result = self.get_json(self.LIST_URI, data={"key": "key0"})
@@ -377,7 +377,7 @@ class UserPreferenceViewSetTest(CacheIsolationTestCase, UserApiTestCase):
         def test_id(user_id):
             result = self.get_json(self.LIST_URI, data={"user": user_id})
             assert result['count'] == 0
-            assert result['results'] == []
+            assert not result['results']
         test_id(self.users[2].id)
         # TODO: If the given id does not match a user, then the filter is a no-op
         # test_id(42)

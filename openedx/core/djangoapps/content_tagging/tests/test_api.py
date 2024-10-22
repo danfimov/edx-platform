@@ -436,7 +436,7 @@ class TestExportImportTags(TaggedCourseMixin):
 
         cleaned_content = content.replace('\r\n', '\n')
         cleaned_expected_csv = self.expected_csv.replace('\r\n', '\n')
-        self.assertEqual(cleaned_content, cleaned_expected_csv)
+        assert cleaned_content == cleaned_expected_csv
 
     def test_import_tags_invalid_format(self) -> None:
         csv_path = self._create_csv_file('invalid format, Invalid\r\ntest1, test2')

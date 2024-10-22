@@ -206,28 +206,28 @@ class _UserStateClientTestCRUD(_UserStateClientTestUtils):
 
     def test_set_get(self):
         self.set(user=0, block=0, state={'a': 'b'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
+        assert self.get(user=0, block=0).state == {'a': 'b'}
 
     def test_set_get_get(self):
         self.set(user=0, block=0, state={'a': 'b'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
+        assert self.get(user=0, block=0).state == {'a': 'b'}
+        assert self.get(user=0, block=0).state == {'a': 'b'}
 
     def test_set_set_get(self):
         self.set(user=0, block=0, state={'a': 'b'})
         self.set(user=0, block=0, state={'a': 'c'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'c'})
+        assert self.get(user=0, block=0).state == {'a': 'c'}
 
     def test_set_overlay(self):
         self.set(user=0, block=0, state={'a': 'b'})
         self.set(user=0, block=0, state={'b': 'c'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b', 'b': 'c'})
+        assert self.get(user=0, block=0).state == {'a': 'b', 'b': 'c'}
 
     def test_get_fields(self):
         self.set(user=0, block=0, state={'a': 'b', 'b': 'c'})
-        self.assertEqual(self.get(user=0, block=0, fields=['a']).state, {'a': 'b'})
-        self.assertEqual(self.get(user=0, block=0, fields=['b']).state, {'b': 'c'})
-        self.assertEqual(self.get(user=0, block=0, fields=['a', 'b']).state, {'a': 'b', 'b': 'c'})
+        assert self.get(user=0, block=0, fields=['a']).state == {'a': 'b'}
+        assert self.get(user=0, block=0, fields=['b']).state == {'b': 'c'}
+        assert self.get(user=0, block=0, fields=['a', 'b']).state == {'a': 'b', 'b': 'c'}
 
     def test_get_missing_block(self):
         self.set(user=0, block=1, state={})
@@ -241,24 +241,24 @@ class _UserStateClientTestCRUD(_UserStateClientTestUtils):
 
     def test_get_missing_field(self):
         self.set(user=0, block=0, state={'a': 'b'})
-        self.assertEqual(self.get(user=0, block=0, fields=['a', 'b']).state, {'a': 'b'})
+        assert self.get(user=0, block=0, fields=['a', 'b']).state == {'a': 'b'}
 
     def test_set_two_users(self):
         self.set(user=0, block=0, state={'a': 'b'})
         self.set(user=1, block=0, state={'b': 'c'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
-        self.assertEqual(self.get(user=1, block=0).state, {'b': 'c'})
+        assert self.get(user=0, block=0).state == {'a': 'b'}
+        assert self.get(user=1, block=0).state == {'b': 'c'}
 
     def test_set_two_blocks(self):
         self.set(user=0, block=0, state={'a': 'b'})
         self.set(user=0, block=1, state={'b': 'c'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
-        self.assertEqual(self.get(user=0, block=1).state, {'b': 'c'})
+        assert self.get(user=0, block=0).state == {'a': 'b'}
+        assert self.get(user=0, block=1).state == {'b': 'c'}
 
     def test_set_many(self):
         self.set_many(user=0, block_to_state={0: {'a': 'b'}, 1: {'b': 'c'}})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
-        self.assertEqual(self.get(user=0, block=1).state, {'b': 'c'})
+        assert self.get(user=0, block=0).state == {'a': 'b'}
+        assert self.get(user=0, block=1).state == {'b': 'c'}
 
     def test_get_many(self):
         self.set_many(user=0, block_to_state={0: {'a': 'b'}, 1: {'b': 'c'}})
@@ -275,7 +275,7 @@ class _UserStateClientTestCRUD(_UserStateClientTestUtils):
             self.get(user=0, block=0)
 
         self.set(user=0, block=0, state={'a': 'b'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
+        assert self.get(user=0, block=0).state == {'a': 'b'}
 
         self.delete(user=0, block=0)
         with self.assertRaises(self.client.DoesNotExist):
@@ -286,17 +286,17 @@ class _UserStateClientTestCRUD(_UserStateClientTestUtils):
             self.get(user=0, block=0)
 
         self.set(user=0, block=0, state={'a': 'b', 'b': 'c'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b', 'b': 'c'})
+        assert self.get(user=0, block=0).state == {'a': 'b', 'b': 'c'}
 
         self.delete(user=0, block=0, fields=['a'])
-        self.assertEqual(self.get(user=0, block=0).state, {'b': 'c'})
+        assert self.get(user=0, block=0).state == {'b': 'c'}
 
     def test_delete_last_field(self):
         with self.assertRaises(self.client.DoesNotExist):
             self.get(user=0, block=0)
 
         self.set(user=0, block=0, state={'a': 'b'})
-        self.assertEqual(self.get(user=0, block=0).state, {'a': 'b'})
+        assert self.get(user=0, block=0).state == {'a': 'b'}
 
         self.delete(user=0, block=0, fields=['a'])
         with self.assertRaises(self.client.DoesNotExist):

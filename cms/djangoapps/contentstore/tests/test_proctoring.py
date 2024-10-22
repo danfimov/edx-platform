@@ -52,27 +52,27 @@ class TestProctoredExams(ModuleStoreTestCase):
         """
         exams = get_all_exams_for_course(str(self.course.id))
 
-        self.assertEqual(len(exams), 1)
+        assert len(exams) == 1
 
         exam = exams[0]
 
         if exam['is_proctored'] and not exam['is_practice_exam']:
             # get the review policy object
             exam_review_policy = get_review_policy_by_exam_id(exam['id'])
-            self.assertEqual(exam_review_policy['review_policy'], sequence.exam_review_rules)
+            assert exam_review_policy['review_policy'] == sequence.exam_review_rules
 
         if not exam['is_proctored'] and not exam['is_practice_exam']:
             # the hide after due value only applies to timed exams
-            self.assertEqual(exam['hide_after_due'], sequence.hide_after_due)
+            assert exam['hide_after_due'] == sequence.hide_after_due
 
-        self.assertEqual(exam['course_id'], str(self.course.id))
-        self.assertEqual(exam['content_id'], str(sequence.location))
-        self.assertEqual(exam['exam_name'], sequence.display_name)
-        self.assertEqual(exam['time_limit_mins'], sequence.default_time_limit_minutes)
-        self.assertEqual(exam['is_proctored'], sequence.is_proctored_exam)
-        self.assertEqual(exam['is_practice_exam'], sequence.is_practice_exam or sequence.is_onboarding_exam)
-        self.assertEqual(exam['is_active'], expected_active)
-        self.assertEqual(exam['backend'], self.course.proctoring_provider)
+        assert exam['course_id'] == str(self.course.id)
+        assert exam['content_id'] == str(sequence.location)
+        assert exam['exam_name'] == sequence.display_name
+        assert exam['time_limit_mins'] == sequence.default_time_limit_minutes
+        assert exam['is_proctored'] == sequence.is_proctored_exam
+        assert exam['is_practice_exam'] == sequence.is_practice_exam or sequence.is_onboarding_exam
+        assert exam['is_active'] == expected_active
+        assert exam['backend'] == self.course.proctoring_provider
 
     @ddt.data(
         (False, True),
@@ -174,7 +174,7 @@ class TestProctoredExams(ModuleStoreTestCase):
         listen_for_course_publish(self, self.course.id)
 
         exams = get_all_exams_for_course(str(self.course.id))
-        self.assertEqual(len(exams), 1)
+        assert len(exams) == 1
 
         sequence.is_time_limited = False
         sequence.is_proctored_exam = False
@@ -205,7 +205,7 @@ class TestProctoredExams(ModuleStoreTestCase):
         listen_for_course_publish(self, self.course.id)
 
         exams = get_all_exams_for_course(str(self.course.id))
-        self.assertEqual(len(exams), 1)
+        assert len(exams) == 1
 
         self.store.delete_item(chapter.location, self.user.id)
 
@@ -215,10 +215,10 @@ class TestProctoredExams(ModuleStoreTestCase):
         # look through exam table, the dangling exam
         # should be disabled
         exams = get_all_exams_for_course(str(self.course.id))
-        self.assertEqual(len(exams), 1)
+        assert len(exams) == 1
 
         exam = exams[0]
-        self.assertEqual(exam['is_active'], False)
+        assert exam['is_active'] is False
 
     @patch.dict('django.conf.settings.FEATURES', {'ENABLE_SPECIAL_EXAMS': False})
     def test_feature_flag_off(self):
@@ -240,7 +240,7 @@ class TestProctoredExams(ModuleStoreTestCase):
         listen_for_course_publish(self, self.course.id)
 
         exams = get_all_exams_for_course(str(self.course.id))
-        self.assertEqual(len(exams), 0)
+        assert len(exams) == 0
 
     @ddt.data(
         (True, False, 1),
@@ -279,7 +279,7 @@ class TestProctoredExams(ModuleStoreTestCase):
         # there shouldn't be any exams because we haven't enabled that
         # advanced setting flag
         exams = get_all_exams_for_course(str(self.course.id))
-        self.assertEqual(len(exams), expected_count)
+        assert len(exams) == expected_count
 
     def test_self_paced_no_due_dates(self):
         self.course = CourseFactory.create(
@@ -336,7 +336,7 @@ class TestProctoredExams(ModuleStoreTestCase):
         listen_for_course_publish(self, self.course.id)
 
         exams = get_all_exams_for_course(str(self.course.id))
-        self.assertEqual(len(exams), 1)
+        assert len(exams) == 1
         self._verify_exam_data(sequence, True)
 
     def test_async_waffle_flag_task(self):

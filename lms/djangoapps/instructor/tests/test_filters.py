@@ -137,7 +137,7 @@ class InstructorDashboardFiltersTest(ModuleStoreTestCase):
             response.content
         )
 
-        self.assertFalse(matches)
+        assert not matches
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -183,8 +183,8 @@ class InstructorDashboardFiltersTest(ModuleStoreTestCase):
         """
         response = self.client.get(self.dashboard_url)
 
-        self.assertEqual(status.HTTP_302_FOUND, response.status_code)
-        self.assertEqual("https://custom-dashboard.com", response.url)
+        assert status.HTTP_302_FOUND == response.status_code
+        assert "https://custom-dashboard.com" == response.url
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -206,7 +206,7 @@ class InstructorDashboardFiltersTest(ModuleStoreTestCase):
         """
         response = self.client.get(self.dashboard_url)
 
-        self.assertEqual("This is a custom response.", response.content.decode("utf-8"))
+        assert "This is a custom response." == response.content.decode("utf-8")
 
     @override_settings(OPEN_EDX_FILTERS_CONFIG={})
     def test_dashboard_render_without_filter_config(self):
@@ -226,5 +226,5 @@ class InstructorDashboardFiltersTest(ModuleStoreTestCase):
             response.content
         )
 
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        assert status.HTTP_200_OK == response.status_code
         assert matches

@@ -324,7 +324,7 @@ class SplitTestBlockStudioTest(SplitTestBlockTest):
         # Verify that a split test has no active children if it has no specified user partition.
         split_test_block.user_partition_id = -1
         [active_children, inactive_children] = split_test_block.active_and_inactive_children()
-        assert active_children == []
+        assert not active_children
         assert inactive_children == children
 
         # Verify that all the children are returned as active for a correctly configured split_test
@@ -334,7 +334,7 @@ class SplitTestBlockStudioTest(SplitTestBlockTest):
         ]
         [active_children, inactive_children] = split_test_block.active_and_inactive_children()
         assert active_children == children
-        assert inactive_children == []
+        assert not inactive_children
 
         # Verify that a split_test does not return inactive children in the active children
         self.split_test_block.user_partitions = [
@@ -355,7 +355,7 @@ class SplitTestBlockStudioTest(SplitTestBlockTest):
         # Verify that a split_test referring to a non-existent user partition has no active children
         self.split_test_block.user_partition_id = 2
         [active_children, inactive_children] = split_test_block.active_and_inactive_children()
-        assert active_children == []
+        assert not active_children
         assert inactive_children == children
 
     def test_validation_messages(self):  # lint-amnesty, pylint: disable=too-many-statements

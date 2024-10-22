@@ -127,4 +127,4 @@ class TestCourseAccess(ModuleStoreTestCase):
                     auth.remove_users(self.user, role(self.course_key.org), user)
                 else:
                     auth.remove_users(self.user, role(self.course_key), user)
-                self.assertFalse(auth.has_course_author_access(user, self.course_key), f"{user} remove didn't work")  # lint-amnesty, pylint: disable=line-too-long
+                assert not auth.has_course_author_access(user, self.course_key), f"{user} remove didn't work"

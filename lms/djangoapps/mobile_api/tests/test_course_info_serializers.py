@@ -43,7 +43,7 @@ class TestCourseAccessSerializer(TestCase):
             'course_id': self.course.id,
         }).data
 
-        self.assertEqual(output_data['has_unmet_prerequisites'], has_unmet_prerequisites)
+        assert output_data['has_unmet_prerequisites'] == has_unmet_prerequisites
         mock_get_prerequisites.assert_called_once_with(self.user, [self.course.id])
 
     @ddt.data(
@@ -66,7 +66,7 @@ class TestCourseAccessSerializer(TestCase):
             'course_id': self.course.id
         }).data
 
-        self.assertEqual(output_data['is_too_early'], is_too_early)
+        assert output_data['is_too_early'] == is_too_early
         mock_check_course_open.assert_called_once_with(self.user, self.course)
 
     @ddt.data(
@@ -90,7 +90,7 @@ class TestCourseAccessSerializer(TestCase):
             'course_id': self.course.id
         }).data
 
-        self.assertEqual(output_data['is_staff'], is_staff)
+        assert output_data['is_staff'] == is_staff
         mock_administrative_access.assert_called_once_with(self.user, self.course.id)
 
     @ddt.data(None, 'mocked_user_course_expiration_date')
@@ -108,7 +108,7 @@ class TestCourseAccessSerializer(TestCase):
             'course_id': self.course.id
         }).data
 
-        self.assertEqual(output_data['audit_access_expires'], mock_return_value)
+        assert output_data['audit_access_expires'] == mock_return_value
         mock_get_user_course_expiration_date.assert_called_once_with(self.user, self.course)
 
     @patch('lms.djangoapps.mobile_api.course_info.serializers.has_access')
@@ -166,7 +166,7 @@ class TestCourseInfoOverviewSerializer(TestCase):
     ) -> None:
         output_data = CourseInfoOverviewSerializer(self.course_overview, context={'user': self.user}).data
 
-        self.assertEqual(output_data['course_about'], mock_get_link_for_about_page.return_value)
+        assert output_data['course_about'] == mock_get_link_for_about_page.return_value
         mock_get_link_for_about_page.assert_called_once_with(self.course_overview)
 
     @patch('lms.djangoapps.mobile_api.course_info.serializers.get_assignments_completions')

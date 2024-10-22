@@ -176,8 +176,8 @@ class TestHelpers(TestCase):
         assert isinstance(site_values, dict)
 
         # without any site configuration it should return empty dict
-        self.assertEqual(site_values, {})
+        assert site_values == {}
 
         with with_site_configuration_context(configuration=test_config):
             site_values = configuration_helpers.get_current_site_configuration_values()
-            self.assertEqual(site_values, test_config)
+            assert site_values == test_config

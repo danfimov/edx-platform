@@ -1041,7 +1041,7 @@ class VideoBlockIndexingTestCase(unittest.TestCase):
             # Some organizations don't have English transcripts for all videos
             # This feature makes it configurable
             translations_no_fallback = block.available_translations(block.get_transcripts_info())
-            assert translations_no_fallback == []
+            assert not translations_no_fallback
 
     @override_settings(ALL_LANGUAGES=ALL_LANGUAGES)
     def test_video_with_language_do_not_have_transcripts_translation(self):

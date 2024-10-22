@@ -39,7 +39,7 @@ class CommandArgsTestCase(TestCase):
     def test_no_course_keys(self):
         parser = self._get_arg_parser()
         args = parser.parse_args([])
-        assert args.course_keys == []
+        assert not args.course_keys
 
 
 class CommandExecutionTestCase(SharedModuleStoreTestCase):

@@ -90,7 +90,7 @@ class BaseTranscripts(CourseTestCase):
             'type': 'video'
         }
         resp = self.client.ajax_post('/xblock/', data)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         self.video_usage_key = self._get_usage_key(resp)
         self.item = modulestore().get_item(self.video_usage_key)
@@ -140,8 +140,8 @@ class BaseTranscripts(CourseTestCase):
 
     def assert_response(self, response, expected_status_code, expected_message):
         response_content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response.status_code, expected_status_code)
-        self.assertEqual(response_content['status'], expected_message)
+        assert response.status_code == expected_status_code
+        assert response_content['status'] == expected_message
 
     def set_fields_from_xml(self, item, xml):
         fields_data = VideoBlock.parse_video_xml(xml)
@@ -255,7 +255,7 @@ class TestUploadTranscripts(BaseTranscripts):
         json_response = json.loads(response.content.decode('utf-8'))
         expected_edx_video_id = edx_video_id if edx_video_id else json_response['edx_video_id']
         video = modulestore().get_item(self.video_usage_key)
-        self.assertEqual(video.edx_video_id, expected_edx_video_id)
+        assert video.edx_video_id == expected_edx_video_id
         self.assertDictEqual(video.transcripts, {'en': f'{expected_edx_video_id}-en.srt'})
 
         # Verify transcript content
@@ -381,7 +381,7 @@ class TestUploadTranscripts(BaseTranscripts):
         self.assert_response(response, expected_status_code=400, expected_message='Invalid Video ID')
 
         # Verify transcript does not exist for non-existant `edx_video_id`
-        self.assertIsNone(get_video_transcript_content(non_existant_edx_video_id, language_code='en'))
+        assert get_video_transcript_content(non_existant_edx_video_id, language_code='en') is None
 
 
 @ddt.ddt
@@ -446,7 +446,7 @@ class TestChooseTranscripts(BaseTranscripts):
         json_response = json.loads(response.content.decode('utf-8'))
         expected_edx_video_id = edx_video_id if edx_video_id else json_response['edx_video_id']
         video = modulestore().get_item(self.video_usage_key)
-        self.assertEqual(video.edx_video_id, expected_edx_video_id)
+        assert video.edx_video_id == expected_edx_video_id
 
         # Verify transcript content
         actual_transcript = get_video_transcript_content(video.edx_video_id, language_code='en')
@@ -563,7 +563,7 @@ class TestRenameTranscripts(BaseTranscripts):
         json_response = json.loads(response.content.decode('utf-8'))
         expected_edx_video_id = edx_video_id if edx_video_id else json_response['edx_video_id']
         video = modulestore().get_item(self.video_usage_key)
-        self.assertEqual(video.edx_video_id, expected_edx_video_id)
+        assert video.edx_video_id == expected_edx_video_id
 
         # Verify transcript content
         actual_transcript = get_video_transcript_content(video.edx_video_id, language_code='en')
@@ -694,7 +694,7 @@ class TestReplaceTranscripts(BaseTranscripts):
         json_response = json.loads(response.content.decode('utf-8'))
         expected_edx_video_id = edx_video_id if edx_video_id else json_response['edx_video_id']
         video = modulestore().get_item(self.video_usage_key)
-        self.assertEqual(video.edx_video_id, expected_edx_video_id)
+        assert video.edx_video_id == expected_edx_video_id
 
         # Verify transcript content
         actual_transcript = get_video_transcript_content(video.edx_video_id, language_code='en')
@@ -794,7 +794,7 @@ class TestDownloadTranscripts(BaseTranscripts):
         """
         Verify transcript download response.
         """
-        self.assertEqual(response.status_code, expected_status_code)
+        assert response.status_code == expected_status_code
         if expected_content:
             assert response.content.decode('utf-8') == expected_content
 
@@ -883,7 +883,7 @@ class TestCheckTranscripts(BaseTranscripts):
         }
         link = reverse('check_transcripts')
         resp = self.client.get(link, {'data': json.dumps(data)})
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertDictEqual(
             json.loads(resp.content.decode('utf-8')),
             {
@@ -927,7 +927,7 @@ class TestCheckTranscripts(BaseTranscripts):
 
         resp = self.client.get(link, {'data': json.dumps(data)})
 
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertDictEqual(
             json.loads(resp.content.decode('utf-8')),
             {
@@ -973,11 +973,11 @@ class TestCheckTranscripts(BaseTranscripts):
         }
         resp = self.client.get(link, {'data': json.dumps(data)})
 
-        self.assertEqual(2, len(mock_get.mock_calls))
+        assert 2 == len(mock_get.mock_calls)
         args, kwargs = mock_get.call_args_list[0]
-        self.assertEqual(args[0], 'https://www.youtube.com/watch?v=good_id_2')
+        assert args[0] == 'https://www.youtube.com/watch?v=good_id_2'
 
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         self.assertDictEqual(
             json.loads(resp.content.decode('utf-8')),
@@ -1005,8 +1005,8 @@ class TestCheckTranscripts(BaseTranscripts):
             }]
         }
         resp = self.client.get(link, {'data': json.dumps(data)})
-        self.assertEqual(resp.status_code, 400)
-        self.assertEqual(json.loads(resp.content.decode('utf-8')).get('status'), "Can't find item by locator.")
+        assert resp.status_code == 400
+        assert json.loads(resp.content.decode('utf-8')).get('status') == "Can't find item by locator."
 
     def test_fail_data_with_bad_locator(self):
         # Test for raising `InvalidLocationError` exception.
@@ -1020,8 +1020,8 @@ class TestCheckTranscripts(BaseTranscripts):
             }]
         }
         resp = self.client.get(link, {'data': json.dumps(data)})
-        self.assertEqual(resp.status_code, 400)
-        self.assertEqual(json.loads(resp.content.decode('utf-8')).get('status'), "Can't find item by locator.")
+        assert resp.status_code == 400
+        assert json.loads(resp.content.decode('utf-8')).get('status') == "Can't find item by locator."
 
         # Test for raising `ItemNotFoundError` exception.
         data = {
@@ -1033,8 +1033,8 @@ class TestCheckTranscripts(BaseTranscripts):
             }]
         }
         resp = self.client.get(link, {'data': json.dumps(data)})
-        self.assertEqual(resp.status_code, 400)
-        self.assertEqual(json.loads(resp.content.decode('utf-8')).get('status'), "Can't find item by locator.")
+        assert resp.status_code == 400
+        assert json.loads(resp.content.decode('utf-8')).get('status') == "Can't find item by locator."
 
     def test_fail_for_non_video_block(self):
         # Not video block: setup
@@ -1077,7 +1077,7 @@ class TestCheckTranscripts(BaseTranscripts):
         }
         link = reverse('check_transcripts')
         resp = self.client.get(link, {'data': json.dumps(data)})
-        self.assertEqual(resp.status_code, 400)
+        assert resp.status_code == 400
         self.assertEqual(
             json.loads(resp.content.decode('utf-8')).get('status'),
             'Transcripts are supported only for "video" blocks.',
@@ -1120,7 +1120,7 @@ class TestCheckTranscripts(BaseTranscripts):
         response = self.client.get(check_transcripts_url, {'data': json.dumps(data)})
 
         # Assert the response
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertDictEqual(
             json.loads(response.content.decode('utf-8')),
             {

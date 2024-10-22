@@ -51,11 +51,11 @@ class ExportCourseTestCase(CourseTestCase):
         key = str(self.course.location.course_key)
         result = export_olx.delay(self.user.id, key, 'en')
         status = UserTaskStatus.objects.get(task_id=result.id)
-        self.assertEqual(status.state, UserTaskStatus.SUCCEEDED)
+        assert status.state == UserTaskStatus.SUCCEEDED
         artifacts = UserTaskArtifact.objects.filter(status=status)
-        self.assertEqual(len(artifacts), 1)
+        assert len(artifacts) == 1
         output = artifacts[0]
-        self.assertEqual(output.name, 'Output')
+        assert output.name == 'Output'
 
     @mock.patch('cms.djangoapps.contentstore.tasks.export_course_to_xml', side_effect=side_effect_exception)
     def test_exception(self, mock_export):  # pylint: disable=unused-argument
@@ -90,12 +90,12 @@ class ExportCourseTestCase(CourseTestCase):
         Verify that a task failed with the specified error message
         """
         status = UserTaskStatus.objects.get(task_id=task_result.id)
-        self.assertEqual(status.state, UserTaskStatus.FAILED)
+        assert status.state == UserTaskStatus.FAILED
         artifacts = UserTaskArtifact.objects.filter(status=status)
-        self.assertEqual(len(artifacts), 1)
+        assert len(artifacts) == 1
         error = artifacts[0]
-        self.assertEqual(error.name, 'Error')
-        self.assertEqual(error.text, error_message)
+        assert error.name == 'Error'
+        assert error.text == error_message
 
 
 @override_settings(CONTENTSTORE=TEST_DATA_CONTENTSTORE)
@@ -111,11 +111,11 @@ class ExportLibraryTestCase(LibraryTestCase):
         key = str(self.lib_key)
         result = export_olx.delay(self.user.id, key, 'en')
         status = UserTaskStatus.objects.get(task_id=result.id)
-        self.assertEqual(status.state, UserTaskStatus.SUCCEEDED)
+        assert status.state == UserTaskStatus.SUCCEEDED
         artifacts = UserTaskArtifact.objects.filter(status=status)
-        self.assertEqual(len(artifacts), 1)
+        assert len(artifacts) == 1
         output = artifacts[0]
-        self.assertEqual(output.name, 'Output')
+        assert output.name == 'Output'
 
 
 @override_settings(CONTENTSTORE=TEST_DATA_CONTENTSTORE)
@@ -152,18 +152,18 @@ class RerunCourseTaskTestCase(CourseTestCase):  # lint-amnesty, pylint: disable=
 
         # Verify the new course run exists
         course = modulestore().get_course(new_course_key)
-        self.assertIsNotNone(course)
+        assert course is not None
 
         # Verify the OrganizationCourse is cloned
-        self.assertEqual(OrganizationCourse.objects.count(), 2)
+        assert OrganizationCourse.objects.count() == 2
         # This will raise an error if the OrganizationCourse object was not cloned
         OrganizationCourse.objects.get(course_id=new_course_id, organization=organization)
 
         # Verify the RestrictedCourse and related objects are cloned
-        self.assertEqual(RestrictedCourse.objects.count(), 2)
+        assert RestrictedCourse.objects.count() == 2
         restricted_course = RestrictedCourse.objects.get(course_key=new_course_key)
 
-        self.assertEqual(CountryAccessRule.objects.count(), 2)
+        assert CountryAccessRule.objects.count() == 2
         CountryAccessRule.objects.get(
             rule_type=CountryAccessRule.BLACKLIST_RULE,
             restricted_course=restricted_course,

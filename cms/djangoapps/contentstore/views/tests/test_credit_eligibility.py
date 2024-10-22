@@ -30,7 +30,7 @@ class CreditEligibilityTest(CourseTestCase):
         if the feature flag 'ENABLE_CREDIT_ELIGIBILITY' is not enabled.
         """
         response = self.client.get_html(self.course_details_url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertNotContains(response, "Course Credit Requirements")
         self.assertNotContains(response, "Steps required to earn course credit")
 
@@ -43,7 +43,7 @@ class CreditEligibilityTest(CourseTestCase):
         # verify that credit eligibility requirements block don't show if the
         # course is not set as credit course
         response = self.client.get_html(self.course_details_url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertNotContains(response, "Course Credit Requirements")
         self.assertNotContains(response, "Steps required to earn course credit")
 
@@ -51,12 +51,12 @@ class CreditEligibilityTest(CourseTestCase):
         # course is set as credit course and it has eligibility requirements
         credit_course = CreditCourse(course_key=str(self.course.id), enabled=True)
         credit_course.save()
-        self.assertEqual(len(get_credit_requirements(self.course.id)), 0)
+        assert len(get_credit_requirements(self.course.id)) == 0
         # test that after publishing course, minimum grade requirement is added
         on_course_publish(self.course.id)
-        self.assertEqual(len(get_credit_requirements(self.course.id)), 1)
+        assert len(get_credit_requirements(self.course.id)) == 1
 
         response = self.client.get_html(self.course_details_url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertContains(response, "Course Credit Requirements")
         self.assertContains(response, "Steps required to earn course credit")

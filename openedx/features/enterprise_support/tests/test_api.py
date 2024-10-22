@@ -684,7 +684,7 @@ class TestEnterpriseApi(EnterpriseServiceMockMixin, CacheIsolationTestCase):
         enterprise_customer_user = EnterpriseCustomerUserFactory(user_id=self.user.id)
 
         if not is_enterprise_enabled:
-            assert get_data_sharing_consents(self.user) == []
+            assert not get_data_sharing_consents(self.user)
         else:
             course_id = 'fake-course'
             data_sharing_consent = DataSharingConsent(
@@ -705,7 +705,7 @@ class TestEnterpriseApi(EnterpriseServiceMockMixin, CacheIsolationTestCase):
         enterprise_customer_user = EnterpriseCustomerUserFactory(user_id=self.user.id)
 
         if not is_enterprise_enabled:
-            assert get_enterprise_course_enrollments(self.user) == []
+            assert not get_enterprise_course_enrollments(self.user)
         else:
             ece = EnterpriseCourseEnrollmentFactory(enterprise_customer_user=enterprise_customer_user)
             enterprise_course_enrollments = get_enterprise_course_enrollments(self.user)

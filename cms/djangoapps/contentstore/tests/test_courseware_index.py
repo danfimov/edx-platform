@@ -208,15 +208,15 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         """ indexing course tests """
         # Only published blocks should be in the index
         added_to_index = self.reindex_course(store)  # This reindex may not be necessary (it may already be indexed)
-        self.assertEqual(added_to_index, 3)
+        assert added_to_index == 3
         response = self.search()
-        self.assertEqual(response["total"], 3)
+        assert response["total"] == 3
 
         # Publish the vertical as is, and any unpublished children should now be available
         self.publish_item(store, self.vertical.location)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 4)
+        assert response["total"] == 4
 
     def _test_not_indexing_unpublished_content(self, store):
         """ add a new one, only appers in index once added """
@@ -224,7 +224,7 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         self.publish_item(store, self.vertical.location)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 4)
+        assert response["total"] == 4
 
         # Now add a new unit to the existing vertical
         BlockFactory.create(
@@ -236,14 +236,14 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         )
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 4)
+        assert response["total"] == 4
 
         # Now publish it and we should find it
         # Publish the vertical as is, and everything should be available
         self.publish_item(store, self.vertical.location)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 5)
+        assert response["total"] == 5
 
     def _test_delete_course_from_search_index_after_course_deletion(self, store):  # pylint: disable=invalid-name
         """
@@ -253,14 +253,14 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         # index the course in search_index (it may already be indexed)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 1)
+        assert response["total"] == 1
 
         # delete the course and look course in search_index
         store.delete_course(self.course.id, ModuleStoreEnum.UserID.test)
-        self.assertIsNone(store.get_course(self.course.id))
+        assert store.get_course(self.course.id) is None
         # Now, because of contentstore.signals.handlers.listen_for_course_delete, the index should already be updated:
         response = self.search()
-        self.assertEqual(response["total"], 0)
+        assert response["total"] == 0
 
     def _test_deleting_item(self, store):
         """ test deleting an item """
@@ -268,19 +268,19 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         self.publish_item(store, self.vertical.location)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 4)
+        assert response["total"] == 4
 
         # just a delete should not change anything
         self.delete_item(store, self.html_unit.location)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 4)
+        assert response["total"] == 4
 
         # but after publishing, we should no longer find the html_unit
         self.publish_item(store, self.vertical.location)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 3)
+        assert response["total"] == 3
 
     def _test_start_date_propagation(self, store):
         """ make sure that the start date is applied at the right level """
@@ -291,7 +291,7 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         self.publish_item(store, self.vertical.location)
         self.reindex_course(store)
         response = self.search()
-        self.assertEqual(response["total"], 4)
+        assert response["total"] == 4
 
         results = response["results"]
         date_map = {
@@ -301,19 +301,19 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
             str(self.html_unit.location): later_date,
         }
         for result in results:
-            self.assertEqual(result["data"]["start_date"], date_map[result["data"]["id"]])
+            assert result["data"]["start_date"] == date_map[result["data"]["id"]]
 
     @patch('django.conf.settings.SEARCH_ENGINE', None)
     def _test_search_disabled(self, store):
         """ if search setting has it as off, confirm that nothing is indexed """
         indexed_count = self.reindex_course(store)
-        self.assertFalse(indexed_count)
+        assert not indexed_count
 
     def _test_time_based_index(self, store):
         """ Make sure that a time based request to index does not index anything too old """
         self.publish_item(store, self.vertical.location)
         indexed_count = self.reindex_course(store)
-        self.assertEqual(indexed_count, 4)
+        assert indexed_count == 4
 
         # Add a new sequential
         sequential2 = BlockFactory.create(
@@ -347,11 +347,11 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         # because it is in a common subtree but not of the original vertical
         # because the original sequential's subtree is too old
         new_indexed_count = self.index_recent_changes(store, before_time)
-        self.assertEqual(new_indexed_count, 5)
+        assert new_indexed_count == 5
 
         # full index again
         indexed_count = self.reindex_course(store)
-        self.assertEqual(indexed_count, 7)
+        assert indexed_count == 7
 
     def _test_course_about_property_index(self, store):
         """
@@ -365,8 +365,8 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         response = self.searcher.search(
             field_dictionary={"course": str(self.course.id)}
         )
-        self.assertEqual(response["total"], 1)
-        self.assertEqual(response["results"][0]["data"]["content"]["display_name"], display_name)
+        assert response["total"] == 1
+        assert response["results"][0]["data"]["content"]["display_name"] == display_name
 
     def _test_course_about_store_index(self, store):
         """
@@ -382,8 +382,8 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         response = self.searcher.search(
             field_dictionary={"course": str(self.course.id)}
         )
-        self.assertEqual(response["total"], 1)
-        self.assertEqual(response["results"][0]["data"]["content"]["short_description"], short_description)
+        assert response["total"] == 1
+        assert response["results"][0]["data"]["content"]["short_description"] == short_description
 
     def _test_course_about_mode_index(self, store):
         """
@@ -409,7 +409,7 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         response = self.searcher.search(
             field_dictionary={"course": str(self.course.id)}
         )
-        self.assertEqual(response["total"], 1)
+        assert response["total"] == 1
         self.assertIn(CourseMode.HONOR, response["results"][0]["data"]["modes"])
         self.assertIn(CourseMode.VERIFIED, response["results"][0]["data"]["modes"])
 
@@ -418,11 +418,11 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         self.publish_item(store, self.vertical.location)
         self.reindex_course(store)
         response = self.search(query_string="Html Content")
-        self.assertEqual(response["total"], 1)
+        assert response["total"] == 1
 
         result = response["results"][0]["data"]
-        self.assertEqual(result["course_name"], "Search Index Test Course")
-        self.assertEqual(result["location"], ["Week 1", "Lesson 1", "Subsection 1"])
+        assert result["course_name"] == "Search Index Test Course"
+        assert result["location"] == ["Week 1", "Lesson 1", "Subsection 1"]
 
     def _test_course_location_null(self, store):
         """ Test that course location information is added to index """
@@ -451,11 +451,11 @@ class TestCoursewareSearchIndexer(MixedWithOptionsTestCase):
         )
         self.reindex_course(store)
         response = self.search(query_string="Find Me")
-        self.assertEqual(response["total"], 1)
+        assert response["total"] == 1
 
         result = response["results"][0]["data"]
-        self.assertEqual(result["course_name"], "Search Index Test Course")
-        self.assertEqual(result["location"], ["Week 1", CoursewareSearchIndexer.UNNAMED_MODULE_NAME, "Subsection 2"])
+        assert result["course_name"] == "Search Index Test Course"
+        assert result["location"] == ["Week 1", CoursewareSearchIndexer.UNNAMED_MODULE_NAME, "Subsection 2"]
 
     @patch('django.conf.settings.SEARCH_ENGINE', 'search.tests.utils.ErroringIndexEngine')
     def _test_exception(self, store):
@@ -536,7 +536,7 @@ class TestLargeCourseDeletions(MixedWithOptionsTestCase):
         """ Check that the search within this course will yield the expected number of results """
 
         response = self.searcher.search(field_dictionary={"course": self.course_id})
-        self.assertEqual(response["total"], expected_count)
+        assert response["total"] == expected_count
 
     def _do_test_large_course_deletion(self, store, load_factor):
         """ Test that deleting items from a course works even when present within a very large course """
@@ -662,7 +662,7 @@ class TestTaskExecution(SharedModuleStoreTestCase):
         response = searcher.search(
             field_dictionary={"course": str(self.course.id)}
         )
-        self.assertEqual(response["total"], 0)
+        assert response["total"] == 0
 
         listen_for_course_publish(self, self.course.id)
 
@@ -670,20 +670,20 @@ class TestTaskExecution(SharedModuleStoreTestCase):
         response = searcher.search(
             field_dictionary={"course": str(self.course.id)}
         )
-        self.assertEqual(response["total"], 3)
+        assert response["total"] == 3
 
     def test_task_library_update(self):
         """ Making sure that the receiver correctly fires off the task when invoked by signal """
         searcher = SearchEngine.get_search_engine(LibrarySearchIndexer.INDEX_NAME)
         library_search_key = str(normalize_key_for_search(self.library.location.library_key))
         response = searcher.search(field_dictionary={"library": library_search_key})
-        self.assertEqual(response["total"], 0)
+        assert response["total"] == 0
 
         listen_for_library_update(self, self.library.location.library_key)
 
         # Note that this test will only succeed if celery is working in inline mode
         response = searcher.search(field_dictionary={"library": library_search_key})
-        self.assertEqual(response["total"], 2)
+        assert response["total"] == 2
 
     def test_ignore_ccx(self):
         """Test that we ignore CCX courses (it's too slow now)."""
@@ -692,12 +692,10 @@ class TestTaskExecution(SharedModuleStoreTestCase):
         # fall through to the normal indexing and raise an exception because
         # there is no data or backing course behind the course key.
         with patch('cms.djangoapps.contentstore.courseware_index.CoursewareSearchIndexer.index') as mock_index:
-            self.assertIsNone(
-                update_search_index(
-                    "ccx-v1:OpenEdX+FAKECOURSE+FAKERUN+ccx@1", "2020-09-28T16:41:57.150796"
-                )
-            )
-            self.assertFalse(mock_index.called)
+            assert update_search_index(
+                "ccx-v1:OpenEdX+FAKECOURSE+FAKERUN+ccx@1", "2020-09-28T16:41:57.150796"
+            ) is None
+            assert not mock_index.called
 
 
 @pytest.mark.django_db
@@ -755,18 +753,18 @@ class TestLibrarySearchIndexer(MixedWithOptionsTestCase):
         """ indexing course tests """
         self.reindex_library(store)
         response = self.search()
-        self.assertEqual(response["total"], 2)
+        assert response["total"] == 2
 
         added_to_index = self.reindex_library(store)
-        self.assertEqual(added_to_index, 2)
+        assert added_to_index == 2
         response = self.search()
-        self.assertEqual(response["total"], 2)
+        assert response["total"] == 2
 
     def _test_creating_item(self, store):
         """ test updating an item """
         self.reindex_library(store)
         response = self.search()
-        self.assertEqual(response["total"], 2)
+        assert response["total"] == 2
 
         # updating a library item causes immediate reindexing
         data = "Some data"
@@ -781,7 +779,7 @@ class TestLibrarySearchIndexer(MixedWithOptionsTestCase):
 
         self.reindex_library(store)
         response = self.search()
-        self.assertEqual(response["total"], 3)
+        assert response["total"] == 3
         html_contents = [cont['html_content'] for cont in self._get_contents(response)]
         self.assertIn(data, html_contents)
 
@@ -789,7 +787,7 @@ class TestLibrarySearchIndexer(MixedWithOptionsTestCase):
         """ test updating an item """
         self.reindex_library(store)
         response = self.search()
-        self.assertEqual(response["total"], 2)
+        assert response["total"] == 2
 
         # updating a library item causes immediate reindexing
         new_data = "I'm new data"
@@ -797,7 +795,7 @@ class TestLibrarySearchIndexer(MixedWithOptionsTestCase):
         self.update_item(store, self.html_unit1)
         self.reindex_library(store)
         response = self.search()
-        self.assertEqual(response["total"], 2)
+        assert response["total"] == 2
         html_contents = [cont['html_content'] for cont in self._get_contents(response)]
         self.assertIn(new_data, html_contents)
 
@@ -805,19 +803,19 @@ class TestLibrarySearchIndexer(MixedWithOptionsTestCase):
         """ test deleting an item """
         self.reindex_library(store)
         response = self.search()
-        self.assertEqual(response["total"], 2)
+        assert response["total"] == 2
 
         # deleting a library item causes immediate reindexing
         self.delete_item(store, self.html_unit1.location)
         self.reindex_library(store)
         response = self.search()
-        self.assertEqual(response["total"], 1)
+        assert response["total"] == 1
 
     @patch('django.conf.settings.SEARCH_ENGINE', None)
     def _test_search_disabled(self, store):
         """ if search setting has it as off, confirm that nothing is indexed """
         indexed_count = self.reindex_library(store)
-        self.assertFalse(indexed_count)
+        assert not indexed_count
 
     @patch('django.conf.settings.SEARCH_ENGINE', 'search.tests.utils.ErroringIndexEngine')
     def _test_exception(self, store):
@@ -1168,9 +1166,9 @@ class GroupConfigurationSearchSplit(CourseTestCase, MixedWithOptionsTestCase):
 
         # Only published blocks should be in the index
         added_to_index = self.reindex_course(self.store)
-        self.assertEqual(added_to_index, 16)
+        assert added_to_index == 16
         response = self.searcher.search(field_dictionary={"course": str(self.course.id)})
-        self.assertEqual(response["total"], 16)
+        assert response["total"] == 16
 
         group_access_content = {'group_access': {666: [1]}}
 

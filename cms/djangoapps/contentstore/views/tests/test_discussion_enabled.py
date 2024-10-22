@@ -103,7 +103,7 @@ class TestDiscussionEnabled(CourseTestCase):
         Tests discussion_enabled can be toggled.
         """
         self.set_discussion_enabled_status(self.vertical, False)
-        self.assertFalse(self.get_discussion_enabled_status(self.vertical))
+        assert not self.get_discussion_enabled_status(self.vertical)
         assert self.get_discussion_enabled_status(self.vertical_1)
 
     def test_non_course_author_cannot_get_or_set_discussion_enabled_flag(self):
@@ -111,7 +111,7 @@ class TestDiscussionEnabled(CourseTestCase):
         Test non course author cannot get/set discussion_enabled flag
         """
         resp = self._get_discussion_enabled_status(self.course_usage_key, self.non_staff_authed_user_client)
-        self.assertEqual(resp.status_code, 403)
+        assert resp.status_code == 403
         # Set call to the API with non authorised user should raise a 403
         resp = self.set_discussion_enabled_status(self.vertical, True, self.non_staff_authed_user_client)
-        self.assertEqual(resp.status_code, 403)
+        assert resp.status_code == 403

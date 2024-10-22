@@ -201,10 +201,10 @@ class RetirementHandlerVerificationAttemptsTest(ModuleStoreTestCase):
 
     def test_retirement_signal(self):
         _listen_for_lms_retire_verification_attempts(sender=self.__class__, user=self.user)
-        self.assertEqual(len(VerificationAttempt.objects.filter(user=self.user)), 0)
-        self.assertEqual(len(VerificationAttempt.objects.filter(user=self.other_user)), 1)
+        assert len(VerificationAttempt.objects.filter(user=self.user)) == 0
+        assert len(VerificationAttempt.objects.filter(user=self.other_user)) == 1
 
     def test_retirement_signal_no_attempts(self):
         no_attempt_user = UserFactory.create()
         _listen_for_lms_retire_verification_attempts(sender=self.__class__, user=no_attempt_user)
-        self.assertEqual(len(VerificationAttempt.objects.all()), 2)
+        assert len(VerificationAttempt.objects.all()) == 2

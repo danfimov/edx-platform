@@ -36,7 +36,7 @@ class DeleteCourseTests(ModuleStoreTestCase):
 
     def test_asset_and_course_deletion(self):
         course_run = CourseFactory()
-        self.assertIsNotNone(modulestore().get_course(course_run.id))
+        assert modulestore().get_course(course_run.id) is not None
 
         store = contentstore()
         asset_key = course_run.id.make_asset_key('asset', 'test.txt')

@@ -166,7 +166,7 @@ def get_event_differences(expected, actual, tolerate=None):
         Some tests will want to assert that the entire event matches exactly, others will tolerate some variance in the
         context or root fields, but not in the payload (for example).
         """
-        if path == [] and EventMatchTolerates.ROOT_EXTRA_FIELDS in tolerate:
+        if not path and EventMatchTolerates.ROOT_EXTRA_FIELDS in tolerate:
             return False
         elif path == ['event'] and EventMatchTolerates.PAYLOAD_EXTRA_FIELDS in tolerate:
             return False

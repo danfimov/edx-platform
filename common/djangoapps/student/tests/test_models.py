@@ -480,7 +480,7 @@ class PendingNameChangeTests(SharedModuleStoreTestCase):
         Test basic name change request functionality.
         """
         do_name_change_request(self.user, self.new_name, self.rationale)
-        self.assertEqual(PendingNameChange.objects.count(), 1)
+        assert PendingNameChange.objects.count() == 1
 
     def test_same_name(self):
         """
@@ -488,7 +488,7 @@ class PendingNameChangeTests(SharedModuleStoreTestCase):
         name will not result in a new pending name change request.
         """
         pending_name_change = do_name_change_request(self.user, self.name, self.rationale)[0]
-        self.assertIsNone(pending_name_change)
+        assert pending_name_change is None
 
     def test_update_name_change(self):
         """
@@ -497,9 +497,9 @@ class PendingNameChangeTests(SharedModuleStoreTestCase):
         """
         do_name_change_request(self.user, self.new_name, self.rationale)
         do_name_change_request(self.user, self.updated_name, self.rationale)
-        self.assertEqual(PendingNameChange.objects.count(), 1)
+        assert PendingNameChange.objects.count() == 1
         pending_name_change = PendingNameChange.objects.get(user=self.user)
-        self.assertEqual(pending_name_change.new_name, self.updated_name)
+        assert pending_name_change.new_name == self.updated_name
 
     def test_confirm_name_change(self):
         """
@@ -509,8 +509,8 @@ class PendingNameChangeTests(SharedModuleStoreTestCase):
         pending_name_change = do_name_change_request(self.user, self.new_name, self.rationale)[0]
         confirm_name_change(self.user, pending_name_change)
         user_profile = UserProfile.objects.get(user=self.user)
-        self.assertEqual(user_profile.name, self.new_name)
-        self.assertEqual(PendingNameChange.objects.count(), 0)
+        assert user_profile.name == self.new_name
+        assert PendingNameChange.objects.count() == 0
 
     def test_delete_by_user_removes_pending_name_change(self):
         do_name_change_request(self.user, self.new_name, self.rationale)

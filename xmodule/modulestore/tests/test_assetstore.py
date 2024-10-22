@@ -222,7 +222,7 @@ class TestMongoAssetMetadataStorage(TestCase):
             course = CourseFactory.create(modulestore=store)
             # Find existing asset metadata.
             asset_md = store.get_all_asset_metadata(course.id, 'asset')
-            assert asset_md == []
+            assert not asset_md
 
     @ddt.data(SPLIT_MODULESTORE_SETUP)
     def test_find_assets_in_non_existent_course(self, storebuilder):
@@ -584,7 +584,7 @@ class TestMongoAssetMetadataStorage(TestCase):
             course_key = store.make_course_key("org", "course", "run")
             asset_key = course_key.make_asset_key('asset', 'foo.jpg')
             assert store.find_asset_metadata(asset_key) is None
-            assert store.get_all_asset_metadata(course_key, 'asset') == []
+            assert not store.get_all_asset_metadata(course_key, 'asset')
 
     @ddt.data(SPLIT_MODULESTORE_SETUP)
     def test_copy_all_assets_same_modulestore(self, storebuilder):

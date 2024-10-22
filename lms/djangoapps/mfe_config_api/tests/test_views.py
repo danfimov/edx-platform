@@ -35,8 +35,8 @@ class MFEConfigTestCase(APITestCase):
         response = self.client.get(self.mfe_config_api_url)
 
         configuration_helpers_mock.get_value.assert_called_once_with("MFE_CONFIG", settings.MFE_CONFIG)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), {"EXAMPLE_VAR": "value"})
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == {"EXAMPLE_VAR": "value"}
 
     @patch("lms.djangoapps.mfe_config_api.views.configuration_helpers")
     def test_get_mfe_config_with_queryparam(self, configuration_helpers_mock):
@@ -54,11 +54,11 @@ class MFEConfigTestCase(APITestCase):
         ]
 
         response = self.client.get(f"{self.mfe_config_api_url}?mfe=mymfe")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         calls = [call("MFE_CONFIG", settings.MFE_CONFIG),
                  call("MFE_CONFIG_OVERRIDES", settings.MFE_CONFIG_OVERRIDES)]
         configuration_helpers_mock.get_value.assert_has_calls(calls)
-        self.assertEqual(response.json(), {"EXAMPLE_VAR": "mymfe_value", "OTHER": "other"})
+        assert response.json() == {"EXAMPLE_VAR": "mymfe_value", "OTHER": "other"}
 
     @ddt.unpack
     @ddt.data(
@@ -122,11 +122,11 @@ class MFEConfigTestCase(APITestCase):
         configuration_helpers_mock.get_value.side_effect = [mfe_config, mfe_config_overrides]
 
         response = self.client.get(f"{self.mfe_config_api_url}?mfe=mymfe")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         calls = [call("MFE_CONFIG", settings.MFE_CONFIG),
                  call("MFE_CONFIG_OVERRIDES", settings.MFE_CONFIG_OVERRIDES)]
         configuration_helpers_mock.get_value.assert_has_calls(calls)
-        self.assertEqual(response.json(), expected_response)
+        assert response.json() == expected_response
 
     def test_get_mfe_config_from_django_settings(self):
         """Test that when there is no site configuration, the API takes the django settings.
@@ -135,8 +135,8 @@ class MFEConfigTestCase(APITestCase):
         - The status of the response of the request is a HTTP_200_OK.
         - The json response is equal to MFE_CONFIG in lms/envs/test.py"""
         response = self.client.get(self.mfe_config_api_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), settings.MFE_CONFIG)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == settings.MFE_CONFIG
 
     def test_get_mfe_config_with_queryparam_from_django_settings(self):
         """Test that when there is no site configuration, the API with queryparam takes the django settings.
@@ -146,9 +146,9 @@ class MFEConfigTestCase(APITestCase):
         - The json response is equal to MFE_CONFIG merged with MFE_CONFIG_OVERRIDES['mymfe']
         """
         response = self.client.get(f"{self.mfe_config_api_url}?mfe=mymfe")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         expected = {**settings.MFE_CONFIG, **settings.MFE_CONFIG_OVERRIDES["mymfe"]}
-        self.assertEqual(response.json(), expected)
+        assert response.json() == expected
 
     @patch("lms.djangoapps.mfe_config_api.views.configuration_helpers")
     @override_settings(ENABLE_MFE_CONFIG_API=False)
@@ -161,4 +161,4 @@ class MFEConfigTestCase(APITestCase):
         """
         response = self.client.get(self.mfe_config_api_url)
         configuration_helpers_mock.get_value.assert_not_called()
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND

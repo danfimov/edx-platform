@@ -54,7 +54,7 @@ class LinkedInAddToProfileUrlTests(TestCase):
 
         # We can switch to this instead of the assertIn once edx-platform reaches Python 3.8
         # There was a problem with dict ordering in the add_to_profile_url function that will go away then.
-        # self.assertEqual(actual_url, expected_url)
+        # assert actual_url == expected_url
 
         assert 'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME' in actual_url
         assert f'&name={quote(settings.PLATFORM_NAME.encode("utf-8"))}+{expected_cert_name}' in actual_url
@@ -89,7 +89,7 @@ class LinkedInAddToProfileUrlTests(TestCase):
 
             # We can switch to this instead of the assertIn once edx-platform reaches Python 3.8
             # There was a problem with dict ordering in the add_to_profile_url function that will go away then.
-            # self.assertEqual(actual_url, expected_url)
+            # assert actual_url == expected_url
 
             assert 'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME' in actual_url
             assert f'&name={quote(settings.PLATFORM_NAME.encode("utf-8"))}+{expected_cert_name}' in actual_url

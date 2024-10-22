@@ -39,5 +39,5 @@ class CourseTextbooksViewTest(CourseTestCase, PermissionAccessMixin):
         self.save_course()
 
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["textbooks"], expected_textbook)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["textbooks"] == expected_textbook

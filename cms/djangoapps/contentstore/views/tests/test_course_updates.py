@@ -71,7 +71,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         course_update_url = self.create_update_url()
         resp = self.client.get_json(course_update_url)
         payload = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(len(payload), 2)
+        assert len(payload) == 2
 
         # try json w/o required fields
         self.assertContains(
@@ -123,7 +123,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         url = self.create_update_url(provided_id=this_id)
         resp = self.client.delete(url)
         payload = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(len(payload), before_delete - 1)
+        assert len(payload) == before_delete - 1
 
     def test_course_updates_compatibility(self):
         '''
@@ -148,22 +148,22 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         course_update_url = self.create_update_url()
         resp = self.client.get_json(course_update_url)
         payload = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(payload, [{'date': update_date, 'content': update_content, 'id': 1}])
-        self.assertEqual(len(payload), 1)
+        assert payload == [{'date': update_date, 'content': update_content, 'id': 1}]
+        assert len(payload) == 1
 
         # test getting single update item
 
         first_update_url = self.create_update_url(provided_id=payload[0]['id'])
         resp = self.client.get_json(first_update_url)
         payload = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(payload, {'date': 'January 23, 2014', 'content': 'Hello world!', 'id': 1})
+        assert payload == {'date': 'January 23, 2014', 'content': 'Hello world!', 'id': 1}
         self.assertHTMLEqual(update_date, payload['date'])
         self.assertHTMLEqual(update_content, payload['content'])
 
         # test that while updating it converts old data (with string format in 'data' field)
         # to new data (with list format in 'items' field) and respectively updates 'data' field.
         course_updates = modulestore().get_item(location)
-        self.assertEqual(course_updates.items, [])
+        assert not course_updates.items
         # now try to update first update item
         update_content = 'Testing'
         payload = {'content': update_content, 'date': update_date}
@@ -172,16 +172,16 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         )
         self.assertHTMLEqual(update_content, json.loads(resp.content.decode('utf-8'))['content'])
         course_updates = modulestore().get_item(location)
-        self.assertEqual(course_updates.items, [{'date': update_date, 'content': update_content, 'id': 1}])
+        assert course_updates.items == [{'date': update_date, 'content': update_content, 'id': 1}]
         # course_updates 'data' field should not update automatically
-        self.assertEqual(course_updates.data, '')
+        assert course_updates.data == ''
 
         # test delete course update item (soft delete)
         course_updates = modulestore().get_item(location)
-        self.assertEqual(course_updates.items, [{'date': update_date, 'content': update_content, 'id': 1}])
+        assert course_updates.items == [{'date': update_date, 'content': update_content, 'id': 1}]
         # now try to delete first update item
         resp = self.client.delete(course_update_url + '1')
-        self.assertEqual(json.loads(resp.content.decode('utf-8')), [])
+        assert not json.loads(resp.content.decode('utf-8'))
         # confirm that course update is soft deleted ('status' flag set to 'deleted') in db
         course_updates = modulestore().get_item(location)
         self.assertEqual(course_updates.items,
@@ -190,8 +190,8 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         # now try to get deleted update
         resp = self.client.get_json(course_update_url + '1')
         payload = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(payload.get('error'), "Course update not found.")
-        self.assertEqual(resp.status_code, 404)
+        assert payload.get('error') == "Course update not found."
+        assert resp.status_code == 404
 
         # now check that course update don't munges html
         update_content = """&lt;problem>
@@ -234,7 +234,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         # now confirm that the bad news and the iframe make up single update
         resp = self.client.get_json(course_update_url)
         payload = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(len(payload), 1)
+        assert len(payload) == 1
 
     def post_course_update(self):
         """
@@ -250,7 +250,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         resp = self.client.ajax_post(course_update_url, payload)
 
         # check that response status is 200 not 400
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         payload = json.loads(resp.content.decode('utf-8'))
         self.assertHTMLEqual(payload['content'], content)
@@ -263,7 +263,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
 
         updates_location = self.course.id.make_usage_key('course_info', 'updates')
         assert isinstance(updates_location, UsageKey)
-        self.assertEqual(updates_location.block_id, 'updates')
+        assert updates_location.block_id == 'updates'
 
         # check posting on handouts
         handouts_location = self.course.id.make_usage_key('course_info', 'handouts')
@@ -274,7 +274,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         resp = self.client.ajax_post(course_handouts_url, payload)
 
         # check that response status is 200 not 500
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         payload = json.loads(resp.content.decode('utf-8'))
         self.assertHTMLEqual(payload['data'], content)
@@ -289,7 +289,7 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
 
         updates_location = self.course.id.make_usage_key('course_info', 'updates')
         assert isinstance(updates_location, UsageKey)
-        self.assertEqual(updates_location.block_id, 'updates')
+        assert updates_location.block_id == 'updates'
 
         course_updates = modulestore().get_item(updates_location)
         course_update_items = list(reversed(get_course_update_items(course_updates)))
@@ -316,4 +316,4 @@ class CourseUpdateTest(CourseTestCase):  # lint-amnesty, pylint: disable=missing
         self.assertHTMLEqual(update_content, json.loads(resp.content.decode('utf-8'))['content'])
         course_updates = modulestore().get_item(updates_location)
         del course_updates.items[0]["status"]
-        self.assertEqual(course_updates.items, [{'date': update_date, 'content': update_content, 'id': 2}])
+        assert course_updates.items == [{'date': update_date, 'content': update_content, 'id': 2}]

@@ -86,7 +86,7 @@ class TestUsersDefaultRole(ModuleStoreTestCase):
         # delete this course and recreate this course with same user
         delete_course(self.course_key, self.user.id)
         resp = self._create_course_with_given_location(self.course_key)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         # check that user has his enrollment for this course
         assert CourseEnrollment.is_enrolled(self.user, self.course_key)
@@ -109,12 +109,12 @@ class TestUsersDefaultRole(ModuleStoreTestCase):
         # now create same course with different name case ('uppercase')
         new_course_key = self.course_key.replace(course=self.course_key.course.upper())
         resp = self._create_course_with_given_location(new_course_key)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         # check that user has his default "Student" forum role again for this course (with changed name case)
         assert self.user.roles.filter(name="Student", course_id=new_course_key)
 
         # Disabled due to case-sensitive test db (sqlite3)
         # # check that there user has only one "Student" forum role (with new updated course_id)
-        # self.assertEqual(self.user.roles.filter(name='Student').count(), 1)
-        # self.assertEqual(self.user.roles.filter(name='Student')[0].course_id, new_course_location.course_key)
+        # assert self.user.roles.filter(name='Student').count() == 1
+        # assert self.user.roles.filter(name='Student')[0].course_id == new_course_location.course_key

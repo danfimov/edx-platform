@@ -1225,7 +1225,7 @@ class TestProgramDataExtender(ModuleStoreTestCase):
         )
         data = ProgramDataExtender(program, self.user).extend()
         assert not data['is_learner_eligible_for_one_click_purchase']
-        assert data['skus'] == []
+        assert not data['skus']
 
     def test_learner_eligibility_for_one_click_purchase_user_entitlements(self):
         """
@@ -1261,7 +1261,7 @@ class TestProgramDataExtender(ModuleStoreTestCase):
         data = ProgramDataExtender(program, self.user).extend()
 
         assert not data['is_learner_eligible_for_one_click_purchase']
-        assert data['skus'] == []
+        assert not data['skus']
 
     def test_old_course_runs(self):
         """
@@ -1294,7 +1294,7 @@ class TestProgramDataExtender(ModuleStoreTestCase):
         )
         data = ProgramDataExtender(program, self.user).extend()
         assert not data['is_learner_eligible_for_one_click_purchase']
-        assert data['skus'] == []
+        assert not data['skus']
 
     def test_second_entitlement_product_wrong_mode(self):
         """

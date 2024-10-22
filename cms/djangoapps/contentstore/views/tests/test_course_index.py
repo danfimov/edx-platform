@@ -78,7 +78,7 @@ class TestCourseIndex(CourseTestCase):
         index_response = authed_client.get(index_url, {}, HTTP_ACCEPT='text/html')
         parsed_html = lxml.html.fromstring(index_response.content)
         courses_tab = parsed_html.find_class('react-course-listing')
-        self.assertEqual(len(courses_tab), expected_course_tab_len)
+        assert len(courses_tab) == expected_course_tab_len
 
     def test_libraries_on_index(self):
         """
@@ -90,7 +90,7 @@ class TestCourseIndex(CourseTestCase):
             """
             parsed_html = lxml.html.fromstring(response.content)
             library_tab = parsed_html.find_class('react-library-listing')
-            self.assertEqual(len(library_tab), 1)
+            assert len(library_tab) == 1
 
         # Add a library:
         lib1 = LibraryFactory.create()  # lint-amnesty, pylint: disable=unused-variable
@@ -123,9 +123,9 @@ class TestCourseIndex(CourseTestCase):
         non_staff_client, _ = self.create_non_staff_authed_user_client()
         response = non_staff_client.delete(outline_url, {}, HTTP_ACCEPT='application/json')
         if self.course.id.deprecated:
-            self.assertEqual(response.status_code, 404)
+            assert response.status_code == 404
         else:
-            self.assertEqual(response.status_code, 403)
+            assert response.status_code == 403
 
     def test_course_staff_access(self):
         """
@@ -160,27 +160,27 @@ class TestCourseIndex(CourseTestCase):
         resp = self.client.get(outline_url, HTTP_ACCEPT='application/json')
 
         if self.course.id.deprecated:
-            self.assertEqual(resp.status_code, 404)
+            assert resp.status_code == 404
             return
 
         json_response = json.loads(resp.content.decode('utf-8'))
 
         # First spot check some values in the root response
-        self.assertEqual(json_response['category'], 'course')
-        self.assertEqual(json_response['id'], str(self.course.location))
-        self.assertEqual(json_response['display_name'], self.course.display_name)
+        assert json_response['category'] == 'course'
+        assert json_response['id'] == str(self.course.location)
+        assert json_response['display_name'] == self.course.display_name
         assert json_response['published']
-        self.assertIsNone(json_response['visibility_state'])
+        assert json_response['visibility_state'] is None
 
         # Now verify the first child
         children = json_response['child_info']['children']
         self.assertGreater(len(children), 0)
         first_child_response = children[0]
-        self.assertEqual(first_child_response['category'], 'chapter')
-        self.assertEqual(first_child_response['id'], str(chapter.location))
-        self.assertEqual(first_child_response['display_name'], 'Week 1')
+        assert first_child_response['category'] == 'chapter'
+        assert first_child_response['id'] == str(chapter.location)
+        assert first_child_response['display_name'] == 'Week 1'
         assert json_response['published']
-        self.assertEqual(first_child_response['visibility_state'], VisibilityState.unscheduled)
+        assert first_child_response['visibility_state'] == VisibilityState.unscheduled
         self.assertGreater(len(first_child_response['child_info']['children']), 0)
 
         # Finally, validate the entire response for consistency
@@ -199,7 +199,7 @@ class TestCourseIndex(CourseTestCase):
         resp = self.client.get(notification_url, HTTP_ACCEPT='application/json')
 
         # verify that we get an empty dict out
-        self.assertEqual(resp.status_code, 400)
+        assert resp.status_code == 400
 
         # create a test notification
         rerun_state = CourseRerunState.objects.update_state(
@@ -221,9 +221,9 @@ class TestCourseIndex(CourseTestCase):
 
         json_response = json.loads(resp.content.decode('utf-8'))
 
-        self.assertEqual(json_response['state'], state)
-        self.assertEqual(json_response['action'], action)
-        self.assertEqual(json_response['should_display'], should_display)
+        assert json_response['state'] == state
+        assert json_response['action'] == action
+        assert json_response['should_display'] == should_display
 
     def test_notifications_handler_dismiss(self):
         state = CourseRerunUIStateManager.State.FAILED
@@ -251,21 +251,21 @@ class TestCourseIndex(CourseTestCase):
             'action_state_id': rerun_state.id,
         })
         resp = self.client.delete(notification_dismiss_url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         with self.assertRaises(CourseRerunState.DoesNotExist):
             # delete nofications that are dismissed
             CourseRerunState.objects.get(id=rerun_state.id)
 
-        self.assertFalse(has_course_author_access(user2, rerun_course_key))
+        assert not has_course_author_access(user2, rerun_course_key)
 
     def assert_correct_json_response(self, json_response):
         """
         Asserts that the JSON response is syntactically consistent
         """
-        self.assertIsNotNone(json_response['display_name'])
-        self.assertIsNotNone(json_response['id'])
-        self.assertIsNotNone(json_response['category'])
+        assert json_response['display_name'] is not None
+        assert json_response['id'] is not None
+        assert json_response['category'] is not None
         assert json_response['published']
         if json_response.get('child_info', None):
             for child_response in json_response['child_info']['children']:
@@ -280,20 +280,20 @@ class TestCourseIndex(CourseTestCase):
         invalid_course_key = f'{self.course.id}_blah_blah_blah'
         course_updates_url = reverse_course_url('course_info_handler', invalid_course_key)
         response = self.client.get(course_updates_url)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
         # Testing the response code by passing split course id whose format is valid but no course
         # having this id exists.
         split_course_key = CourseLocator(org='orgASD', course='course_01213', run='Run_0_hhh_hhh_hhh')
         course_updates_url_split = reverse_course_url('course_info_handler', split_course_key)
         response = self.client.get(course_updates_url_split)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
         # Testing the response by passing split course id whose format is invalid.
         invalid_course_id = f'invalid.course.key/{split_course_key}'
         course_updates_url_split = reverse_course_url('course_info_handler', invalid_course_id)
         response = self.client.get(course_updates_url_split)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
     def test_course_index_invalid_url(self):
         """
@@ -304,14 +304,14 @@ class TestCourseIndex(CourseTestCase):
         invalid_course_key = f'{self.course.id}_some_invalid_run'
         course_outline_url = reverse_course_url('course_handler', invalid_course_key)
         response = self.client.get_html(course_outline_url)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
         # Testing the response code by passing split course key, no course
         # having this key exists.
         split_course_key = CourseLocator(org='invalid_org', course='course_01111', run='Run_0_invalid')
         course_outline_url_split = reverse_course_url('course_handler', split_course_key)
         response = self.client.get_html(course_outline_url_split)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
     def test_course_outline_with_display_course_number_as_none(self):
         """
@@ -322,7 +322,7 @@ class TestCourseIndex(CourseTestCase):
         updated_course = self.update_course(self.course, self.user.id)
 
         # Assert that 'display_coursenumber' field has been changed successfully.
-        self.assertEqual(updated_course.display_coursenumber, None)
+        assert updated_course.display_coursenumber is None
 
         # Perform GET request on course outline url with the course id.
         course_outline_url = reverse_course_url('course_handler', updated_course.id)
@@ -330,11 +330,11 @@ class TestCourseIndex(CourseTestCase):
 
         # course_handler raise 404 for old mongo course
         if self.course.id.deprecated:
-            self.assertEqual(response.status_code, 404)
+            assert response.status_code == 404
             return
 
         # Assert that response code is 200.
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         # Assert that 'display_course_number' is being set to "" (as display_coursenumber was None).
         self.assertContains(response, 'display_course_number: ""')
@@ -422,13 +422,13 @@ class TestCourseIndexArchived(CourseTestCase):
         if org is not None:
             index_params['org'] = org
         index_response = self.client.get(index_url, index_params, HTTP_ACCEPT='text/html')
-        self.assertEqual(index_response.status_code, 200)
+        assert index_response.status_code == 200
 
         parsed_html = lxml.html.fromstring(index_response.content)
         course_tab = parsed_html.find_class('courses')
-        self.assertEqual(len(course_tab), 1)
+        assert len(course_tab) == 1
         archived_course_tab = parsed_html.find_class('archived-courses')
-        self.assertEqual(len(archived_course_tab), 1 if separate_archived_courses else 0)
+        assert len(archived_course_tab) == 1 if separate_archived_courses else 0
 
     @override_settings(FEATURES=FEATURES_WITHOUT_HOME_PAGE_COURSE_V2_API)
     @ddt.data(
@@ -541,28 +541,28 @@ class TestCourseOutline(CourseTestCase):
         outline_url = outline_url + '?format=concise' if is_concise else outline_url
         resp = self.client.get(outline_url, HTTP_ACCEPT='application/json')
         if self.course.id.deprecated:
-            self.assertEqual(resp.status_code, 404)
+            assert resp.status_code == 404
             return
 
         json_response = json.loads(resp.content.decode('utf-8'))
 
         # First spot check some values in the root response
-        self.assertEqual(json_response['category'], 'course')
-        self.assertEqual(json_response['id'], str(self.course.location))
-        self.assertEqual(json_response['display_name'], self.course.display_name)
+        assert json_response['category'] == 'course'
+        assert json_response['id'] == str(self.course.location)
+        assert json_response['display_name'] == self.course.display_name
         self.assertNotEqual(json_response.get('published', False), is_concise)
-        self.assertIsNone(json_response.get('visibility_state'))
+        assert json_response.get('visibility_state') is None
 
         # Now verify the first child
         children = json_response['child_info']['children']
         self.assertGreater(len(children), 0)
         first_child_response = children[0]
-        self.assertEqual(first_child_response['category'], 'chapter')
-        self.assertEqual(first_child_response['id'], str(self.chapter.location))
-        self.assertEqual(first_child_response['display_name'], 'Week 1')
+        assert first_child_response['category'] == 'chapter'
+        assert first_child_response['id'] == str(self.chapter.location)
+        assert first_child_response['display_name'] == 'Week 1'
         self.assertNotEqual(json_response.get('published', False), is_concise)
         if not is_concise:
-            self.assertEqual(first_child_response['visibility_state'], VisibilityState.unscheduled)
+            assert first_child_response['visibility_state'] == VisibilityState.unscheduled
         self.assertGreater(len(first_child_response['child_info']['children']), 0)
 
         # Finally, validate the entire response for consistency
@@ -572,9 +572,9 @@ class TestCourseOutline(CourseTestCase):
         """
         Asserts that the JSON response is syntactically consistent
         """
-        self.assertIsNotNone(json_response['display_name'])
-        self.assertIsNotNone(json_response['id'])
-        self.assertIsNotNone(json_response['category'])
+        assert json_response['display_name'] is not None
+        assert json_response['id'] is not None
+        assert json_response['category'] is not None
         self.assertNotEqual(json_response.get('published', False), is_concise)
         if json_response.get('child_info', None):
             for child_response in json_response['child_info']['children']:
@@ -589,12 +589,12 @@ class TestCourseOutline(CourseTestCase):
         )
 
         # Verify that None is returned for a non-existent locator
-        self.assertIsNone(course_outline_initial_state('no-such-locator', course_structure))
+        assert course_outline_initial_state('no-such-locator', course_structure) is None
 
         # Verify that the correct initial state is returned for the test chapter
         chapter_locator = str(self.chapter.location)
         initial_state = course_outline_initial_state(chapter_locator, course_structure)
-        self.assertEqual(initial_state['locator_to_show'], chapter_locator)
+        assert initial_state['locator_to_show'] == chapter_locator
         expanded_locators = initial_state['expanded_locators']
         self.assertIn(str(self.sequential.location), expanded_locators)
         self.assertIn(str(self.vertical.location), expanded_locators)
@@ -773,15 +773,15 @@ class TestCourseReIndex(CourseTestCase):
 
         # A course with the default release date should display as "Unscheduled"
         self.assertContains(response, self.SUCCESSFUL_RESPONSE)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         response = self.client.post(index_url, {}, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.content, b'')
-        self.assertEqual(response.status_code, 405)
+        assert response.content == b''
+        assert response.status_code == 405
 
         self.client.logout()
         response = self.client.get(index_url, {}, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 302)
+        assert response.status_code == 302
 
     def test_negative_conditions(self):
         """
@@ -791,7 +791,7 @@ class TestCourseReIndex(CourseTestCase):
         # register a non-staff member and try to delete the course branch
         non_staff_client, _ = self.create_non_staff_authed_user_client()
         response = non_staff_client.get(index_url, {}, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_empty_content_type(self):
         """
@@ -802,7 +802,7 @@ class TestCourseReIndex(CourseTestCase):
 
         # A course with the default release date should display as "Unscheduled"
         self.assertContains(response, self.SUCCESSFUL_RESPONSE)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @mock.patch('xmodule.html_block.HtmlBlock.index_dictionary')
     def test_reindex_course_search_index_error(self, mock_index_dictionary):
@@ -818,7 +818,7 @@ class TestCourseReIndex(CourseTestCase):
 
         # Start manual reindex and check error in response
         response = self.client.get(index_url, {}, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 500)
+        assert response.status_code == 500
 
     def test_reindex_json_responses(self):
         """
@@ -831,7 +831,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # Start manual reindex
         reindex_course_and_check_access(self.course.id, self.user)
@@ -843,7 +843,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
     @mock.patch('xmodule.video_block.VideoBlock.index_dictionary')
     def test_reindex_video_error_json_responses(self, mock_index_dictionary):
@@ -857,7 +857,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # set mocked exception response
         err = SearchIndexingError
@@ -879,7 +879,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # set mocked exception response
         err = SearchIndexingError
@@ -901,7 +901,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # set mocked exception response
         err = Exception
@@ -941,7 +941,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # Start manual reindex
         CoursewareSearchIndexer.do_course_reindex(modulestore(), self.course.id)
@@ -953,7 +953,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
     @mock.patch('xmodule.video_block.VideoBlock.index_dictionary')
     def test_indexing_video_error_responses(self, mock_index_dictionary):
@@ -967,7 +967,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # set mocked exception response
         err = Exception
@@ -989,7 +989,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # set mocked exception response
         err = Exception
@@ -1011,7 +1011,7 @@ class TestCourseReIndex(CourseTestCase):
             size=10,
             from_=0,
             course_id=str(self.course.id))
-        self.assertEqual(response['total'], 1)
+        assert response['total'] == 1
 
         # set mocked exception response
         err = Exception

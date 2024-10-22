@@ -153,9 +153,9 @@ class XBlockSerializationTestCase(SharedModuleStoreTestCase):
         )
         self.assertIn("CDATA", serialized.olx_str)
         # Static files should be identical:
-        self.assertEqual(serialized.static_files, serialized_learning_core.static_files)
+        assert serialized.static_files == serialized_learning_core.static_files
         # This is the only other difference - an extra field with the learning-core-specific definition ID:
-        self.assertEqual(serialized_learning_core.def_id, "html/just_img")
+        assert serialized_learning_core.def_id == "html/just_img"
 
     def test_html_with_fields(self):
         """ Test an HTML Block with non-default fields like editor='raw' """

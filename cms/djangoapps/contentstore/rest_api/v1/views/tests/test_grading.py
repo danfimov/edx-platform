@@ -45,7 +45,7 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
             "default_grade_designations": ['A', 'B', 'C', 'D'],
         }
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     @patch("django.conf.settings.DEFAULT_GRADE_DESIGNATIONS", ['A', 'B'])
@@ -55,8 +55,8 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
         """
         response = self.client.get(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(['A', 'B'], response.data["default_grade_designations"])
+        assert response.status_code == status.HTTP_200_OK
+        assert ['A' == 'B'], response.data["default_grade_designations"]
 
     @patch.dict("django.conf.settings.FEATURES", {"ENABLE_CREDIT_ELIGIBILITY": True})
     def test_credit_eligibility_setting(self):
@@ -65,7 +65,7 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
         """
         _ = CreditCourseFactory(course_key=self.course.id, enabled=True)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         assert response.data["show_credit_eligibility"]
         assert response.data["is_credit_course"]
 
@@ -76,8 +76,8 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
         self.client.logout()
         response = self.client.post(self.url)
         error = self.get_and_check_developer_response(response)
-        self.assertEqual(error, "Authentication credentials were not provided.")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        assert error == "Authentication credentials were not provided."
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_post_permissions_unauthorized(self):
         """
@@ -86,8 +86,8 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
         client, _ = self.create_non_staff_authed_user_client()
         response = client.post(self.url)
         error = self.get_and_check_developer_response(response)
-        self.assertEqual(error, "You do not have permission to perform this action.")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        assert error == "You do not have permission to perform this action."
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @patch(
         "openedx.core.djangoapps.credit.tasks.update_credit_course_requirements.delay"
@@ -115,5 +115,5 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
             data=json.dumps(request_data),
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         mock_update_credit_course_requirements.assert_called_once()

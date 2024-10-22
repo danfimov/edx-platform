@@ -409,7 +409,7 @@ class CreditRequirementApiTests(CreditApiTestBase):
 
         # The eligibility should NOT show up in the user's list of eligibilities
         eligibilities = api.get_eligibilities_for_user("staff")
-        assert eligibilities == []
+        assert not eligibilities
 
     def test_eligibility_disabled_course(self):
         # Configure a credit eligibility for a disabled course
@@ -428,7 +428,7 @@ class CreditRequirementApiTests(CreditApiTestBase):
 
         # The eligibility should NOT show up in the user's list of eligibilities
         eligibilities = api.get_eligibilities_for_user("staff")
-        assert eligibilities == []
+        assert not eligibilities
 
     def assert_grade_requirement_status(self, expected_status, expected_sort_value):
         """ Assert the status and order of the grade requirement. """
@@ -917,7 +917,7 @@ class CreditProviderIntegrationApiTests(CreditApiTestBase):
         provider.save()
 
         result = api.get_credit_providers()
-        assert result == []
+        assert not result
 
     def test_get_credit_providers_details(self):
         """Test that credit api method 'test_get_credit_provider_details'
@@ -938,7 +938,7 @@ class CreditProviderIntegrationApiTests(CreditApiTestBase):
 
         # now test that user gets empty dict for non existent credit provider
         result = api.get_credit_providers(['fake_provider_id'])
-        assert result == []
+        assert not result
 
     def test_credit_request(self):
         # Initiate a credit request
@@ -1148,7 +1148,7 @@ class CreditProviderIntegrationApiTests(CreditApiTestBase):
 
     def test_get_credit_requests_no_requests(self):
         requests = api.get_credit_requests_for_user(self.USER_INFO["username"])
-        assert requests == []
+        assert not requests
 
     def _configure_credit(self, course_key=None):
         """
@@ -1306,7 +1306,7 @@ class CourseApiTests(CreditApiTestBase):
         """Verify that if all providers are in-active than method return empty list."""
         self._mock_ecommerce_courses_api(self.course_key, self.COURSE_API_RESPONSE)
         CreditProvider.objects.all().update(active=False)
-        assert get_credit_provider_attribute_values(self.course_key, 'display_name') == []
+        assert not get_credit_provider_attribute_values(self.course_key, 'display_name')
 
     @ddt.data(None, ['asu'], ['asu', 'co'], ['asu', 'co', 'mit'])
     def test_make_providers_strings(self, providers):

@@ -20,11 +20,11 @@ class TextbookIndexTestCase(CourseTestCase):
     def test_view_index(self):
         "Basic check that the textbook index page responds correctly"
         resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         # we don't have resp.context right now,
         # due to bugs in our testing harness :(
         if resp.context and resp.context.get('course'):
-            self.assertEqual(resp.context['course'], self.course)
+            assert resp.context['course'] == self.course
 
     def test_view_index_xhr(self):
         "Check that we get a JSON response when requested via AJAX"
@@ -33,9 +33,9 @@ class TextbookIndexTestCase(CourseTestCase):
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         obj = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(self.course.pdf_textbooks, obj)
+        assert self.course.pdf_textbooks == obj
 
     def test_view_index_xhr_content(self):
         "Check that the response maps to the content of the modulestore"
@@ -66,10 +66,10 @@ class TextbookIndexTestCase(CourseTestCase):
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         obj = json.loads(resp.content.decode('utf-8'))
 
-        self.assertEqual(content, obj)
+        assert content == obj
 
     def test_view_index_xhr_put(self):
         "Check that you can save information to the server"
@@ -84,7 +84,7 @@ class TextbookIndexTestCase(CourseTestCase):
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         # should be the same, except for added ID
         no_ids = []
@@ -92,7 +92,7 @@ class TextbookIndexTestCase(CourseTestCase):
         for textbook in self.course.pdf_textbooks:
             del textbook["id"]
             no_ids.append(textbook)
-        self.assertEqual(no_ids, textbooks)
+        assert no_ids == textbooks
 
     def test_view_index_xhr_put_invalid(self):
         "Check that you can't save invalid JSON"
@@ -103,7 +103,7 @@ class TextbookIndexTestCase(CourseTestCase):
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEqual(resp.status_code, 400)
+        assert resp.status_code == 400
         obj = json.loads(resp.content.decode('utf-8'))
         self.assertIn("error", obj)
 
@@ -133,12 +133,12 @@ class TextbookCreateTestCase(CourseTestCase):
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(resp.status_code, 201)
+        assert resp.status_code == 201
         self.assertIn("Location", resp)
         textbook = json.loads(resp.content.decode('utf-8'))
         self.assertIn("id", textbook)
         del textbook["id"]
-        self.assertEqual(self.textbook, textbook)
+        assert self.textbook == textbook
 
     def test_valid_id(self):
         "Textbook IDs must begin with a number; try a valid one"
@@ -150,9 +150,9 @@ class TextbookCreateTestCase(CourseTestCase):
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(resp.status_code, 201)
+        assert resp.status_code == 201
         textbook = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(self.textbook, textbook)
+        assert self.textbook == textbook
 
     def test_invalid_id(self):
         "Textbook IDs must begin with a number; try an invalid one"
@@ -164,7 +164,7 @@ class TextbookCreateTestCase(CourseTestCase):
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(resp.status_code, 400)
+        assert resp.status_code == 400
         self.assertNotIn("Location", resp)
 
 
@@ -212,35 +212,35 @@ class TextbookDetailTestCase(CourseTestCase):
     def test_get_1(self):
         "Get the first textbook"
         resp = self.client.get(self.url1)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         compare = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(compare, self.textbook1)
+        assert compare == self.textbook1
 
     def test_get_2(self):
         "Get the second textbook"
         resp = self.client.get(self.url2)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         compare = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(compare, self.textbook2)
+        assert compare == self.textbook2
 
     def test_get_nonexistant(self):
         "Get a nonexistent textbook"
         resp = self.client.get(self.url_nonexist)
-        self.assertEqual(resp.status_code, 404)
+        assert resp.status_code == 404
 
     def test_delete(self):
         "Delete a textbook by ID"
         resp = self.client.delete(self.url1)
-        self.assertEqual(resp.status_code, 204)
+        assert resp.status_code == 204
         self.reload_course()
-        self.assertEqual(self.course.pdf_textbooks, [self.textbook2])
+        assert self.course.pdf_textbooks == [self.textbook2]
 
     def test_delete_nonexistant(self):
         "Delete a textbook by ID, when the ID doesn't match an existing textbook"
         resp = self.client.delete(self.url_nonexist)
-        self.assertEqual(resp.status_code, 404)
+        assert resp.status_code == 404
         self.reload_course()
-        self.assertEqual(self.course.pdf_textbooks, [self.textbook1, self.textbook2])
+        assert self.course.pdf_textbooks, [self.textbook1 == self.textbook2]
 
     def test_create_new_by_id(self):
         "Create a textbook by ID"
@@ -255,11 +255,11 @@ class TextbookDetailTestCase(CourseTestCase):
             data=json.dumps(textbook),
             content_type="application/json",
         )
-        self.assertEqual(resp.status_code, 201)
+        assert resp.status_code == 201
         resp2 = self.client.get(url)
-        self.assertEqual(resp2.status_code, 200)
+        assert resp2.status_code == 200
         compare = json.loads(resp2.content.decode('utf-8'))
-        self.assertEqual(compare, textbook)
+        assert compare == textbook
         self.reload_course()
         self.assertEqual(
             self.course.pdf_textbooks,
@@ -278,11 +278,11 @@ class TextbookDetailTestCase(CourseTestCase):
             data=json.dumps(replacement),
             content_type="application/json",
         )
-        self.assertEqual(resp.status_code, 201)
+        assert resp.status_code == 201
         resp2 = self.client.get(self.url2)
-        self.assertEqual(resp2.status_code, 200)
+        assert resp2.status_code == 200
         compare = json.loads(resp2.content.decode('utf-8'))
-        self.assertEqual(compare, replacement)
+        assert compare == replacement
         course = self.store.get_item(self.course.location)
         self.assertEqual(
             course.pdf_textbooks,
@@ -318,23 +318,23 @@ class TextbookValidationTestCase(TestCase):
     def test_happy_path_plural(self):
         "Test that the plural validator works properly"
         result = validate_textbooks_json(json.dumps(self.textbooks))
-        self.assertEqual(self.textbooks, result)
+        assert self.textbooks == result
 
     def test_happy_path_singular_1(self):
         "Test that the singular validator works properly"
         result = validate_textbook_json(json.dumps(self.tb1))
-        self.assertEqual(self.tb1, result)
+        assert self.tb1 == result
 
     def test_happy_path_singular_2(self):
         "Test that the singular validator works properly, with different data"
         result = validate_textbook_json(json.dumps(self.tb2))
-        self.assertEqual(self.tb2, result)
+        assert self.tb2 == result
 
     def test_valid_id(self):
         "Test that a valid ID doesn't trip the validator, and comes out unchanged"
         self.tb1["id"] = 1
         result = validate_textbook_json(json.dumps(self.tb1))
-        self.assertEqual(self.tb1, result)
+        assert self.tb1 == result
 
     def test_invalid_id(self):
         "Test that an invalid ID trips the validator"

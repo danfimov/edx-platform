@@ -38,7 +38,7 @@ class ContentStoreTestCase(ModuleStoreTestCase):
     def login(self, email, password):
         """Login, check that it worked."""
         resp = self._login(email, password)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         return resp
 
     def _create_account(self, username, email, password):
@@ -59,12 +59,12 @@ class ContentStoreTestCase(ModuleStoreTestCase):
     def create_account(self, username, email, password):
         """Create the account and check that it worked"""
         resp = self._create_account(username, email, password)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         json_data = parse_json(resp)
-        self.assertEqual(json_data['success'], True)
+        assert json_data['success'] is True
 
         # Check both that the user is created, and inactive
-        self.assertFalse(user(email).is_active)
+        assert not user(email).is_active
 
         return resp
 
@@ -79,7 +79,7 @@ class ContentStoreTestCase(ModuleStoreTestCase):
 
     def activate_user(self, email):
         resp = self._activate_user(email)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         # Now make sure that the user is now actually activated
         assert user(email).is_active
 
@@ -103,7 +103,7 @@ class AuthTestCase(ContentStoreTestCase):
 
     def check_page_get(self, url, expected):
         resp = self.client.get_html(url)
-        self.assertEqual(resp.status_code, expected)
+        assert resp.status_code == expected
         return resp
 
     def test_private_pages_auth(self):
@@ -153,7 +153,7 @@ class AuthTestCase(ContentStoreTestCase):
         # make sure we can access courseware immediately
         course_url = '/home/'
         resp = self.client.get_html(course_url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         # then wait a bit and see if we get timed out
         time.sleep(2)
@@ -215,7 +215,7 @@ class ForumTestCase(CourseTestCase):
             (now + datetime.timedelta(days=24), now + datetime.timedelta(days=30))
         ]
         self.set_blackout_dates(times2)
-        self.assertFalse(self.course.forum_posts_allowed)
+        assert not self.course.forum_posts_allowed
 
         # Single date set for allowed forum posts.
         self.course.discussion_blackouts = [
@@ -229,7 +229,7 @@ class ForumTestCase(CourseTestCase):
             now - datetime.timedelta(days=24),
             now + datetime.timedelta(days=30)
         ]
-        self.assertFalse(self.course.forum_posts_allowed)
+        assert not self.course.forum_posts_allowed
 
         # test if user gives empty blackout date it should return true for forum_posts_allowed
         self.course.discussion_blackouts = [[]]
@@ -255,11 +255,11 @@ class CourseKeyVerificationTestCase(CourseTestCase):
         """
         url = f'/import/{course_key}'
         resp = self.client.get_html(url)
-        self.assertEqual(resp.status_code, status_code)
+        assert resp.status_code == status_code
 
         url = '/import_status/{course_key}/{filename}'.format(
             course_key=course_key,
             filename='xyz.tar.gz'
         )
         resp = self.client.get_html(url)
-        self.assertEqual(resp.status_code, status_code)
+        assert resp.status_code == status_code

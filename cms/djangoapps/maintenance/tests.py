@@ -103,7 +103,7 @@ class MaintenanceViewAccessTests(MaintenanceViewTestCase):
         Test that all maintenance app views are accessible to global staff user.
         """
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @ddt.data(*MAINTENANCE_URLS)
     def test_non_global_staff_access(self, url):
@@ -282,7 +282,7 @@ class TestAnnouncementsViews(MaintenanceViewTestCase):
         self.assertContains(response, '<div class="wrapper-form announcement-container">')
         self.client.post(url, {"content": "Test Edit Announcement", "active": True})
         announcement = Announcement.objects.get(pk=announcement.pk)
-        self.assertEqual(announcement.content, "Test Edit Announcement")
+        assert announcement.content == "Test Edit Announcement"
 
     def test_delete(self):
         """
@@ -293,12 +293,12 @@ class TestAnnouncementsViews(MaintenanceViewTestCase):
         url = reverse("maintenance:announcement_delete", kwargs={"pk": announcement.pk})
         self.client.post(url)
         result = Announcement.objects.filter(content="Test Edit Announcement").exists()
-        self.assertFalse(result)
+        assert not result
 
     def _test_403(self, viewname, kwargs=None):
         url = reverse("maintenance:%s" % viewname, kwargs=kwargs)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_authorization(self):
         self.client.login(username=self.non_staff_user, password=self.TEST_PASSWORD)

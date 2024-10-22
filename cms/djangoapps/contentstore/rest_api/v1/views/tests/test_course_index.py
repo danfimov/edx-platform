@@ -88,7 +88,7 @@ class CourseIndexViewTest(CourseTestCase, PermissionAccessMixin):
             "advance_settings_url": f"/settings/advanced/{self.course.id}",
         }
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     @override_waffle_flag(CUSTOM_RELATIVE_DATES, active=False)
@@ -135,13 +135,13 @@ class CourseIndexViewTest(CourseTestCase, PermissionAccessMixin):
             "advance_settings_url": f"/settings/advanced/{self.course.id}",
         }
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     def test_course_index_response_with_invalid_course(self):
         """Check error response for invalid course id"""
         response = self.client.get(self.url + "1")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         self.assertEqual(response.data, {
             "developer_message": f"Unknown course {self.course.id}1",
             "error_code": "course_does_not_exist"

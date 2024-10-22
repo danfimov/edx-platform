@@ -34,4 +34,4 @@ class getPublicSigningJWKSFunctionTest(TestCase):
         resp = self._get_jwks()
         content = json.loads(resp.content)
         assert resp.status_code == 200
-        assert content['keys'] == []
+        assert not content['keys']

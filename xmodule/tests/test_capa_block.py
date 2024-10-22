@@ -1858,7 +1858,7 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
         with patch.object(block.lcp, 'calculate_score', return_value={'score': 1, 'total': 2}):
             result = block.calculate_score_list()
             expected_result = [Score(raw_earned=1, raw_possible=2), Score(raw_earned=1, raw_possible=2)]
-            self.assertEqual(result, expected_result)
+            assert result == expected_result
 
     def test_calculate_score_list_empty(self):
         """
@@ -1872,7 +1872,7 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
 
         with patch.object(block.lcp, 'calculate_score', return_value=Mock()):
             result = block.calculate_score_list()
-            self.assertEqual(result, [])
+            assert not result
             block.lcp.calculate_score.assert_not_called()
 
     def test_update_correctness_list_updates_attempt(self):
@@ -1883,7 +1883,7 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
 
         block.update_correctness_list()
 
-        self.assertEqual(block.lcp.context['attempt'], 1)
+        assert block.lcp.context['attempt'] == 1
 
     def test_update_correctness_list_with_history(self):
         """
@@ -1897,10 +1897,10 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
 
         with patch.object(block.lcp, 'get_grade_from_current_answers', return_value=correct_map):
             block.update_correctness_list()
-            self.assertEqual(block.lcp.context['attempt'], 2)
+            assert block.lcp.context['attempt'] == 2
             block.lcp.get_grade_from_current_answers.assert_called_once_with(student_answers, correct_map)
-            self.assertEqual(block.lcp.correct_map_history, [correct_map])
-            self.assertEqual(block.lcp.correct_map.get_dict(), correct_map.get_dict())
+            assert block.lcp.correct_map_history == [correct_map]
+            assert block.lcp.correct_map.get_dict() == correct_map.get_dict()
 
     def test_update_correctness_list_without_history(self):
         """
@@ -1915,7 +1915,7 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
 
         with patch.object(block.lcp, 'get_grade_from_current_answers', return_value=Mock()):
             block.update_correctness_list()
-            self.assertEqual(block.lcp.context['attempt'], 1)
+            assert block.lcp.context['attempt'] == 1
             block.lcp.get_grade_from_current_answers.assert_not_called()
 
     @override_settings(FEATURES=FEATURES_WITH_GRADING_METHOD_IN_PROBLEMS)
@@ -1931,7 +1931,7 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
 
         result = block.get_rescore_with_grading_method()
 
-        self.assertEqual(result, Score(raw_earned=1, raw_possible=1))
+        assert result == Score(raw_earned=1, raw_possible=1)
 
     def test_get_score_with_grading_method(self):
         """
@@ -1947,8 +1947,8 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
 
         score = block.get_score_with_grading_method(block.score_from_lcp(block.lcp))
 
-        self.assertEqual(score, expected_score)
-        self.assertEqual(block.score, expected_score)
+        assert score == expected_score
+        assert block.score == expected_score
 
     @patch('xmodule.capa_block.ProblemBlock.score_from_lcp')
     def test_get_score_with_grading_method_updates_score(self, mock_score_from_lcp: Mock):
@@ -1964,8 +1964,8 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
 
         score = block.get_score_with_grading_method(current_score)
 
-        self.assertEqual(score, current_score)
-        self.assertEqual(block.score_history, [current_score])
+        assert score == current_score
+        assert block.score_history == [current_score]
 
     def test_get_score_with_grading_method_calls_grading_method_handler(self):
         """

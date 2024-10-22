@@ -180,19 +180,19 @@ class TestGatingApi(ModuleStoreTestCase, MilestonesTestCaseMixin):
         staff = UserFactory(is_staff=True)
         student = UserFactory(is_staff=False)
 
-        assert gating_api.get_gated_content(self.course, staff) == []
-        assert gating_api.get_gated_content(self.course, student) == []
+        assert not gating_api.get_gated_content(self.course, staff)
+        assert not gating_api.get_gated_content(self.course, student)
 
         gating_api.add_prerequisite(self.course.id, self.seq1.location)
         gating_api.set_required_content(self.course.id, self.seq2.location, self.seq1.location, 100)
         milestone = milestones_api.get_course_content_milestones(self.course.id, self.seq2.location, 'requires')[0]
 
-        assert gating_api.get_gated_content(self.course, staff) == []
+        assert not gating_api.get_gated_content(self.course, staff)
         assert gating_api.get_gated_content(self.course, student) == [str(self.seq2.location)]
 
         milestones_api.add_user_milestone({'id': student.id}, milestone)
 
-        assert gating_api.get_gated_content(self.course, student) == []
+        assert not gating_api.get_gated_content(self.course, student)
 
     @data(
         (100, 0, 50, 0, False),

@@ -18,12 +18,12 @@ class TemplateTests(ModuleStoreTestCase):
     """
     def test_get_templates(self):
         found = templates.all_templates()
-        self.assertIsNotNone(found.get('course'))
-        self.assertIsNotNone(found.get('about'))
-        self.assertIsNotNone(found.get('html'))
-        self.assertIsNotNone(found.get('problem'))
-        self.assertEqual(len(found.get('course')), 0)
-        self.assertEqual(len(found.get('about')), 1)
+        assert found.get('course') is not None
+        assert found.get('about') is not None
+        assert found.get('html') is not None
+        assert found.get('problem') is not None
+        assert len(found.get('course')) == 0
+        assert len(found.get('about')) == 1
         self.assertGreaterEqual(len(found.get('html')), 2)
         self.assertGreaterEqual(len(found.get('problem')), 10)
         dropdown = None
@@ -33,18 +33,18 @@ class TemplateTests(ModuleStoreTestCase):
             if template['metadata']['display_name'] == 'Dropdown':
                 dropdown = template
                 break
-        self.assertIsNotNone(dropdown)
+        assert dropdown is not None
         self.assertIn('markdown', dropdown['metadata'])
         self.assertIn('data', dropdown)
         self.assertRegex(dropdown['metadata']['markdown'], r'.*dropdown problems.*')
         self.assertRegex(dropdown['data'], r'<problem>\s*<optionresponse>\s*<p>.*dropdown problems.*')
 
     def test_get_some_templates(self):
-        self.assertEqual(len(SequenceBlock.templates()), 0)
+        assert len(SequenceBlock.templates()) == 0
         self.assertGreater(len(HtmlBlock.templates()), 0)
-        self.assertIsNone(SequenceBlock.get_template('doesntexist.yaml'))
-        self.assertIsNone(HtmlBlock.get_template('doesntexist.yaml'))
-        self.assertIsNotNone(HtmlBlock.get_template('announcement.yaml'))
+        assert SequenceBlock.get_template('doesntexist.yaml') is None
+        assert HtmlBlock.get_template('doesntexist.yaml') is None
+        assert HtmlBlock.get_template('announcement.yaml') is not None
 
     def test_factories(self):
         test_course = CourseFactory.create(
@@ -54,19 +54,19 @@ class TemplateTests(ModuleStoreTestCase):
             display_name='fun test course',
             user_id=ModuleStoreEnum.UserID.test,
         )
-        self.assertIsInstance(test_course, CourseBlock)
-        self.assertEqual(test_course.display_name, 'fun test course')
+        assert isinstance(test_course, CourseBlock)
+        assert test_course.display_name == 'fun test course'
         course_from_store = self.store.get_course(test_course.id)
-        self.assertEqual(course_from_store.id.org, 'testx')
-        self.assertEqual(course_from_store.id.course, 'course')
-        self.assertEqual(course_from_store.id.run, '2014')
+        assert course_from_store.id.org == 'testx'
+        assert course_from_store.id.course == 'course'
+        assert course_from_store.id.run == '2014'
 
         test_chapter = BlockFactory.create(
             parent_location=test_course.location,
             category='chapter',
             display_name='chapter 1'
         )
-        self.assertIsInstance(test_chapter, SequenceBlock)
+        assert isinstance(test_chapter, SequenceBlock)
         # refetch parent which should now point to child
         test_course = self.store.get_course(test_course.id.version_agnostic())
         self.assertIn(test_chapter.location, test_course.children)
@@ -93,8 +93,8 @@ class TemplateTests(ModuleStoreTestCase):
             test_course.runtime, test_course.id, 'chapter', fields={'display_name': 'chapter n'},
             parent_xblock=test_course
         )
-        self.assertIsInstance(test_chapter, SequenceBlock)
-        self.assertEqual(test_chapter.display_name, 'chapter n')
+        assert isinstance(test_chapter, SequenceBlock)
+        assert test_chapter.display_name == 'chapter n'
         self.assertIn(test_chapter, test_course.get_children())
 
         # test w/ a definition (e.g., a problem)
@@ -103,11 +103,11 @@ class TemplateTests(ModuleStoreTestCase):
             test_course.runtime, test_course.id, 'problem', fields={'data': test_def_content},
             parent_xblock=test_chapter
         )
-        self.assertIsInstance(test_problem, ProblemBlock)
-        self.assertEqual(test_problem.data, test_def_content)
+        assert isinstance(test_problem, ProblemBlock)
+        assert test_problem.data == test_def_content
         self.assertIn(test_problem, test_chapter.get_children())
         test_problem.display_name = 'test problem'
-        self.assertEqual(test_problem.display_name, 'test problem')
+        assert test_problem.display_name == 'test problem'
 
     def test_delete_course(self):
         test_course = CourseFactory.create(
@@ -125,13 +125,13 @@ class TemplateTests(ModuleStoreTestCase):
 
         id_locator = test_course.id.for_branch(ModuleStoreEnum.BranchName.draft)
         # verify it can be retrieved by id
-        self.assertIsInstance(self.store.get_course(id_locator), CourseBlock)
+        assert isinstance(self.store.get_course(id_locator), CourseBlock)
         # TODO reenable when split_draft supports getting specific versions
         # guid_locator = test_course.location.course_agnostic()
         # Verify it can be retrieved by guid
-        # self.assertIsInstance(self.store.get_item(guid_locator), CourseBlock)
+        # assert isinstance(self.store.get_item(guid_locator), CourseBlock)
         self.store.delete_course(id_locator, ModuleStoreEnum.UserID.test)
         # Test can no longer retrieve by id.
-        self.assertIsNone(self.store.get_course(id_locator))
+        assert self.store.get_course(id_locator) is None
         # But can retrieve by guid -- same TODO as above
-        # self.assertIsInstance(self.store.get_item(guid_locator), CourseBlock)
+        # assert isinstance(self.store.get_item(guid_locator), CourseBlock)

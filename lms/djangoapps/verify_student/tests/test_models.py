@@ -242,7 +242,7 @@ class TestPhotoVerification(TestVerificationBase, MockS3Boto3Mixin, ModuleStoreT
     def test_parse_error_msg_failure(self, msg):
         user = UserFactory.create()
         attempt = SoftwareSecurePhotoVerification.objects.create(user=user, status='denied', error_msg=msg)
-        assert attempt.parsed_error_msg() == []
+        assert not attempt.parsed_error_msg()
 
     def test_active_at_datetime(self):
         user = UserFactory.create()

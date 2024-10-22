@@ -626,7 +626,7 @@ class TestAccountsAPI(FilteredQueryCountMixin, CacheIsolationTestCase, UserAPITe
         client = self.login_client('staff_client', 'staff_user')
         json_data = {"emails": ['non_existant_email@example.com']}
         response = self.post_search_api(client, json_data=json_data)
-        assert response.data == []
+        assert not response.data
 
     def test_search_emails_with_invalid_param(self):
         client = self.login_client('staff_client', 'staff_user')
@@ -1279,14 +1279,14 @@ class NameChangeViewTests(UserAPITestCase):
         """
         self.client.login(username=self.user.username, password=TEST_PASSWORD)
         response = self._send_create(self.client, {'name': 'New Name'})
-        self.assertEqual(response.status_code, 201)
+        assert response.status_code == 201
 
     def test_create_unauthenticated(self):
         """
         Test that a name change request fails for an unauthenticated user.
         """
         response = self._send_create(self.client, {'name': 'New Name'})
-        self.assertEqual(response.status_code, 401)
+        assert response.status_code == 401
 
     def test_create_empty_request(self):
         """
@@ -1294,7 +1294,7 @@ class NameChangeViewTests(UserAPITestCase):
         """
         self.client.login(username=self.user.username, password=TEST_PASSWORD)
         response = self._send_create(self.client, {})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     def test_create_blank_name(self):
         """
@@ -1302,7 +1302,7 @@ class NameChangeViewTests(UserAPITestCase):
         """
         self.client.login(username=self.user.username, password=TEST_PASSWORD)
         response = self._send_create(self.client, {'name': ''})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     @ddt.data('<html>invalid name</html>', 'https://invalid.com')
     def test_create_fails_validation(self, invalid_name):
@@ -1311,7 +1311,7 @@ class NameChangeViewTests(UserAPITestCase):
         """
         self.client.login(username=self.user.username, password=TEST_PASSWORD)
         response = self._send_create(self.client, {'name': invalid_name})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     def test_confirm_succeeds(self):
         """
@@ -1320,8 +1320,8 @@ class NameChangeViewTests(UserAPITestCase):
         self.staff_client.login(username=self.staff_user.username, password=TEST_PASSWORD)
         do_name_change_request(self.user, 'New Name', 'test')
         response = self._send_confirm(self.staff_client, self.user.username)
-        self.assertEqual(response.status_code, 204)
-        self.assertIsNone(get_pending_name_change(self.user))
+        assert response.status_code == 204
+        assert get_pending_name_change(self.user) is None
 
     def test_confirm_non_staff(self):
         """
@@ -1330,8 +1330,8 @@ class NameChangeViewTests(UserAPITestCase):
         self.client.login(username=self.user.username, password=TEST_PASSWORD)
         do_name_change_request(self.user, 'New Name', 'test')
         response = self._send_confirm(self.client, self.user.username)
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(get_pending_name_change(self.user).new_name, 'New Name')
+        assert response.status_code == 403
+        assert get_pending_name_change(self.user).new_name == 'New Name'
 
     def test_confirm_no_pending_name_change(self):
         """
@@ -1339,7 +1339,7 @@ class NameChangeViewTests(UserAPITestCase):
         """
         self.staff_client.login(username=self.staff_user.username, password=TEST_PASSWORD)
         response = self._send_confirm(self.staff_client, self.user.username)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
 
 @ddt.ddt

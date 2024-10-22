@@ -328,7 +328,7 @@ class TestTaxonomyListCreateViewSet(TestTaxonomyObjectsMixin, APITestCase):
         response = self.client.get(url, query_params, format="json")
 
         assert response.status_code == status.HTTP_200_OK
-        self.assertEqual(set(t["name"] for t in response.data["results"]), set(expected_taxonomies))
+        assert set(t["name"] for t in response.data["results"]) == set(expected_taxonomies)
 
     def test_list_taxonomy_staff(self) -> None:
         """
@@ -442,7 +442,7 @@ class TestTaxonomyListCreateViewSet(TestTaxonomyObjectsMixin, APITestCase):
 
         assert response.status_code == status.HTTP_200_OK if len(expected_taxonomies) > 0 else status.HTTP_404_NOT_FOUND
         if status.is_success(response.status_code):
-            self.assertEqual(set(t["name"] for t in response.data["results"]), set(expected_taxonomies))
+            assert set(t["name"] for t in response.data["results"]) == set(expected_taxonomies)
             parsed_url = urlparse(response.data["next"])
 
             next_page = parse_qs(parsed_url.query).get("page", [None])[0]
@@ -1174,7 +1174,7 @@ class TestTaxonomyUpdateOrg(TestTaxonomyObjectsMixin, APITestCase):
         # Check that the orgs were updated
         url = TAXONOMY_ORG_DETAIL_URL.format(pk=self.tA1.pk)
         response = self.client.get(url)
-        assert response.data["orgs"] == []
+        assert not response.data["orgs"]
         assert response.data["all_orgs"]
 
     def test_update_no_org(self) -> None:
@@ -1191,7 +1191,7 @@ class TestTaxonomyUpdateOrg(TestTaxonomyObjectsMixin, APITestCase):
         # Check that the orgs were updated
         url = TAXONOMY_ORG_DETAIL_URL.format(pk=self.tA1.pk)
         response = self.client.get(url)
-        assert response.data["orgs"] == []
+        assert not response.data["orgs"]
         assert not response.data["all_orgs"]
 
     @ddt.data(
@@ -1231,7 +1231,7 @@ class TestTaxonomyUpdateOrg(TestTaxonomyObjectsMixin, APITestCase):
         # Check that the orgs didn't change
         url = TAXONOMY_ORG_DETAIL_URL.format(pk=self.st1.pk)
         response = self.client.get(url)
-        assert response.data["orgs"] == []
+        assert not response.data["orgs"]
         assert response.data["all_orgs"]
 
     @ddt.data(
@@ -1451,7 +1451,7 @@ class TestObjectTagViewSet(TestObjectTagMixin, APITestCase):
                 response_tags = response_taxonomy["tags"]
                 assert [t["value"] for t in response_tags] == tag_values
             else:
-                assert tags_by_taxonomy == []  # No tags are set from any taxonomy
+                assert not tags_by_taxonomy  # No tags are set from any taxonomy
 
             # Check that re-fetching the tags returns what we set
             url = OBJECT_TAG_UPDATE_URL.format(object_id=self.courseA)
@@ -1531,7 +1531,7 @@ class TestObjectTagViewSet(TestObjectTagMixin, APITestCase):
                 response_tags = response_taxonomy["tags"]
                 assert [t["value"] for t in response_tags] == tag_values
             else:
-                assert tags_by_taxonomy == []  # No tags are set from any taxonomy
+                assert not tags_by_taxonomy  # No tags are set from any taxonomy
 
             # Check that re-fetching the tags returns what we set
             url = OBJECT_TAG_UPDATE_URL.format(object_id=self.xblockA)
@@ -1612,7 +1612,7 @@ class TestObjectTagViewSet(TestObjectTagMixin, APITestCase):
                 response_tags = response_taxonomy["tags"]
                 assert [t["value"] for t in response_tags] == tag_values
             else:
-                assert tags_by_taxonomy == []  # No tags are set from any taxonomy
+                assert not tags_by_taxonomy  # No tags are set from any taxonomy
 
             # Check that re-fetching the tags returns what we set
             url = OBJECT_TAG_UPDATE_URL.format(object_id=self.libraryA)
@@ -1693,7 +1693,7 @@ class TestObjectTagViewSet(TestObjectTagMixin, APITestCase):
                 response_tags = response_taxonomy["tags"]
                 assert [t["value"] for t in response_tags] == tag_values
             else:
-                assert tags_by_taxonomy == []  # No tags are set from any taxonomy
+                assert not tags_by_taxonomy  # No tags are set from any taxonomy
 
             # Check that re-fetching the tags returns what we set
             url = OBJECT_TAG_UPDATE_URL.format(object_id=self.collection_key)

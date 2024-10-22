@@ -1375,7 +1375,7 @@ class EnrollmentEmbargoTest(EnrollmentTestMixin, UrlResetMixin, ModuleStoreTestC
         assert resp_data['user_message_url'] == user_message_url
 
         # Verify that we were not enrolled
-        assert self._get_enrollments() == []
+        assert not self._get_enrollments()
 
     @patch.dict(settings.FEATURES, {'EMBARGO': True})
     def test_embargo_change_enrollment_restrict_geoip(self):

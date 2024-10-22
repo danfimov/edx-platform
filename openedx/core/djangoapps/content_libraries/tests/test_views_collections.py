@@ -175,7 +175,7 @@ class ContentLibraryCollectionsViewsTest(ContentLibrariesRestApiTest):
         self.assertDictContainsEntries(resp.data, post_data)
 
         created_collection = Collection.objects.get(id=resp.data["id"])
-        self.assertIsNotNone(created_collection)
+        assert created_collection is not None
 
         # Check that user with read only access cannot create new Content Library Collection
         reader = UserFactory.create(username="Reader", email="reader@example.com")
@@ -277,8 +277,8 @@ class ContentLibraryCollectionsViewsTest(ContentLibrariesRestApiTest):
         self.assertDictContainsEntries(resp.data, patch_data)
 
         created_collection = Collection.objects.get(id=resp.data["id"])
-        self.assertIsNotNone(created_collection)
-        self.assertEqual(created_collection.title, patch_data["title"])
+        assert created_collection is not None
+        assert created_collection.title == patch_data["title"]
 
         # Check that user with read only access cannot update a Content Library Collection
         reader = UserFactory.create(username="Reader", email="reader@example.com")

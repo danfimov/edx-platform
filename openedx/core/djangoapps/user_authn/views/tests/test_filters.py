@@ -160,7 +160,7 @@ class RegistrationFiltersTest(UserAPITestCase):
         """
         response = self.client.post(self.url, self.user_info)
 
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        assert status.HTTP_403_FORBIDDEN == response.status_code
 
     @override_settings(OPEN_EDX_FILTERS_CONFIG={})
     def test_register_without_filter_configuration(self):
@@ -253,7 +253,7 @@ class LoginFiltersTest(UserAPITestCase):
 
         response = self.client.post(self.url, data)
 
-        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        assert status.HTTP_400_BAD_REQUEST == response.status_code
 
     @override_settings(OPEN_EDX_FILTERS_CONFIG={})
     def test_login_without_filter_configuration(self):
@@ -271,4 +271,4 @@ class LoginFiltersTest(UserAPITestCase):
 
         response = self.client.post(self.url, data)
 
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        assert status.HTTP_200_OK == response.status_code

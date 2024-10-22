@@ -961,7 +961,7 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase, XssTestMixin, Tes
         soup = BeautifulSoup(markup=response.content, features="lxml")
         pay_and_verify_div = soup.find(id="pay-and-verify-container")
 
-        assert pay_and_verify_div is not None,\
+        assert pay_and_verify_div is not None, \
             "Could not load pay and verify flow data.  Maybe this isn't the pay and verify page?"
 
         return {
@@ -1270,7 +1270,7 @@ class TestSubmitPhotosForVerification(MockS3Boto3Mixin, TestVerificationBase):
         # Since we are giving a full name, it should be written into the attempt
         # whether or not the user name was updated
         attempt = SoftwareSecurePhotoVerification.objects.get(user=self.user)
-        self.assertEqual(attempt.name, self.FULL_NAME)
+        assert attempt.name == self.FULL_NAME
 
     def test_submit_photos_sends_confirmation_email(self):
         self._submit_photos(

@@ -432,7 +432,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_result, response.data)
         self.assertNotIn('primary', response.data)
 
@@ -455,10 +455,10 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_enrollments, response.data['enrollments'])
         self.assertIn('primary', response.data)
-        self.assertEqual(str(course.id), response.data['primary']['course']['id'])
+        assert str(course.id) == response.data['primary']['course']['id']
 
     def test_student_have_two_enrollments(self):
         """
@@ -472,12 +472,12 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['enrollments']['results']), 1)
-        self.assertEqual(response.data['enrollments']['count'], 1)
-        self.assertEqual(response.data['enrollments']['results'][0]['course']['id'], str(course_first.id))
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['enrollments']['results']) == 1
+        assert response.data['enrollments']['count'] == 1
+        assert response.data['enrollments']['results'][0]['course']['id'] == str(course_first.id)
         self.assertIn('primary', response.data)
-        self.assertEqual(response.data['primary']['course']['id'], str(course_second.id))
+        assert response.data['primary']['course']['id'] == str(course_second.id)
 
     def test_student_have_more_then_ten_enrollments(self):
         """
@@ -492,12 +492,12 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['enrollments']['count'], 15)
-        self.assertEqual(response.data['enrollments']['num_pages'], 3)
-        self.assertEqual(len(response.data['enrollments']['results']), 5)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrollments']['count'] == 15
+        assert response.data['enrollments']['num_pages'] == 3
+        assert len(response.data['enrollments']['results']) == 5
         self.assertIn('primary', response.data)
-        self.assertEqual(response.data['primary']['course']['id'], str(latest_enrolment.id))
+        assert response.data['primary']['course']['id'] == str(latest_enrolment.id)
 
     def test_student_have_progress_in_old_course_and_enroll_newest_course(self):
         """
@@ -514,12 +514,12 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['enrollments']['count'], 6)
-        self.assertEqual(len(response.data['enrollments']['results']), 5)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrollments']['count'] == 6
+        assert len(response.data['enrollments']['results']) == 5
         # check that we have the new_course in primary section
         self.assertIn('primary', response.data)
-        self.assertEqual(response.data['primary']['course']['id'], str(new_course.id))
+        assert response.data['primary']['course']['id'] == str(new_course.id)
 
         # doing progress in the old_course
         StudentModule.objects.create(
@@ -529,12 +529,12 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
         )
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['enrollments']['count'], 6)
-        self.assertEqual(len(response.data['enrollments']['results']), 5)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrollments']['count'] == 6
+        assert len(response.data['enrollments']['results']) == 5
         # check that now we have the old_course in primary section
         self.assertIn('primary', response.data)
-        self.assertEqual(response.data['primary']['course']['id'], str(old_course.id))
+        assert response.data['primary']['course']['id'] == str(old_course.id)
 
         # enroll to the newest course
         newest_course = CourseFactory.create(org="edx", mobile_available=True)
@@ -542,12 +542,12 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['enrollments']['count'], 7)
-        self.assertEqual(len(response.data['enrollments']['results']), 5)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrollments']['count'] == 7
+        assert len(response.data['enrollments']['results']) == 5
         # check that now we have the newest_course in primary section
         self.assertIn('primary', response.data)
-        self.assertEqual(response.data['primary']['course']['id'], str(newest_course.id))
+        assert response.data['primary']['course']['id'] == str(newest_course.id)
 
     def test_student_enrolled_only_not_mobile_available_courses(self):
         """
@@ -575,7 +575,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_result, response.data)
         self.assertNotIn('primary', response.data)
 
@@ -594,12 +594,12 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['enrollments']['count'], 5)
-        self.assertEqual(len(response.data['enrollments']['results']), 5)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrollments']['count'] == 5
+        assert len(response.data['enrollments']['results']) == 5
         # check that we have the new_course in primary section
         self.assertIn('primary', response.data)
-        self.assertEqual(response.data['primary']['course']['id'], str(new_course.id))
+        assert response.data['primary']['course']['id'] == str(new_course.id)
 
         # doing progress in the not_mobile_available course
         StudentModule.objects.create(
@@ -609,12 +609,12 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
         )
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['enrollments']['count'], 5)
-        self.assertEqual(len(response.data['enrollments']['results']), 5)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrollments']['count'] == 5
+        assert len(response.data['enrollments']['results']) == 5
         # check that we have the new_course in primary section in the same way
         self.assertIn('primary', response.data)
-        self.assertEqual(response.data['primary']['course']['id'], str(new_course.id))
+        assert response.data['primary']['course']['id'] == str(new_course.id)
 
     def test_pagination_for_user_enrollments_api_v4(self):
         """
@@ -626,11 +626,11 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
             self.enroll(course.id)
 
         response = self.api_response(api_version=API_V4)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['enrollments']['count'], 14)
-        self.assertEqual(response.data['enrollments']['num_pages'], 3)
-        self.assertEqual(response.data['enrollments']['current_page'], 1)
-        self.assertEqual(len(response.data['enrollments']['results']), 5)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrollments']['count'] == 14
+        assert response.data['enrollments']['num_pages'] == 3
+        assert response.data['enrollments']['current_page'] == 1
+        assert len(response.data['enrollments']['results']) == 5
         self.assertIn('next', response.data['enrollments'])
         self.assertIn('previous', response.data['enrollments'])
         self.assertIn('primary', response.data)
@@ -645,8 +645,8 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['primary']['course_status'], None)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['primary']['course_status'] is None
 
     @patch('lms.djangoapps.mobile_api.users.serializers.get_key_to_last_completed_block')
     def test_course_status_in_primary_obj_when_student_have_progress(
@@ -694,8 +694,8 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['primary']['course_status'], expected_course_status)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['primary']['course_status'] == expected_course_status
         get_last_completed_block_mock.assert_called_once_with(self.user, course.id)
 
     def test_user_enrollment_api_v4_in_progress_status(self):
@@ -729,10 +729,10 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
         response = self.api_response(api_version=API_V4, data={'status': EnrollmentStatuses.IN_PROGRESS.value})
         enrollments = response.data['enrollments']
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(enrollments['count'], 2)
-        self.assertEqual(enrollments['results'][1]['course']['id'], str(actual_course.id))
-        self.assertEqual(enrollments['results'][0]['course']['id'], str(infinite_course.id))
+        assert response.status_code == status.HTTP_200_OK
+        assert enrollments['count'] == 2
+        assert enrollments['results'][1]['course']['id'] == str(actual_course.id)
+        assert enrollments['results'][0]['course']['id'] == str(infinite_course.id)
         self.assertNotIn('primary', response.data)
 
     def test_user_enrollment_api_v4_completed_status(self):
@@ -772,9 +772,9 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
         response = self.api_response(api_version=API_V4, data={'status': EnrollmentStatuses.COMPLETED.value})
         enrollments = response.data['enrollments']
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(enrollments['count'], 1)
-        self.assertEqual(enrollments['results'][0]['course']['id'], str(infinite_course.id))
+        assert response.status_code == status.HTTP_200_OK
+        assert enrollments['count'] == 1
+        assert enrollments['results'][0]['course']['id'] == str(infinite_course.id)
         self.assertNotIn('primary', response.data)
 
     def test_user_enrollment_api_v4_expired_status(self):
@@ -807,9 +807,9 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
         response = self.api_response(api_version=API_V4, data={'status': EnrollmentStatuses.EXPIRED.value})
         enrollments = response.data['enrollments']
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(enrollments['count'], 1)
-        self.assertEqual(enrollments['results'][0]['course']['id'], str(old_course.id))
+        assert response.status_code == status.HTTP_200_OK
+        assert enrollments['count'] == 1
+        assert enrollments['results'][0]['course']['id'] == str(old_course.id)
         self.assertNotIn('primary', response.data)
 
     def test_user_enrollment_api_v4_expired_course_with_certificate(self):
@@ -843,9 +843,9 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
         response = self.api_response(api_version=API_V4, data={'status': EnrollmentStatuses.COMPLETED.value})
         enrollments = response.data['enrollments']
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(enrollments['count'], 1)
-        self.assertEqual(enrollments['results'][0]['course']['id'], str(expired_course_with_cert.id))
+        assert response.status_code == status.HTTP_200_OK
+        assert enrollments['count'] == 1
+        assert enrollments['results'][0]['course']['id'] == str(expired_course_with_cert.id)
         self.assertNotIn('primary', response.data)
 
     def test_user_enrollment_api_v4_status_all(self):
@@ -885,11 +885,11 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
         response = self.api_response(api_version=API_V4, data={'status': EnrollmentStatuses.ALL.value})
         enrollments = response.data['enrollments']
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(enrollments['count'], 3)
-        self.assertEqual(enrollments['results'][0]['course']['id'], str(infinite_course.id))
-        self.assertEqual(enrollments['results'][1]['course']['id'], str(actual_course.id))
-        self.assertEqual(enrollments['results'][2]['course']['id'], str(old_course.id))
+        assert response.status_code == status.HTTP_200_OK
+        assert enrollments['count'] == 3
+        assert enrollments['results'][0]['course']['id'] == str(infinite_course.id)
+        assert enrollments['results'][1]['course']['id'] == str(actual_course.id)
+        assert enrollments['results'][2]['course']['id'] == str(old_course.id)
         self.assertNotIn('primary', response.data)
 
     def test_response_contains_primary_enrollment_assignments_info(self):
@@ -899,7 +899,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertIn('course_assignments', response.data['primary'])
         self.assertIn('past_assignments', response.data['primary']['course_assignments'])
         self.assertIn('future_assignments', response.data['primary']['course_assignments'])
@@ -918,7 +918,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertIn('course_progress', response.data['primary'])
         self.assertDictEqual(response.data['primary']['course_progress'], expected_course_progress)
 
@@ -948,7 +948,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertIn('course_progress', response.data['primary'])
         self.assertDictEqual(response.data['primary']['course_progress'], expected_course_progress)
 
@@ -964,7 +964,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         for enrollment in response.data['enrollments']['results']:
             self.assertNotIn('course_progress', enrollment)
 
@@ -981,7 +981,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4, data={'requested_fields': 'course_progress'})
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         for enrollment in response.data['enrollments']['results']:
             self.assertIn('course_progress', enrollment)
             self.assertDictEqual(enrollment['course_progress'], expected_course_progress)
@@ -1013,7 +1013,7 @@ class TestUserEnrollmentApi(UrlResetMixin, MobileAPITestCase, MobileAuthUserTest
 
         response = self.api_response(api_version=API_V4, data={'requested_fields': 'course_progress'})
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertIn('course_progress', response.data['primary'])
         self.assertDictEqual(response.data['primary']['course_progress'], expected_course_progress)
         self.assertIn('course_progress', response.data['enrollments']['results'][0])

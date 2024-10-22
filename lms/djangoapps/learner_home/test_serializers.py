@@ -160,7 +160,7 @@ class TestCourseProviderSerializer(LearnerDashboardBaseTest):
         input_data = test_enrollment.course_overview
         output_data = CourseProviderSerializer(input_data).data
 
-        self.assertEqual(output_data["name"], test_enrollment.course_overview.org)
+        assert output_data["name"] == test_enrollment.course_overview.org
 
 
 class TestCourseSerializer(LearnerDashboardBaseTest):
@@ -222,7 +222,7 @@ class TestCourseRunSerializer(LearnerDashboardBaseTest):
         output_data = CourseRunSerializer(input_data, context=input_context).data
 
         # Then the resumeUrl is None, which is allowed
-        self.assertIsNone(output_data["resumeUrl"])
+        assert output_data["resumeUrl"] is None
 
     def is_progress_url_matching_course_home_mfe_progress_tab_is_active(self):
         """
@@ -288,7 +288,7 @@ class TestCoursewareAccessSerializer(LearnerDashboardBaseTest):
         output_data = CoursewareAccessSerializer(input_data, context=input_context).data
 
         # Then "hasUnmetPrerequisites" is outputs correctly
-        self.assertEqual(output_data["hasUnmetPrerequisites"], has_unmet_prerequisites)
+        assert output_data["hasUnmetPrerequisites"] == has_unmet_prerequisites
 
     @ddt.data(True, False)
     def test_is_staff(self, is_staff):
@@ -311,7 +311,7 @@ class TestCoursewareAccessSerializer(LearnerDashboardBaseTest):
         output_data = CoursewareAccessSerializer(input_data, context=input_context).data
 
         # Then "isStaff" serializes properly
-        self.assertEqual(output_data["isStaff"], is_staff)
+        assert output_data["isStaff"] == is_staff
 
     @ddt.data(True, False)
     def test_is_too_early(self, is_too_early):
@@ -334,7 +334,7 @@ class TestCoursewareAccessSerializer(LearnerDashboardBaseTest):
         output_data = CoursewareAccessSerializer(input_data, context=input_context).data
 
         # Then "isTooEarly" serializes properly
-        self.assertEqual(output_data["isTooEarly"], is_too_early)
+        assert output_data["isTooEarly"] == is_too_early
 
 
 @ddt.ddt
@@ -398,7 +398,7 @@ class TestEnrollmentSerializer(LearnerDashboardBaseTest):
         # When I serialize
         output = EnrollmentSerializer(input_data, context=input_context).data
 
-        self.assertEqual(output["isAuditAccessExpired"], should_be_expired)
+        assert output["isAuditAccessExpired"] == should_be_expired
 
     @ddt.data(
         (random_url(), True, uuid4(), True),
@@ -432,7 +432,7 @@ class TestEnrollmentSerializer(LearnerDashboardBaseTest):
 
         # Then I correctly return whether or not the user can upgrade
         # (If any of the payment page, upsell, or sku aren't provided, this is False)
-        self.assertEqual(output["canUpgrade"], expected_can_upgrade)
+        assert output["canUpgrade"] == expected_can_upgrade
 
     @ddt.data(None, "", "some_url")
     def test_has_started(self, resume_url):
@@ -455,7 +455,7 @@ class TestEnrollmentSerializer(LearnerDashboardBaseTest):
         if resume_url:
             assert output["hasStarted"]
         else:
-            self.assertFalse(output["hasStarted"])
+            assert not output["hasStarted"]
 
 
 @ddt.ddt
@@ -562,7 +562,7 @@ class TestCertificateSerializer(LearnerDashboardBaseTest):
 
         # Then the available date is the course end date
         expected_available_date = datetime_to_django_format(input_data.course.end)
-        self.assertEqual(output_data["availableDate"], expected_available_date)
+        assert output_data["availableDate"] == expected_available_date
 
     def test_available_date_specific_end(self):
         # Given new cert display settings are enabled
@@ -582,7 +582,7 @@ class TestCertificateSerializer(LearnerDashboardBaseTest):
         expected_available_date = datetime_to_django_format(
             input_data.course.certificate_available_date
         )
-        self.assertEqual(output_data["availableDate"], expected_available_date)
+        assert output_data["availableDate"] == expected_available_date
 
     @ddt.data(
         ("downloadable", False),
@@ -604,7 +604,7 @@ class TestCertificateSerializer(LearnerDashboardBaseTest):
         output_data = CertificateSerializer(input_data, context=input_context).data
 
         # Then isRestricted should be calculated correctly
-        self.assertEqual(output_data["isRestricted"], is_restricted_expected)
+        assert output_data["isRestricted"] == is_restricted_expected
 
     @ddt.data(
         ("downloadable", True),
@@ -627,7 +627,7 @@ class TestCertificateSerializer(LearnerDashboardBaseTest):
         output_data = CertificateSerializer(input_data, context=input_context).data
 
         # Then isEarned should be calculated correctly
-        self.assertEqual(output_data["isEarned"], is_earned_expected)
+        assert output_data["isEarned"] == is_earned_expected
 
     @ddt.data(
         ("downloadable", True),
@@ -650,7 +650,7 @@ class TestCertificateSerializer(LearnerDashboardBaseTest):
         output_data = CertificateSerializer(input_data, context=input_context).data
 
         # Then isDownloadable should be calculated correctly
-        self.assertEqual(output_data["isDownloadable"], is_downloadable_expected)
+        assert output_data["isDownloadable"] == is_downloadable_expected
 
     @ddt.data(
         (True, random_url()),
@@ -812,7 +812,7 @@ class TestProgramsSerializer(TestCase):
         output_data = RelatedProgramSerializer(input_data).data
 
         # Test the output
-        self.assertEqual(output_data["bannerImgSrc"], None)
+        assert output_data["bannerImgSrc"] is None
 
     def test_empty_sessions(self):
         input_data = {"relatedPrograms": []}
@@ -911,7 +911,7 @@ class TestLearnerEnrollmentsSerializer(LearnerDashboardBaseTest):
         ]
 
         # Verify we have all the expected keys in our output
-        self.assertEqual(output.keys(), set(expected_keys))
+        assert output.keys() == set(expected_keys)
 
         # Entitlements should be the only empty field for an enrollment
         entitlement = output.pop("entitlement")
@@ -1151,7 +1151,7 @@ class TestEnterpriseDashboardSerializer(TestCase):
         output_data = EnterpriseDashboardSerializer(input_data).data
 
         expected_keys = ["label", "url", "uuid", "isLearnerPortalEnabled", "authOrgId"]
-        self.assertEqual(output_data.keys(), set(expected_keys))
+        assert output_data.keys() == set(expected_keys)
 
     def test_happy_path(self):
         """Test that data serializes correctly"""
@@ -1177,7 +1177,7 @@ class TestEnterpriseDashboardSerializer(TestCase):
         """ Test for missing auth_org_id """
         input_data = self.generate_test_enterprise_customer()
         del input_data['auth_org_id']
-        self.assertIsNone(EnterpriseDashboardSerializer(input_data).data['authOrgId'])
+        assert EnterpriseDashboardSerializer(input_data).data['authOrgId'] is None
 
 
 class TestSocialMediaSettingsSiteSerializer(TestCase):
@@ -1202,7 +1202,7 @@ class TestSocialMediaSettingsSiteSerializer(TestCase):
             "socialBrand",
             "utmParams",
         ]
-        self.assertEqual(output_data.keys(), set(expected_keys))
+        assert output_data.keys() == set(expected_keys)
 
 
 class TestSocialShareSettingsSerializer(TestCase):
@@ -1222,7 +1222,7 @@ class TestSocialShareSettingsSerializer(TestCase):
         output_data = SocialShareSettingsSerializer(input_data).data
 
         expected_keys = ["twitter", "facebook"]
-        self.assertEqual(output_data.keys(), set(expected_keys))
+        assert output_data.keys() == set(expected_keys)
 
 
 class TestLearnerDashboardSerializer(LearnerDashboardBaseTest):
@@ -1419,7 +1419,7 @@ class TestLearnerDashboardSerializer(LearnerDashboardBaseTest):
 
         output_suggested_courses = output_data.pop("suggestedCourses")
 
-        self.assertEqual(len(suggested_courses), len(output_suggested_courses))
+        assert len(suggested_courses) == len(output_suggested_courses)
 
     @mock.patch(
         "lms.djangoapps.learner_home.serializers.SuggestedCourseSerializer.to_representation"

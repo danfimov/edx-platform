@@ -328,7 +328,7 @@ class ClipboardTestCase(ModuleStoreTestCase):
         olx_str = python_api.get_staged_content_olx(staged_content_id)
         assert '<a href="/static/nonexistent1.jpg">' in olx_str
         static_assets = python_api.get_staged_content_static_files(staged_content_id)
-        assert static_assets == []
+        assert not static_assets
 
     def test_no_course_permission(self):
         """

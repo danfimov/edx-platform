@@ -61,7 +61,7 @@ class TestExamSettingsView(CourseTestCase, UrlResetMixin):
         """
         outline_url = reverse_course_url(handler, self.course.id)
         resp = self.client.get(outline_url, HTTP_ACCEPT='text/html')
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertNotContains(resp, 'Proctored Exam Settings')
 
     @override_settings(FEATURES=FEATURES_WITH_EXAM_SETTINGS_ENABLED)
@@ -79,7 +79,7 @@ class TestExamSettingsView(CourseTestCase, UrlResetMixin):
         """
         outline_url = reverse_course_url(handler, self.course.id)
         resp = self.client.get(outline_url, HTTP_ACCEPT='text/html')
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertContains(resp, 'Proctored Exam Settings')
 
     @override_settings(

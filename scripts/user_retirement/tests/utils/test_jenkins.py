@@ -97,13 +97,13 @@ class TestBackoff(unittest.TestCase):
     def test_max_timeout(self, base, factor, timeout, expected_max_tries, expected_waits):
         # pylint: disable=protected-access
         wait_gen, max_tries = jenkins._backoff_timeout(timeout, base, factor)
-        self.assertEqual(expected_max_tries, max_tries)
+        assert expected_max_tries == max_tries
 
         # Use max_tries-1, because we only wait that many times
         waits = list(islice(wait_gen(), max_tries - 1))
-        self.assertEqual(expected_waits, waits)
+        assert expected_waits == waits
 
-        self.assertEqual(timeout, sum(waits))
+        assert timeout == sum(waits)
 
     def test_backoff_call(self):
         # pylint: disable=protected-access
@@ -119,7 +119,7 @@ class TestBackoff(unittest.TestCase):
 
         count_retries()
 
-        self.assertEqual(always_false.call_count, 13)
+        assert always_false.call_count == 13
 
 
 @ddt.ddt
@@ -190,4 +190,4 @@ class TestJenkinsAPI(unittest.TestCase):
 
         # Make the call to the Jenkins API
         result = jenkins.trigger_build(BASE_URL, USER_ID, USER_TOKEN, JOB, TOKEN, cause, param)
-        self.assertEqual(result, 'SUCCESS')
+        assert result == 'SUCCESS'

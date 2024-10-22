@@ -83,10 +83,10 @@ class CreateVerificationAttempt(TestCase):
         )
         verification_attempt = VerificationAttempt.objects.get(id=expected_id)
 
-        self.assertEqual(verification_attempt.user, self.user)
-        self.assertEqual(verification_attempt.name, 'Tester McTest')
-        self.assertEqual(verification_attempt.status, VerificationAttemptStatus.CREATED)
-        self.assertEqual(verification_attempt.expiration_datetime, datetime(2024, 12, 31, tzinfo=timezone.utc))
+        assert verification_attempt.user == self.user
+        assert verification_attempt.name == 'Tester McTest'
+        assert verification_attempt.status == VerificationAttemptStatus.CREATED
+        assert verification_attempt.expiration_datetime == datetime(2024, 12, 31, tzinfo=timezone.utc)
         mock_created_event.assert_called_with(
             attempt_id=verification_attempt.id,
             user=self.user,
@@ -107,10 +107,10 @@ class CreateVerificationAttempt(TestCase):
         )
         verification_attempt = VerificationAttempt.objects.get(id=expected_id)
 
-        self.assertEqual(verification_attempt.user, self.user)
-        self.assertEqual(verification_attempt.name, 'Tester McTest')
-        self.assertEqual(verification_attempt.status, VerificationAttemptStatus.CREATED)
-        self.assertEqual(verification_attempt.expiration_datetime, None)
+        assert verification_attempt.user == self.user
+        assert verification_attempt.name == 'Tester McTest'
+        assert verification_attempt.status == VerificationAttemptStatus.CREATED
+        assert verification_attempt.expiration_datetime is None
 
 
 @ddt.ddt
@@ -159,10 +159,10 @@ class UpdateVerificationAttempt(TestCase):
         verification_attempt = VerificationAttempt.objects.get(id=self.attempt.id)
 
         # Values should change as a result of this update.
-        self.assertEqual(verification_attempt.user, self.user)
-        self.assertEqual(verification_attempt.name, name)
-        self.assertEqual(verification_attempt.status, status)
-        self.assertEqual(verification_attempt.expiration_datetime, expiration_datetime)
+        assert verification_attempt.user == self.user
+        assert verification_attempt.name == name
+        assert verification_attempt.status == status
+        assert verification_attempt.expiration_datetime == expiration_datetime
 
         if status == VerificationAttemptStatus.PENDING:
             mock_pending_event.assert_called_with(
@@ -200,10 +200,10 @@ class UpdateVerificationAttempt(TestCase):
         verification_attempt = VerificationAttempt.objects.get(id=self.attempt.id)
 
         # Values should not change as a result of the values passed in being None, except for expiration_datetime.
-        self.assertEqual(verification_attempt.user, self.user)
-        self.assertEqual(verification_attempt.name, self.attempt.name)
-        self.assertEqual(verification_attempt.status, self.attempt.status)
-        self.assertEqual(verification_attempt.expiration_datetime, None)
+        assert verification_attempt.user == self.user
+        assert verification_attempt.name == self.attempt.name
+        assert verification_attempt.status == self.attempt.status
+        assert verification_attempt.expiration_datetime is None
 
     def test_update_verification_attempt_not_found(self):
         self.assertRaises(

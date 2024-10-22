@@ -67,10 +67,10 @@ class LibraryTestCase(ModuleStoreTestCase):
             'library': library,
             'display_name': display_name,
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         lib_info = parse_json(response)
         lib_key = CourseKey.from_string(lib_info['library_key'])
-        self.assertIsInstance(lib_key, LibraryLocator)
+        assert isinstance(lib_key, LibraryLocator)
         return lib_key
 
     def _add_library_content_block(self, course, library_key, publish_item=False, other_settings=None):
@@ -111,7 +111,7 @@ class LibraryTestCase(ModuleStoreTestCase):
             kwargs={'handler': 'upgrade_and_sync'}
         )
         response = self.client.ajax_post(handler_url)
-        self.assertEqual(response.status_code, status_code_expected)
+        assert response.status_code == status_code_expected
         return modulestore().get_item(lib_content_block.location)
 
     def _bind_block(self, block, user=None):
@@ -143,7 +143,7 @@ class LibraryTestCase(ModuleStoreTestCase):
         Use the REST API to get a list of libraries visible to the current user.
         """
         response = self.client.get_json(LIBRARY_REST_URL)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         return parse_json(response)
 
 
@@ -170,7 +170,7 @@ class TestLibraries(LibraryTestCase):
             course = CourseFactory.create()
 
         lc_block = self._add_library_content_block(course, self.lib_key, other_settings={'max_count': num_to_select})
-        self.assertEqual(len(lc_block.children), 0)
+        assert len(lc_block.children) == 0
         lc_block = self._upgrade_and_sync(lc_block)
 
         # Now, we want to make sure that .children has the total # of potential
@@ -179,8 +179,8 @@ class TestLibraries(LibraryTestCase):
         # In order to be able to call get_child_blocks(), we must first
         # call bind_for_student:
         self._bind_block(lc_block)
-        self.assertEqual(len(lc_block.children), num_to_create)
-        self.assertEqual(len(lc_block.get_child_blocks()), num_expected)
+        assert len(lc_block.children) == num_to_create
+        assert len(lc_block.get_child_blocks()) == num_expected
 
     def test_consistent_children(self):
         """
@@ -205,7 +205,7 @@ class TestLibraries(LibraryTestCase):
             Fetch the child shown to the current user.
             """
             children = block.get_child_blocks()
-            self.assertEqual(len(children), 1)
+            assert len(children) == 1
             return children[0]
 
         # Check which child a student will see:
@@ -225,9 +225,9 @@ class TestLibraries(LibraryTestCase):
                 lc_block = modulestore().get_item(lc_block_key)  # Reload block from the database
                 self._bind_block(lc_block)
                 current_child = get_child_of_lc_block(lc_block)
-                self.assertEqual(current_child.location, chosen_child.location)
-                self.assertEqual(current_child.data, chosen_child.data)
-                self.assertEqual(current_child.definition_locator.definition_id, chosen_child_defn_id)
+                assert current_child.location == chosen_child.location
+                assert current_child.data == chosen_child.data
+                assert current_child.definition_locator.definition_id == chosen_child_defn_id
 
         check()
         # Refresh the children:
@@ -272,8 +272,8 @@ class TestLibraries(LibraryTestCase):
             display_name=name_value,
             data=data_value,
         )
-        self.assertEqual(lib_block.data, data_value)
-        self.assertEqual(lib_block.display_name, name_value)
+        assert lib_block.data == data_value
+        assert lib_block.display_name == name_value
 
         # Next, create a course:
         with modulestore().default_store(ModuleStoreEnum.Type.split):
@@ -284,8 +284,8 @@ class TestLibraries(LibraryTestCase):
         lc_block = self._upgrade_and_sync(lc_block)
         course_block = modulestore().get_item(lc_block.children[0])
 
-        self.assertEqual(course_block.data, data_value)
-        self.assertEqual(course_block.display_name, name_value)
+        assert course_block.data == data_value
+        assert course_block.display_name == name_value
 
     def test_block_with_children(self):
         """
@@ -308,8 +308,8 @@ class TestLibraries(LibraryTestCase):
             display_name=name_value,
             data=data_value,
         )
-        self.assertEqual(child_block.data, data_value)
-        self.assertEqual(child_block.display_name, name_value)
+        assert child_block.data == data_value
+        assert child_block.display_name == name_value
 
         # Next, create a course:
         with modulestore().default_store(ModuleStoreEnum.Type.split):
@@ -318,13 +318,13 @@ class TestLibraries(LibraryTestCase):
         # Add a LibraryContent block to the course:
         lc_block = self._add_library_content_block(course, self.lib_key)
         lc_block = self._upgrade_and_sync(lc_block)
-        self.assertEqual(len(lc_block.children), 1)
+        assert len(lc_block.children) == 1
         course_vert_block = modulestore().get_item(lc_block.children[0])
-        self.assertEqual(len(course_vert_block.children), 1)
+        assert len(course_vert_block.children) == 1
         course_child_block = modulestore().get_item(course_vert_block.children[0])
 
-        self.assertEqual(course_child_block.data, data_value)
-        self.assertEqual(course_child_block.display_name, name_value)
+        assert course_child_block.data == data_value
+        assert course_child_block.display_name == name_value
 
     def test_switch_to_unknown_source_library_preserves_settings(self):
         """
@@ -354,8 +354,8 @@ class TestLibraries(LibraryTestCase):
         good_library_version = lc_block.source_library_version
         assert good_library_id
         assert good_library_version
-        self.assertEqual(len(lc_block.children), 1)
-        self.assertEqual(modulestore().get_item(lc_block.children[0]).data, data_value)
+        assert len(lc_block.children) == 1
+        assert modulestore().get_item(lc_block.children[0]).data == data_value
 
         # Now, change the block settings to have an invalid library key:
         bad_library_id = "library-v1:NOT+FOUND"
@@ -363,7 +363,7 @@ class TestLibraries(LibraryTestCase):
             lc_block.location,
             {"source_library_id": bad_library_id},
         )
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         lc_block = modulestore().get_item(lc_block.location)
         # Source library id should be set to the new bad one...
@@ -371,8 +371,8 @@ class TestLibraries(LibraryTestCase):
         # ...but old source library version should be preserved...
         assert lc_block.source_library_version == good_library_version
         # ...and children should not be deleted due to a bad setting.
-        self.assertEqual(len(lc_block.children), 1)
-        self.assertEqual(modulestore().get_item(lc_block.children[0]).data, data_value)
+        assert len(lc_block.children) == 1
+        assert modulestore().get_item(lc_block.children[0]).data == data_value
 
         # Attempting to force an upgrade (the user would have to do this through the API, as
         # the UI wouldn't give them the option) returns a 400 and preserves the LC block's state.
@@ -385,8 +385,8 @@ class TestLibraries(LibraryTestCase):
         # ...but old source library version should be preserved...
         assert lc_block.source_library_version == good_library_version
         # ...and children should not be deleted due to a bad setting.
-        self.assertEqual(len(lc_block.children), 1)
-        self.assertEqual(modulestore().get_item(lc_block.children[0]).data, data_value)
+        assert len(lc_block.children) == 1
+        assert modulestore().get_item(lc_block.children[0]).data == data_value
 
     def test_sync_if_source_library_changed(self):
         """
@@ -422,9 +422,9 @@ class TestLibraries(LibraryTestCase):
         lc_block = self._upgrade_and_sync(lc_block)
 
         # Sanity check the initial condition.
-        self.assertEqual(len(lc_block.children), 1)
+        assert len(lc_block.children) == 1
         html_block_1 = modulestore().get_item(lc_block.children[0])
-        self.assertEqual(html_block_1.data, data1)
+        assert html_block_1.data == data1
 
         # Now, switch over to new library. Don't call upgrade_and_sync, because we are
         # testing that it happens automatically.
@@ -432,13 +432,13 @@ class TestLibraries(LibraryTestCase):
             lc_block.location,
             {"source_library_id": str(library2key)},
         )
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         # Check that the course now has the new lib's new block.
         lc_block = modulestore().get_item(lc_block.location)
-        self.assertEqual(len(lc_block.children), 1)
+        assert len(lc_block.children) == 1
         html_block_2 = modulestore().get_item(lc_block.children[0])
-        self.assertEqual(html_block_2.data, data2)
+        assert html_block_2.data == data2
 
     def test_sync_if_capa_type_changed(self):
         """ Tests that children are automatically refreshed if capa type field changes """
@@ -467,29 +467,29 @@ class TestLibraries(LibraryTestCase):
         # Add a LibraryContent block to the course:
         lc_block = self._add_library_content_block(course, self.lib_key)
         lc_block = self._upgrade_and_sync(lc_block)
-        self.assertEqual(len(lc_block.children), 2)
+        assert len(lc_block.children) == 2
 
         resp = self._update_block(
             lc_block.location,
             {"capa_type": 'optionresponse'},
         )
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         lc_block = modulestore().get_item(lc_block.location)
 
-        self.assertEqual(len(lc_block.children), 1)
+        assert len(lc_block.children) == 1
         html_block = modulestore().get_item(lc_block.children[0])
-        self.assertEqual(html_block.display_name, name1)
+        assert html_block.display_name == name1
 
         resp = self._update_block(
             lc_block.location,
             {"capa_type": 'multiplechoiceresponse'},
         )
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         lc_block = modulestore().get_item(lc_block.location)
 
-        self.assertEqual(len(lc_block.children), 1)
+        assert len(lc_block.children) == 1
         html_block = modulestore().get_item(lc_block.children[0])
-        self.assertEqual(html_block.display_name, name2)
+        assert html_block.display_name == name2
 
     def test_library_filters(self):
         """
@@ -500,12 +500,12 @@ class TestLibraries(LibraryTestCase):
         self._create_library(library="l3", display_name="Library-Title-3", org='org-test1')
         self._create_library(library="l4", display_name="Library-Title-4", org='org-test2')
 
-        self.assertEqual(len(self.client.get_json(LIBRARY_REST_URL).json()), 5)  # 1 more from self.setUp()
-        self.assertEqual(len(self.client.get_json(f'{LIBRARY_REST_URL}?org=org-test1').json()), 2)
-        self.assertEqual(len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=test-lib').json()), 2)
-        self.assertEqual(len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=library-title').json()), 3)
-        self.assertEqual(len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=library-').json()), 3)
-        self.assertEqual(len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=org-test').json()), 3)
+        assert len(self.client.get_json(LIBRARY_REST_URL).json()) == 5  # 1 more from self.setUp(
+        assert len(self.client.get_json(f'{LIBRARY_REST_URL}?org=org-test1').json()) == 2
+        assert len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=test-lib').json()) == 2
+        assert len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=library-title').json()) == 3
+        assert len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=library-').json()) == 3
+        assert len(self.client.get_json(f'{LIBRARY_REST_URL}?text_search=org-test').json()) == 3
 
 
 @ddt.ddt
@@ -534,9 +534,9 @@ class TestLibraryAccess(LibraryTestCase):
             LIBRARY_REST_URL,
             {'org': org, 'library': library, 'display_name': "Irrelevant"}
         )
-        self.assertEqual(response.status_code, expected_code)
+        assert response.status_code == expected_code
         key = LibraryLocator(org=org, library=library)
-        self.assertEqual(modulestore().get_library(key), None)
+        assert modulestore().get_library(key) is None
 
     def _can_access_library(self, library):
         """
@@ -583,7 +583,7 @@ class TestLibraryAccess(LibraryTestCase):
         with patch.dict('django.conf.settings.FEATURES', {'ENABLE_CREATOR_GROUP': True}):
             lib_key2 = self._create_library(library="lib2", display_name="Test Library 2")
             library2 = modulestore().get_library(lib_key2)
-            self.assertIsNotNone(library2)
+            assert library2 is not None
 
     @ddt.data(
         CourseInstructorRole,
@@ -602,19 +602,19 @@ class TestLibraryAccess(LibraryTestCase):
 
         # non_staff_user shouldn't be able to access any libraries:
         lib_list = self._list_libraries()
-        self.assertEqual(len(lib_list), 0)
-        self.assertFalse(self._can_access_library(self.library))
-        self.assertFalse(self._can_access_library(library2_key))
+        assert len(lib_list) == 0
+        assert not self._can_access_library(self.library)
+        assert not self._can_access_library(library2_key)
 
         # Now manually intervene to give non_staff_user access to library2_key:
         access_role(library2_key).add_users(self.non_staff_user)
 
         # Now non_staff_user should be able to access library2_key only:
         lib_list = self._list_libraries()
-        self.assertEqual(len(lib_list), 1)
-        self.assertEqual(lib_list[0]["library_key"], str(library2_key))
+        assert len(lib_list) == 1
+        assert lib_list[0]["library_key"] == str(library2_key)
         assert self._can_access_library(library2_key)
-        self.assertFalse(self._can_access_library(self.library))
+        assert not self._can_access_library(self.library)
 
     @ddt.data(
         OrgStaffRole,
@@ -638,11 +638,11 @@ class TestLibraryAccess(LibraryTestCase):
 
         # Now non_staff_user should be able to access lib_key_pacific only:
         lib_list = self._list_libraries()
-        self.assertEqual(len(lib_list), 1)
-        self.assertEqual(lib_list[0]["library_key"], str(lib_key_pacific))
+        assert len(lib_list) == 1
+        assert lib_list[0]["library_key"] == str(lib_key_pacific)
         assert self._can_access_library(lib_key_pacific)
-        self.assertFalse(self._can_access_library(lib_key_atlantic))
-        self.assertFalse(self._can_access_library(self.lib_key))
+        assert not self._can_access_library(lib_key_atlantic)
+        assert not self._can_access_library(self.lib_key)
 
     @ddt.data(True, False)
     def test_read_only_role(self, use_org_level_role):
@@ -654,7 +654,7 @@ class TestLibraryAccess(LibraryTestCase):
 
         # Login as a non_staff_user:
         self._login_as_non_staff_user()
-        self.assertFalse(self._can_access_library(self.library))
+        assert not self._can_access_library(self.library)
 
         block_url = reverse_usage_url('xblock_handler', block.location)
 
@@ -694,11 +694,11 @@ class TestLibraryAccess(LibraryTestCase):
             return response.status_code == 200
 
         # Check that we do not have read or write access to block:
-        self.assertFalse(can_read_block())
-        self.assertFalse(can_edit_block())
-        self.assertFalse(can_delete_block())
-        self.assertFalse(can_copy_block())
-        self.assertFalse(can_create_block())
+        assert not can_read_block()
+        assert not can_edit_block()
+        assert not can_delete_block()
+        assert not can_copy_block()
+        assert not can_create_block()
 
         # Give non_staff_user read-only permission:
         if use_org_level_role:
@@ -708,10 +708,10 @@ class TestLibraryAccess(LibraryTestCase):
 
         assert self._can_access_library(self.library)
         assert can_read_block()
-        self.assertFalse(can_edit_block())
-        self.assertFalse(can_delete_block())
-        self.assertFalse(can_copy_block())
-        self.assertFalse(can_create_block())
+        assert not can_edit_block()
+        assert not can_delete_block()
+        assert not can_copy_block()
+        assert not can_create_block()
 
     @ddt.data(
         (LibraryUserRole, CourseStaffRole, True),
@@ -746,7 +746,7 @@ class TestLibraryAccess(LibraryTestCase):
         })
         self.assertIn(response.status_code, (200, 403))  # 400 would be ambiguous
         duplicate_action_allowed = (response.status_code == 200)
-        self.assertEqual(duplicate_action_allowed, expected_result)
+        assert duplicate_action_allowed == expected_result
 
     @ddt.data(
         (LibraryUserRole, CourseStaffRole, True),
@@ -781,7 +781,7 @@ class TestLibraryAccess(LibraryTestCase):
         # We must use the CMS's module system in order to get permissions checks.
         self._bind_block(lc_block, user=self.non_staff_user)
         lc_block = self._upgrade_and_sync(lc_block, status_code_expected=200 if expected_result else 403)
-        self.assertEqual(len(lc_block.children), 1 if expected_result else 0)
+        assert len(lc_block.children) == 1 if expected_result else 0
 
     def test_studio_user_permissions(self):
         """
@@ -819,7 +819,7 @@ class TestLibraryAccess(LibraryTestCase):
             edit_view_url = reverse_usage_url("xblock_view_handler", lib_block.location, {"view_name": STUDIO_VIEW})
 
             resp = self.client.get_json(edit_view_url)
-            self.assertEqual(resp.status_code, 200)
+            assert resp.status_code == 200
 
             return parse_json(resp)['html']
 
@@ -833,7 +833,7 @@ class TestLibraryAccess(LibraryTestCase):
         self._login_as_non_staff_user()
         response = self.client.get_json(LIBRARY_REST_URL)
         staff_libs = parse_json(response)
-        self.assertEqual(2, len(staff_libs))
+        assert 2 == len(staff_libs)
 
         non_staff_settings_html = _get_settings_html()
         self.assertIn('staff_lib_1', non_staff_settings_html)
@@ -893,11 +893,11 @@ class TestOverrides(LibraryTestCase):
         self.problem_in_course = modulestore().get_item(self.lc_block.children[0])
         problem2_in_course = modulestore().get_item(lc_block2.children[0])
 
-        self.assertEqual(self.problem_in_course.display_name, new_display_name)
-        self.assertEqual(self.problem_in_course.weight, new_weight)
+        assert self.problem_in_course.display_name == new_display_name
+        assert self.problem_in_course.weight == new_weight
 
-        self.assertEqual(problem2_in_course.display_name, self.original_display_name)
-        self.assertEqual(problem2_in_course.weight, self.original_weight)
+        assert problem2_in_course.display_name == self.original_display_name
+        assert problem2_in_course.weight == self.original_weight
 
     def test_reset_override(self):
         """
@@ -910,8 +910,8 @@ class TestOverrides(LibraryTestCase):
         modulestore().update_item(self.problem_in_course, self.user.id)
         self.problem_in_course = modulestore().get_item(self.problem_in_course.location)
 
-        self.assertEqual(self.problem_in_course.display_name, new_display_name)
-        self.assertEqual(self.problem_in_course.weight, new_weight)
+        assert self.problem_in_course.display_name == new_display_name
+        assert self.problem_in_course.weight == new_weight
 
         # Reset:
         for field_name in ["display_name", "weight"]:
@@ -921,8 +921,8 @@ class TestOverrides(LibraryTestCase):
         modulestore().update_item(self.problem_in_course, self.user.id)
         self.problem_in_course = modulestore().get_item(self.problem_in_course.location)
 
-        self.assertEqual(self.problem_in_course.display_name, self.original_display_name)
-        self.assertEqual(self.problem_in_course.weight, self.original_weight)
+        assert self.problem_in_course.display_name == self.original_display_name
+        assert self.problem_in_course.weight == self.original_weight
 
     def test_consistent_definitions(self):
         """
@@ -932,7 +932,7 @@ class TestOverrides(LibraryTestCase):
         This test is specific to split mongo.
         """
         definition_id = self.problem.definition_locator.definition_id
-        self.assertEqual(self.problem_in_course.definition_locator.definition_id, definition_id)
+        assert self.problem_in_course.definition_locator.definition_id == definition_id
 
         # Now even if we change some Scope.settings fields and refresh, the definition should be unchanged
         self.problem.weight = 20
@@ -941,8 +941,8 @@ class TestOverrides(LibraryTestCase):
         self.lc_block = self._upgrade_and_sync(self.lc_block)
         self.problem_in_course = modulestore().get_item(self.problem_in_course.location)
 
-        self.assertEqual(self.problem.definition_locator.definition_id, definition_id)
-        self.assertEqual(self.problem_in_course.definition_locator.definition_id, definition_id)
+        assert self.problem.definition_locator.definition_id == definition_id
+        assert self.problem_in_course.definition_locator.definition_id == definition_id
 
     @ddt.data(False, True)
     def test_persistent_overrides(self, duplicate):
@@ -965,8 +965,8 @@ class TestOverrides(LibraryTestCase):
             self.problem_in_course = modulestore().get_item(self.lc_block.children[0])
         else:
             self.problem_in_course = modulestore().get_item(self.problem_in_course.location)
-        self.assertEqual(self.problem_in_course.display_name, new_display_name)
-        self.assertEqual(self.problem_in_course.weight, new_weight)
+        assert self.problem_in_course.display_name == new_display_name
+        assert self.problem_in_course.weight == new_weight
 
         # Change the settings in the library version:
         self.problem.display_name = "X"
@@ -978,9 +978,9 @@ class TestOverrides(LibraryTestCase):
         self.lc_block = self._upgrade_and_sync(self.lc_block)
         self.problem_in_course = modulestore().get_item(self.problem_in_course.location)
 
-        self.assertEqual(self.problem_in_course.display_name, new_display_name)
-        self.assertEqual(self.problem_in_course.weight, new_weight)
-        self.assertEqual(self.problem_in_course.data, new_data_value)
+        assert self.problem_in_course.display_name == new_display_name
+        assert self.problem_in_course.weight == new_weight
+        assert self.problem_in_course.data == new_data_value
 
     def test_duplicated_version(self):
         """
@@ -988,8 +988,8 @@ class TestOverrides(LibraryTestCase):
         the new block will use the old library version and not the new one.
         """
         store = modulestore()
-        self.assertEqual(len(self.library.children), 1)
-        self.assertEqual(len(self.lc_block.children), 1)
+        assert len(self.library.children) == 1
+        assert len(self.lc_block.children) == 1
 
         # Edit the only problem in the library:
         self.problem.display_name = "--changed in library--"
@@ -1006,13 +1006,13 @@ class TestOverrides(LibraryTestCase):
         self.library = store.get_library(self.lib_key)
 
         # The library has changed...
-        self.assertEqual(len(self.library.children), 2)
+        assert len(self.library.children) == 2
 
         # But the block hasn't.
         self.lc_block = store.get_item(self.lc_block.location)
-        self.assertEqual(len(self.lc_block.children), 1)
-        self.assertEqual(self.problem_in_course.location, self.lc_block.children[0])
-        self.assertEqual(self.problem_in_course.display_name, self.original_display_name)
+        assert len(self.lc_block.children) == 1
+        assert self.problem_in_course.location == self.lc_block.children[0]
+        assert self.problem_in_course.display_name == self.original_display_name
 
         # Duplicate self.lc_block:
         duplicate = store.get_item(
@@ -1020,14 +1020,14 @@ class TestOverrides(LibraryTestCase):
         )
         # The duplicate should have identical children to the original:
         assert self.lc_block.source_library_version
-        self.assertEqual(self.lc_block.source_library_version, duplicate.source_library_version)
-        self.assertEqual(len(duplicate.children), 1)
+        assert self.lc_block.source_library_version == duplicate.source_library_version
+        assert len(duplicate.children) == 1
         problem2_in_course = store.get_item(duplicate.children[0])
-        self.assertEqual(problem2_in_course.display_name, self.original_display_name)
+        assert problem2_in_course.display_name == self.original_display_name
 
         # Refresh our reference to the block
         self.lc_block = self._upgrade_and_sync(self.lc_block)
         self.problem_in_course = store.get_item(self.problem_in_course.location)
 
         # and the block has changed too.
-        self.assertEqual(len(self.lc_block.children), 2)
+        assert len(self.lc_block.children) == 2

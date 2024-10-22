@@ -86,7 +86,7 @@ class TestGetPrograms(CacheIsolationTestCase):
         # When called before UUIDs are cached, the function should return an
         # empty list and log a warning.
         with with_site_configuration_context(domain=self.site.name, configuration={"COURSE_CATALOG_API_URL": "foo"}):
-            assert get_programs(site=self.site) == []
+            assert not get_programs(site=self.site)
             mock_warning.assert_called_once_with(
                 f"Failed to get program UUIDs from the cache for site {self.site.domain}."
             )
@@ -187,7 +187,7 @@ class TestGetPrograms(CacheIsolationTestCase):
         expected_program = ProgramFactory()
         expected_course = expected_program["courses"][0]["course_runs"][0]["key"]
 
-        assert get_programs(course=expected_course) == []
+        assert not get_programs(course=expected_course)
 
         cache.set(COURSE_PROGRAMS_CACHE_KEY_TPL.format(course_run_id=expected_course), [expected_program["uuid"]], None)
         cache.set(PROGRAM_CACHE_KEY_TPL.format(uuid=expected_program["uuid"]), expected_program, None)
@@ -213,7 +213,7 @@ class TestGetPrograms(CacheIsolationTestCase):
         expected_program = ProgramFactory()
         expected_catalog_course = expected_program["courses"][0]
 
-        assert get_programs(catalog_course_uuid=expected_catalog_course["uuid"]) == []
+        assert not get_programs(catalog_course_uuid=expected_catalog_course["uuid"])
 
         cache.set(
             CATALOG_COURSE_PROGRAMS_CACHE_KEY_TPL.format(course_uuid=expected_catalog_course["uuid"]),
@@ -247,7 +247,7 @@ class TestGetPathways(CacheIsolationTestCase):
 
         # When called before pathways are cached, the function should return an
         # empty list and log a warning.
-        assert get_pathways(self.site) == []
+        assert not get_pathways(self.site)
         mock_warning.assert_called_once_with("Failed to get credit pathway ids from the cache.")
         mock_warning.reset_mock()
 
@@ -350,7 +350,7 @@ class TestGetProgramTypes(CatalogIntegrationMixin, TestCase):
 
         # Catalog integration is disabled.
         data = get_program_types()
-        assert data == []
+        assert not data
 
         catalog_integration = self.create_catalog_integration()
         UserFactory(username=catalog_integration.service_username)
@@ -374,7 +374,7 @@ class TestGetCurrency(CatalogIntegrationMixin, TestCase):
 
         # Catalog integration is disabled.
         data = get_currency_data()
-        assert data == []
+        assert not data
 
         catalog_integration = self.create_catalog_integration()
         UserFactory(username=catalog_integration.service_username)
@@ -446,7 +446,7 @@ class TestGetCourseRuns(CatalogIntegrationMixin, CacheIsolationTestCase):
 
         data = get_course_runs()
         assert not mock_get_edx_api_data.called
-        assert data == []
+        assert not data
 
     @mock.patch(UTILS_MODULE + ".logger.error")
     def test_service_user_missing(self, mock_log_error, mock_get_edx_api_data):
@@ -461,7 +461,7 @@ class TestGetCourseRuns(CatalogIntegrationMixin, CacheIsolationTestCase):
             catalog_integration.service_username,
         )
         assert not mock_get_edx_api_data.called
-        assert data == []
+        assert not data
 
     def test_get_course_runs(self, mock_get_edx_api_data):
         """

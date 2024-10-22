@@ -2483,9 +2483,8 @@ class AnnotationResponseTest(ResponseTest):  # lint-amnesty, pylint: disable=mis
             actual_correctness = correct_map.get_correctness(answer_id)
             actual_points = correct_map.get_npoints(answer_id)
 
-            assert expected_correctness == actual_correctness,\
-                ('%s should be marked %s' % (answer_id, expected_correctness))
-            assert expected_points == actual_points, ('%s should have %d points' % (answer_id, expected_points))
+            assert expected_correctness == actual_correctness, f'{answer_id} should be marked {expected_correctness}'
+            assert expected_points == actual_points, f'{answer_id} should have {expected_points} points'
 
 
 class ChoiceTextResponseTest(ResponseTest):

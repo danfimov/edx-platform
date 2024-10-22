@@ -38,11 +38,11 @@ class TestBraze(unittest.TestCase):
         with mock.patch.object(logger, 'info') as mock_info:
             self.braze.delete_user(self.learner)
 
-        self.assertEqual(mock_info.call_args, [('Braze user deletion succeeded',)])
+        assert mock_info.call_args == [('Braze user deletion succeeded',)]
 
-        self.assertEqual(len(req_mock.request_history), 1)
+        assert len(req_mock.request_history) == 1
         request = req_mock.request_history[0]
-        self.assertEqual(request.json(), {'external_ids': [1234]})
+        assert request.json() == {'external_ids': [1234]}
 
     def test_delete_fatal_error(self, req_mock):
         self._mock_delete(req_mock, 404, message='Test Error Message')
@@ -53,8 +53,8 @@ class TestBraze(unittest.TestCase):
                 self.braze.delete_user(self.learner)
 
         error = 'Braze user deletion failed due to Test Error Message'
-        self.assertEqual(mock_error.call_args, [(error,)])
-        self.assertEqual(str(exc.exception), error)
+        assert mock_error.call_args == [(error,)]
+        assert str(exc.exception) == error
 
     @ddt.data(429, 500)
     def test_delete_recoverable_error(self, status_code, req_mock):
@@ -63,4 +63,4 @@ class TestBraze(unittest.TestCase):
         with self.assertRaises(BrazeRecoverableException):
             self.braze.delete_user(self.learner)
 
-        self.assertEqual(len(req_mock.request_history), 5)
+        assert len(req_mock.request_history) == 5

@@ -104,17 +104,17 @@ class ImportEntranceExamTestCase(CourseTestCase, MilestonesTestCaseMixin):
         Check that course is imported successfully as an entrance exam.
         """
         course = self.store.get_course(self.course.id)
-        self.assertIsNotNone(course)
-        self.assertEqual(course.entrance_exam_enabled, False)
+        assert course is not None
+        assert course.entrance_exam_enabled is False
 
         with open(self.entrance_exam_tar, 'rb') as gtar:  # lint-amnesty, pylint: disable=bad-option-value, open-builtin
             args = {"name": self.entrance_exam_tar, "course-data": [gtar]}
             resp = self.client.post(self.url, args)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         course = self.store.get_course(self.course.id)
-        self.assertIsNotNone(course)
-        self.assertEqual(course.entrance_exam_enabled, True)
-        self.assertEqual(course.entrance_exam_minimum_score_pct, 0.7)
+        assert course is not None
+        assert course.entrance_exam_enabled is True
+        assert course.entrance_exam_minimum_score_pct == 0.7
 
     def test_import_delete_pre_exiting_entrance_exam(self):
         """
@@ -122,14 +122,14 @@ class ImportEntranceExamTestCase(CourseTestCase, MilestonesTestCaseMixin):
         """
         exam_url = f'/course/{str(self.course.id)}/entrance_exam/'
         resp = self.client.post(exam_url, {'entrance_exam_minimum_score_pct': 0.5}, http_accept='application/json')
-        self.assertEqual(resp.status_code, 201)
+        assert resp.status_code == 201
 
         # Reload the test course now that the exam block has been added
         self.course = modulestore().get_course(self.course.id)
         metadata = CourseMetadata.fetch_all(self.course)
         assert metadata['entrance_exam_enabled']
-        self.assertIsNotNone(metadata['entrance_exam_minimum_score_pct'])
-        self.assertEqual(metadata['entrance_exam_minimum_score_pct']['value'], 0.5)
+        assert metadata['entrance_exam_minimum_score_pct'] is not None
+        assert metadata['entrance_exam_minimum_score_pct']['value'] == 0.5
         assert bool(milestones_helpers.get_course_milestones(str(self.course.id)))
         content_milestones = milestones_helpers.get_course_content_milestones(
             str(self.course.id),
@@ -142,11 +142,11 @@ class ImportEntranceExamTestCase(CourseTestCase, MilestonesTestCaseMixin):
         with open(self.entrance_exam_tar, 'rb') as gtar:  # lint-amnesty, pylint: disable=bad-option-value, open-builtin
             args = {"name": self.entrance_exam_tar, "course-data": [gtar]}
             resp = self.client.post(self.url, args)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         course = self.store.get_course(self.course.id)
-        self.assertIsNotNone(course)
-        self.assertEqual(course.entrance_exam_enabled, True)
-        self.assertEqual(course.entrance_exam_minimum_score_pct, 0.7)
+        assert course is not None
+        assert course.entrance_exam_enabled is True
+        assert course.entrance_exam_minimum_score_pct == 0.7
 
 
 @ddt.ddt
@@ -231,9 +231,9 @@ class ImportTestCase(CourseTestCase):
         """
         Fail if the import response does not match with the provided status and message.
         """
-        self.assertEqual(response["ImportStatus"], status)
+        assert response["ImportStatus"] == status
         if expected_message:
-            self.assertEqual(response['Message'], expected_message)
+            assert response['Message'] == expected_message
 
     def get_import_status(self, course_id, file_path):
         """Helper method to get course import status."""
@@ -264,7 +264,7 @@ class ImportTestCase(CourseTestCase):
         expected_error_mesg = f'{self.log_prefix} {error_msg}'
         response = self.import_file_in_course(bad_file)
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         mocked_log.error.assert_called_once_with(expected_error_mesg)
 
         # Check that `import_status` returns the appropriate stage (i.e., the
@@ -280,7 +280,7 @@ class ImportTestCase(CourseTestCase):
         """
         good_file = self.good_archives[fmt]
         response = self.import_file_in_course(good_file)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @ddt.data('zip', 'tar')
     def test_import_in_existing_course(self, fmt):
@@ -294,31 +294,31 @@ class ImportTestCase(CourseTestCase):
         auth.add_users(self.user, CourseStaffRole(self.course.id), nonstaff_user)
 
         course = self.store.get_course(self.course.id)
-        self.assertIsNotNone(course)
+        assert course is not None
         display_name_before_import = course.display_name
 
         # Check that global staff user can import course
         response = self.import_file_in_course(good_file)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         course = self.store.get_course(self.course.id)
-        self.assertIsNotNone(course)
+        assert course is not None
         display_name_after_import = course.display_name
 
         # Check that course display name have changed after import
         self.assertNotEqual(display_name_before_import, display_name_after_import)
 
         # Now check that non_staff user has his same role
-        self.assertFalse(CourseInstructorRole(self.course.id).has_user(nonstaff_user))
+        assert not CourseInstructorRole(self.course.id).has_user(nonstaff_user)
         assert CourseStaffRole(self.course.id).has_user(nonstaff_user)
 
         # Now course staff user can also successfully import course
         self.client.login(username=nonstaff_user.username, password='foo')
         resp = self.import_file_in_course(good_file)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
 
         # Now check that non_staff user has his same role
-        self.assertFalse(CourseInstructorRole(self.course.id).has_user(nonstaff_user))
+        assert not CourseInstructorRole(self.course.id).has_user(nonstaff_user)
         assert CourseStaffRole(self.course.id).has_user(nonstaff_user)
 
     ## Unsafe tar methods #####################################################
@@ -407,10 +407,10 @@ class ImportTestCase(CourseTestCase):
         def try_tar(tarpath):
             """ Attempt to tar an unacceptable file """
             resp = self.import_file_in_course(tarpath)
-            self.assertEqual(resp.status_code, 200)
+            assert resp.status_code == 200
 
             resp = self.get_import_status(self.course.id, tarpath)
-            self.assertEqual(resp["ImportStatus"], -1)
+            assert resp["ImportStatus"] == -1
 
         try_tar(self._fifo_tar())
         try_tar(self._symlink_tar())
@@ -467,13 +467,13 @@ class ImportTestCase(CourseTestCase):
         # Refresh library.
         library = self.store.get_library(lib_key)
         children = [self.store.get_item(child).url_name for child in library.children]
-        self.assertEqual(len(children), 2)
+        assert len(children) == 2
         self.assertIn(test_block.url_name, children)
         self.assertIn(test_block2.url_name, children)
 
         unchanged_lib = self.store.get_library(unchanged_key)
         children = [self.store.get_item(child).url_name for child in unchanged_lib.children]
-        self.assertEqual(len(children), 2)
+        assert len(children) == 2
         self.assertIn(test_block3.url_name, children)
         self.assertIn(test_block4.url_name, children)
 
@@ -496,16 +496,16 @@ class ImportTestCase(CourseTestCase):
         finally:
             shutil.rmtree(extract_dir)
 
-        self.assertEqual(lib_key, library_items[0].location.library_key)
+        assert lib_key == library_items[0].location.library_key
         library = self.store.get_library(lib_key)
         children = [self.store.get_item(child).url_name for child in library.children]
-        self.assertEqual(len(children), 3)
+        assert len(children) == 3
         self.assertNotIn(test_block.url_name, children)
         self.assertNotIn(test_block2.url_name, children)
 
         unchanged_lib = self.store.get_library(unchanged_key)
         children = [self.store.get_item(child).url_name for child in unchanged_lib.children]
-        self.assertEqual(len(children), 2)
+        assert len(children) == 2
         self.assertIn(test_block3.url_name, children)
         self.assertIn(test_block4.url_name, children)
 
@@ -584,7 +584,7 @@ class ImportTestCase(CourseTestCase):
         expected_error_mesg = f'{self.log_prefix} User permission denied: {self.user.username}'
         with patch('cms.djangoapps.contentstore.tasks.has_course_author_access', Mock(return_value=False)):
             response = self.import_file_in_course(good_file)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         mocked_log.error.assert_called_once_with(expected_error_mesg)
 
         status_response = self.get_import_status(self.course.id, good_file)
@@ -601,7 +601,7 @@ class ImportTestCase(CourseTestCase):
         good_file = self.good_archives[fmt]
         with patch('django.contrib.auth.models.User.objects.get', side_effect=User.DoesNotExist):
             response = self.import_file_in_course(good_file)
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
             mocked_log.error.assert_called_once_with(expected_error_mesg)
 
         status_response = self.get_import_status(self.course.id, good_file)
@@ -618,7 +618,7 @@ class ImportTestCase(CourseTestCase):
         with patch('cms.djangoapps.contentstore.tasks.safe_extractall', side_effect=SuspiciousOperation):
             response = self.import_file_in_course(good_file)
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         mocked_log.error.assert_called_once_with(expected_error_mesg)
 
         status_response = self.get_import_status(self.course.id, good_file)
@@ -635,7 +635,7 @@ class ImportTestCase(CourseTestCase):
         with patch.object(course_import_export_storage, 'open', side_effect=Exception):
             response = self.import_file_in_course(good_file)
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         mocked_log.exception.assert_called_once_with(expected_error_mesg, exc_info=True)
 
         status_response = self.get_import_status(self.course.id, good_file)
@@ -662,7 +662,7 @@ class ImportTestCase(CourseTestCase):
         with patch.dict(settings.FEATURES, ENABLE_COURSE_OLX_VALIDATION=True):
             response = self.import_file_in_course(good_file)
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         mocked_log.error.assert_called_once_with(expected_error_mesg)
 
         status_response = self.get_import_status(self.course.id, good_file)
@@ -688,7 +688,7 @@ class ImportTestCase(CourseTestCase):
             mocked_import.side_effect = exc
             expected_exception_messages = f"{self.log_prefix} Error while importing course: {str(exc)}"
             response = self.import_file_in_course(good_file)
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
             mocked_log.exception.assert_called_once_with(expected_exception_messages)
             mocked_log.reset_mock()
 
@@ -710,7 +710,7 @@ class ImportTestCase(CourseTestCase):
             mocked_import.side_effect = exception
             expected_exc_mesg = f"{self.log_prefix} Error while importing course: {str(exception)}"
             response = self.import_file_in_course(good_file)
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
             mocked_log.exception.assert_called_once_with(expected_exc_mesg)
             mocked_log.reset_mock()
 
@@ -728,7 +728,7 @@ class ImportTestCase(CourseTestCase):
                 kwargs={'filename': os.path.split(good_file)[1]}
             )
         )
-        self.assertEqual(resp.headers['Cache-Control'], 'no-cache, no-store, must-revalidate')
+        assert resp.headers['Cache-Control'], 'no-cache, no-store == must-revalidate'
 
 
 @override_settings(CONTENTSTORE=TEST_DATA_CONTENTSTORE)
@@ -751,7 +751,7 @@ class ExportTestCase(CourseTestCase):
         Get the HTML for the page.
         """
         resp = self.client.get_html(self.url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertContains(resp, "Export My Course Content")
 
     def test_export_json_unsupported(self):
@@ -759,7 +759,7 @@ class ExportTestCase(CourseTestCase):
         JSON is unsupported.
         """
         resp = self.client.get(self.url, HTTP_ACCEPT='application/json')
-        self.assertEqual(resp.status_code, 406)
+        assert resp.status_code == 406
 
     def test_export_async(self):
         """
@@ -768,11 +768,11 @@ class ExportTestCase(CourseTestCase):
         Return a TarFile of the successful export.
         """
         resp = self.client.post(self.url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         resp = self.client.get(self.status_url)
         result = json.loads(resp.content.decode('utf-8'))
         status = result['ExportStatus']
-        self.assertEqual(status, 3)
+        assert status == 3
         self.assertIn('ExportOutput', result)
         output_url = result['ExportOutput']
         resp = self.client.get(output_url)
@@ -786,7 +786,7 @@ class ExportTestCase(CourseTestCase):
 
     def _verify_export_succeeded(self, resp):
         """ Export success helper method. """
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         assert resp.get('Content-Disposition').startswith('attachment')
 
     def test_unknown_xblock_top_level(self):
@@ -811,9 +811,9 @@ class ExportTestCase(CourseTestCase):
 
         # The course run file still has a child pointer to the unknown type and
         # creates the <not_a_real_block_type url="..."> pointer tag...
-        self.assertEqual(course_elem.tag, 'course')
+        assert course_elem.tag == 'course'
         unknown_elem = course_elem[0]
-        self.assertEqual(unknown_elem.tag, 'not_a_real_block_type')
+        assert unknown_elem.tag == 'not_a_real_block_type'
         # Non empty url_name attribute (the generated ID)
         assert unknown_elem.attrib['url_name']
 
@@ -851,7 +851,7 @@ class ExportTestCase(CourseTestCase):
 
         # The course run file should have a vertical that points to the
         # non-existant block.
-        self.assertEqual(course_elem.tag, 'course')
+        assert course_elem.tag == 'course'
         self.assertEqual(course_elem[0].tag, 'vertical')  # This is just a reference
 
         vert_file_path = next(
@@ -861,10 +861,10 @@ class ExportTestCase(CourseTestCase):
         vert_file = tar_ball.extractfile(vert_file_path)
         vert_xml = lxml.etree.parse(vert_file)
         vert_elem = vert_xml.getroot()
-        self.assertEqual(vert_elem.tag, 'vertical')
-        self.assertEqual(len(vert_elem), 1)
+        assert vert_elem.tag == 'vertical'
+        assert len(vert_elem) == 1
         unknown_elem = vert_elem[0]
-        self.assertEqual(unknown_elem.tag, 'not_a_real_block_type')
+        assert unknown_elem.tag == 'not_a_real_block_type'
         # Non empty url_name attribute (the generated ID)
         assert unknown_elem.attrib['url_name']
 
@@ -877,9 +877,9 @@ class ExportTestCase(CourseTestCase):
     def _verify_export_failure(self, expected_text):
         """ Export failure helper method. """
         resp = self.client.post(self.url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         resp = self.client.get(self.status_url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         result = json.loads(resp.content.decode('utf-8'))
         self.assertNotIn('ExportOutput', result)
         self.assertIn('ExportError', result)
@@ -907,15 +907,15 @@ class ExportTestCase(CourseTestCase):
             export_library_to_xml(self.store, contentstore(), lib_key, root_dir, name)
             with open(root_dir / name / LIBRARY_ROOT) as xml_root:
                 lib_xml = lxml.etree.XML(xml_root.read())
-                self.assertEqual(lib_xml.get('org'), lib_key.org)
-                self.assertEqual(lib_xml.get('library'), lib_key.library)
+                assert lib_xml.get('org') == lib_key.org
+                assert lib_xml.get('library') == lib_key.library
                 block = lib_xml.find('video')
-                self.assertIsNotNone(block)
-                self.assertEqual(block.get('url_name'), video_block.url_name)
+                assert block is not None
+                assert block.get('url_name') == video_block.url_name
             with open(root_dir / name / 'video' / video_block.url_name + '.xml') as xml_block:
                 video_xml = lxml.etree.XML(xml_block.read())
-                self.assertEqual(video_xml.tag, 'video')
-                self.assertEqual(video_xml.get('youtube_id_1_0'), youtube_id)
+                assert video_xml.tag == 'video'
+                assert video_xml.get('youtube_id_1_0') == youtube_id
         finally:
             shutil.rmtree(root_dir / name)
 
@@ -945,7 +945,7 @@ class ExportTestCase(CourseTestCase):
         Export failure if course does not exist
         """
         resp = self.client.get_html(url)
-        self.assertEqual(resp.status_code, 404)
+        assert resp.status_code == 404
 
     def test_non_course_author(self):
         """
@@ -953,7 +953,7 @@ class ExportTestCase(CourseTestCase):
         """
         client, _ = self.create_non_staff_authed_user_client()
         resp = client.get(self.url)
-        self.assertEqual(resp.status_code, 403)
+        assert resp.status_code == 403
 
     def test_status_non_course_author(self):
         """
@@ -961,7 +961,7 @@ class ExportTestCase(CourseTestCase):
         """
         client, _ = self.create_non_staff_authed_user_client()
         resp = client.get(self.status_url)
-        self.assertEqual(resp.status_code, 403)
+        assert resp.status_code == 403
 
     def test_status_missing_record(self):
         """
@@ -969,9 +969,9 @@ class ExportTestCase(CourseTestCase):
         represented in the database should yield a useful result
         """
         resp = self.client.get(self.status_url)
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         result = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(result['ExportStatus'], 0)
+        assert result['ExportStatus'] == 0
 
     def test_output_non_course_author(self):
         """
@@ -979,7 +979,7 @@ class ExportTestCase(CourseTestCase):
         """
         client, _ = self.create_non_staff_authed_user_client()
         resp = client.get(reverse_course_url('export_output_handler', self.course.id))
-        self.assertEqual(resp.status_code, 403)
+        assert resp.status_code == 403
 
     def _mock_artifact(self, spec=None, file_url=None):
         """
@@ -1010,7 +1010,7 @@ class ExportTestCase(CourseTestCase):
         )
         resp = self.client.get(self.status_url)
         result = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(result['ExportOutput'], '/path/to/testfile.tar.gz')
+        assert result['ExportOutput'] == '/path/to/testfile.tar.gz'
 
     @ddt.data(S3Boto3Storage)
     @patch('cms.djangoapps.contentstore.views.import_export._latest_task_status')
@@ -1032,7 +1032,7 @@ class ExportTestCase(CourseTestCase):
         )
         resp = self.client.get(self.status_url)
         result = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(result['ExportOutput'], '/s3/file/path/testfile.tar.gz')
+        assert result['ExportOutput'] == '/s3/file/path/testfile.tar.gz'
 
     @patch('cms.djangoapps.contentstore.views.import_export._latest_task_status')
     @patch('user_tasks.models.UserTaskArtifact.objects.get')
@@ -1050,7 +1050,7 @@ class ExportTestCase(CourseTestCase):
         resp = self.client.get(self.status_url)
         result = json.loads(resp.content.decode('utf-8'))
         file_export_output_url = reverse_course_url('export_output_handler', self.course.id)
-        self.assertEqual(result['ExportOutput'], file_export_output_url)
+        assert result['ExportOutput'] == file_export_output_url
 
 
 @override_settings(CONTENTSTORE=TEST_DATA_CONTENTSTORE)
@@ -1091,7 +1091,7 @@ class TestLibraryImportExport(CourseTestCase):
         )
 
         source_library = self.store.get_library(source_library1_key)
-        self.assertEqual(source_library.url_name, 'library')
+        assert source_library.url_name == 'library'
 
         # Import the exported library into a different content library.
         import_library_from_xml(
@@ -1175,7 +1175,7 @@ class TestCourseExportImport(LibraryTestCase):
         source_course_lib_children = self.get_lib_content_block_children(source_course_location)
         dest_course_lib_children = self.get_lib_content_block_children(dest_course_location)
 
-        self.assertEqual(len(source_course_lib_children), len(dest_course_lib_children))
+        assert len(source_course_lib_children) == len(dest_course_lib_children)
 
         for source_child_location, dest_child_location in zip(source_course_lib_children, dest_course_lib_children):
             # Assert problem names on draft branch.
@@ -1193,7 +1193,7 @@ class TestCourseExportImport(LibraryTestCase):
         """
         source_child = self.store.get_item(source_child_location)
         dest_child = self.store.get_item(dest_child_location)
-        self.assertEqual(source_child.display_name, dest_child.display_name)
+        assert source_child.display_name == dest_child.display_name
 
     @ddt.data(*itertools.product([False, True], repeat=2))
     @ddt.unpack
@@ -1295,7 +1295,7 @@ class TestCourseExportImportProblem(CourseTestCase):
         Asserts that problems' data is as expected with pre-tag content maintained.
         """
         problem_content = self.get_problem_content(course_location)
-        self.assertEqual(expected_problem_content, problem_content)
+        assert expected_problem_content == problem_content
 
     @ddt.data(
         [

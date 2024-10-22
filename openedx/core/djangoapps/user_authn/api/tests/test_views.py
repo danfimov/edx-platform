@@ -359,7 +359,7 @@ class MFEContextViewTest(ThirdPartyAuthTestMixin, APITestCase):
         Test MFE Context API serialized response
         """
         response = self.client.get(self.url, self.query_params)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
         params = {
             'next': self.query_params['next']
@@ -375,7 +375,7 @@ class MFEContextViewTest(ThirdPartyAuthTestMixin, APITestCase):
         Test MFE Context API response keys
         """
         response = self.client.get(self.url, self.query_params)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
         response_keys = set(response.data.keys())
         self.assertSetEqual(

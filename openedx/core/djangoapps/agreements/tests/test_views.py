@@ -178,8 +178,8 @@ class IntegritySignatureViewTests(APITestCase, ModuleStoreTestCase):
 
         # Check that the course has a signature created
         signatures = get_integrity_signatures_for_course(self.course_id)
-        self.assertEqual(len(signatures), 1)
-        self.assertEqual(signatures[0].user.username, self.USERNAME)
+        assert len(signatures) == 1
+        assert signatures[0].user.username == self.USERNAME
 
     def test_post_duplicate_integrity_signature(self):
         # Create a signature
@@ -208,8 +208,8 @@ class IntegritySignatureViewTests(APITestCase, ModuleStoreTestCase):
 
             # The course should not have a second signature
             signatures = get_integrity_signatures_for_course(self.course_id)
-            self.assertEqual(len(signatures), 1)
-            self.assertEqual(signatures[0].user.username, self.USERNAME)
+            assert len(signatures) == 1
+            assert signatures[0].user.username == self.USERNAME
 
     @patch.dict(settings.FEATURES, {'ENABLE_INTEGRITY_SIGNATURE': False})
     def test_post_integrity_signature_no_waffle_flag(self):
@@ -287,5 +287,5 @@ class LTIPIISignatureSignatureViewTests(APITestCase, ModuleStoreTestCase):
                                      "lti_tools": self.lti_tools, "created_at": self.time_created})
         self._assert_response(response, status.HTTP_200_OK, self.user, self.course_id)
         signature = get_lti_pii_signature(self.user.username, self.course_id)
-        self.assertEqual(signature.user.username, self.user.username)
-        self.assertEqual(signature.lti_tools, self.lti_tools)
+        assert signature.user.username == self.user.username
+        assert signature.lti_tools == self.lti_tools

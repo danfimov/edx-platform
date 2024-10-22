@@ -46,9 +46,9 @@ class TestDeleteOrphan(TestOrphanBase):
         assert self.store.has_item(course.id.make_usage_key('html', 'multi_parent_html'))
 
         # and make sure that these were
-        self.assertFalse(self.store.has_item(course.id.make_usage_key('vertical', 'OrphanVert')))
-        self.assertFalse(self.store.has_item(course.id.make_usage_key('chapter', 'OrphanChapter')))
-        self.assertFalse(self.store.has_item(course.id.make_usage_key('html', 'OrphanHtml')))
+        assert not self.store.has_item(course.id.make_usage_key('vertical', 'OrphanVert'))
+        assert not self.store.has_item(course.id.make_usage_key('chapter', 'OrphanChapter'))
+        assert not self.store.has_item(course.id.make_usage_key('html', 'OrphanHtml'))
 
     def test_delete_orphans_published_branch_split(self):
         """

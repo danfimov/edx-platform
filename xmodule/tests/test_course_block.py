@@ -390,14 +390,14 @@ class TeamsConfigurationTestCase(unittest.TestCase):
         """
         Tests that no teamsets are configured by default.
         """
-        assert self.course.teamsets == []
+        assert not self.course.teamsets
 
     def test_teamsets_empty(self):
         """
         Test that if only the max team size is configured then there are no teamsets
         """
         self.add_team_configuration(max_team_size=4)
-        assert self.course.teamsets == []
+        assert not self.course.teamsets
 
     def test_teamsets_present(self):
         """

@@ -76,7 +76,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         Test response if PII sharing is not allowed
         """
         response = self._get()
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         expected_data = {
             'course_key': None,
             'provider_type': '',
@@ -90,7 +90,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
             'free_tier': False,
             'pii_sharing_allowed': False
         }
-        self.assertEqual(response.data, expected_data)
+        assert response.data == expected_data
 
     def test_pii_sharing_is_allowed(self):
         """
@@ -98,7 +98,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         """
         CourseAllowPIISharingInLTIFlag.objects.create(course_id=self.course.id, enabled=True)
         response = self._get()
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         expected_data = {
             'enabled': True,
             'course_key': None,
@@ -113,7 +113,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
             'provider_type': ''
         }
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(content, expected_data)
+        assert content == expected_data
 
     @ddt.data(('zoom', False, False), ('big_blue_button', False, True))
     @ddt.unpack
@@ -124,13 +124,13 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         lti_config, data, response = self.create_course_live_config(provider)
         course_live_configurations = CourseLiveConfiguration.get(self.course.id)
         lti_configuration = course_live_configurations.get(self.course.id).lti_configuration
-        self.assertEqual(self.course.id, course_live_configurations.course_key)
-        self.assertEqual(data['enabled'], course_live_configurations.enabled)
-        self.assertEqual(data['provider_type'], course_live_configurations.provider_type)
+        assert self.course.id == course_live_configurations.course_key
+        assert data['enabled'] == course_live_configurations.enabled
+        assert data['provider_type'] == course_live_configurations.provider_type
 
-        self.assertEqual(lti_config['lti_1p1_client_key'], lti_configuration.lti_1p1_client_key)
-        self.assertEqual(lti_config['lti_1p1_client_secret'], lti_configuration.lti_1p1_client_secret)
-        self.assertEqual(lti_config['lti_1p1_launch_url'], lti_configuration.lti_1p1_launch_url)
+        assert lti_config['lti_1p1_client_key'] == lti_configuration.lti_1p1_client_key
+        assert lti_config['lti_1p1_client_secret'] == lti_configuration.lti_1p1_client_secret
+        assert lti_config['lti_1p1_launch_url'] == lti_configuration.lti_1p1_launch_url
 
         provider_instance = ProviderManager().get_enabled_providers().get(provider)
         additional_param = {'additional_parameters': {}}
@@ -143,7 +143,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
             **additional_param
         }, lti_configuration.lti_config)
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @ddt.data(('zoom', False, False), ('big_blue_button', False, True))
     @ddt.unpack
@@ -172,13 +172,13 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         live_configurations = CourseLiveConfiguration.get(self.course.id)
         lti_configuration = live_configurations.get(self.course.id).lti_configuration
 
-        self.assertEqual(self.course.id, live_configurations.course_key)
-        self.assertEqual(updated_data['enabled'], live_configurations.enabled)
-        self.assertEqual(updated_data['provider_type'], live_configurations.provider_type)
+        assert self.course.id == live_configurations.course_key
+        assert updated_data['enabled'] == live_configurations.enabled
+        assert updated_data['provider_type'] == live_configurations.provider_type
 
-        self.assertEqual(updated_lti_config.get('lti_1p1_client_key'), lti_configuration.lti_1p1_client_key)
-        self.assertEqual(lti_config.get('lti_1p1_client_secret'), lti_configuration.lti_1p1_client_secret)
-        self.assertEqual(updated_lti_config.get('lti_1p1_launch_url'), lti_configuration.lti_1p1_launch_url)
+        assert updated_lti_config.get('lti_1p1_client_key') == lti_configuration.lti_1p1_client_key
+        assert lti_config.get('lti_1p1_client_secret') == lti_configuration.lti_1p1_client_secret
+        assert updated_lti_config.get('lti_1p1_launch_url') == lti_configuration.lti_1p1_launch_url
 
         provider_instance = ProviderManager().get_enabled_providers().get(provider)
         additional_param = {'additional_parameters': {}}
@@ -191,7 +191,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
             **additional_param
         }, lti_configuration.lti_config)
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @ddt.data(('zoom', False, False), ('big_blue_button', False, True))
     @ddt.unpack
@@ -225,8 +225,8 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         }
 
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(content, expected_data)
+        assert response.status_code == 200
+        assert content == expected_data
 
     @ddt.data(('zoom', False, False), ('big_blue_button', False, True))
     @ddt.unpack
@@ -251,7 +251,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         }
         response = self._post(updated_data)
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         provider_instance = ProviderManager().get_enabled_providers().get(provider)
         additional_param = {'additional_parameters': {}}
@@ -275,7 +275,7 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
             },
             'pii_sharing_allowed': share_email or share_username
         }
-        self.assertEqual(content, expected_data)
+        assert content == expected_data
 
     def test_post_error_messages(self):
         """
@@ -287,8 +287,8 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         expected_data = {
             'provider_type': ['This field is required.'],
         }
-        self.assertEqual(content, expected_data)
-        self.assertEqual(response.status_code, 400)
+        assert content == expected_data
+        assert response.status_code == 400
 
     def test_non_staff_user_access(self):
         """
@@ -297,13 +297,13 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         self.user = self.create_user_for_course(self.course, user_type=CourseUserType.UNENROLLED)
         response = self._get()
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(content, {'detail': 'You do not have permission to perform this action.'})
+        assert response.status_code == 403
+        assert content == {'detail': 'You do not have permission to perform this action.'}
 
         response = self._post({})
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(content, {'detail': 'You do not have permission to perform this action.'})
+        assert response.status_code == 403
+        assert content == {'detail': 'You do not have permission to perform this action.'}
 
     def test_courseware_api_has_live_tab(self):
         """
@@ -348,8 +348,8 @@ class TestCourseLiveConfigurationView(ModuleStoreTestCase, APITestCase):
         }
 
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(content, expected_data)
+        assert response.status_code == 200
+        assert content == expected_data
 
 
 class TestCourseLiveProvidersView(ModuleStoreTestCase, APITestCase):
@@ -382,7 +382,7 @@ class TestCourseLiveProvidersView(ModuleStoreTestCase, APITestCase):
         }
         response = self.client.get(self.url)
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(content, expected_data)
+        assert content == expected_data
 
 
 class TestCourseLiveIFrameView(ModuleStoreTestCase, APITestCase):
@@ -428,8 +428,8 @@ class TestCourseLiveIFrameView(ModuleStoreTestCase, APITestCase):
         )
         live_config.save()
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response.data['iframe'], Markup)
+        assert response.status_code == 200
+        assert isinstance(response.data['iframe'], Markup)
         self.assertIn('iframe', str(response.data['iframe']))
 
     def test_non_authenticated_user(self):
@@ -438,7 +438,7 @@ class TestCourseLiveIFrameView(ModuleStoreTestCase, APITestCase):
         """
         self.client.logout()
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 401)
+        assert response.status_code == 401
 
     def test_not_enrolled_user(self):
         """
@@ -446,7 +446,7 @@ class TestCourseLiveIFrameView(ModuleStoreTestCase, APITestCase):
         """
         self.user = self.create_user_for_course(self.course, user_type=CourseUserType.UNENROLLED)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_live_configuration_disabled(self):
         """
@@ -458,4 +458,4 @@ class TestCourseLiveIFrameView(ModuleStoreTestCase, APITestCase):
             provider_type="zoom",
         )
         response = self.client.get(self.url)
-        self.assertEqual(response.data['developer_message'], 'Course live is not enabled for this course.')
+        assert response.data['developer_message'] == 'Course live is not enabled for this course.'

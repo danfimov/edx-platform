@@ -164,11 +164,11 @@ class ContainerPageTestCase(StudioPageTestCase, LibraryTestCase):
 
         # Create a library content block
         lc_block = self._add_library_content_block(course, self.lib_key)
-        self.assertEqual(len(lc_block.children), 0)
+        assert len(lc_block.children) == 0
 
         # Refresh children to be reflected in lc_block
         lc_block = self._upgrade_and_sync(lc_block)
-        self.assertEqual(len(lc_block.children), 1)
+        assert len(lc_block.children) == 1
 
         self.validate_preview_html(
             lc_block,
@@ -241,7 +241,7 @@ class ContainerPageTestCase(StudioPageTestCase, LibraryTestCase):
             request=request,
             usage_key_string=str(self.vertical.location)
         )
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
 
 class ContainerEmbedPageTestCase(ContainerPageTestCase):  # lint-amnesty, pylint: disable=test-inherits-tests

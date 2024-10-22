@@ -116,7 +116,7 @@ class XBlockViewGetTest(XBlockViewTestCase, ModuleStoreTestCase, APITestCase):
         url = self.get_url()
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_xblock_handler_called_with_correct_arguments(self):
         self.client.login(
@@ -172,7 +172,7 @@ class XBlockViewPostTest(XBlockViewTestCase, ModuleStoreTestCase, APITestCase):
         url = self.get_url()
 
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_xblock_handler_called_with_correct_arguments(self):
         self.client.login(
@@ -223,7 +223,7 @@ class XBlockViewPutTest(XBlockViewTestCase, ModuleStoreTestCase, APITestCase):
         url = self.get_url()
 
         response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_xblock_handler_called_with_correct_arguments(self):
         self.client.login(
@@ -274,7 +274,7 @@ class XBlockViewPatchTest(XBlockViewTestCase, ModuleStoreTestCase, APITestCase):
         url = self.get_url()
 
         response = self.client.patch(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_xblock_handler_called_with_correct_arguments(self):
         self.client.login(
@@ -315,7 +315,7 @@ class XBlockViewDeleteTest(XBlockViewTestCase, ModuleStoreTestCase, APITestCase)
         url = self.get_url()
 
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_xblock_handler_called_with_correct_arguments(self):
         self.client.login(

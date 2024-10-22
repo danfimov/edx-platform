@@ -29,6 +29,6 @@ class TestOrganizationListing(TestCase):
     def test_organization_list(self):
         """Verify that the organization names list api returns list of organization short names."""
         response = self.client.get(self.org_names_listing_url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         org_names = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(org_names, self.org_short_names)
+        assert org_names == self.org_short_names

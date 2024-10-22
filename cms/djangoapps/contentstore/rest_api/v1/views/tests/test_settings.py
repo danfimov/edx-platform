@@ -57,7 +57,7 @@ class CourseSettingsViewTest(CourseTestCase, PermissionAccessMixin):
             "licensing_enabled": False,
         }
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     @patch.dict("django.conf.settings.FEATURES", {"ENABLE_CREDIT_ELIGIBILITY": True})
@@ -67,7 +67,7 @@ class CourseSettingsViewTest(CourseTestCase, PermissionAccessMixin):
         """
         _ = CreditCourseFactory(course_key=self.course.id, enabled=True)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertIn("credit_requirements", response.data)
         assert response.data["is_credit_course"]
 
@@ -84,4 +84,4 @@ class CourseSettingsViewTest(CourseTestCase, PermissionAccessMixin):
         """
         response = self.client.get(self.url)
         self.assertIn("possible_pre_requisite_courses", response.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK

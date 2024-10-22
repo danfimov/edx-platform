@@ -90,7 +90,7 @@ class CustomValidationTestCase(TestCase):
         request = mock.Mock(grant_type='client_credentials', client=application_access.application, scopes=None)
         overriden_default_scopes = self.validator.get_default_scopes(request=request, client_id='client_id')
 
-        self.assertEqual(overriden_default_scopes, self.default_scopes + ['user_id'])
+        assert overriden_default_scopes == self.default_scopes + ['user_id']
 
     def test_get_default_scopes(self):
         """
@@ -99,7 +99,7 @@ class CustomValidationTestCase(TestCase):
         request = mock.Mock(grant_type='client_credentials', client=None, scopes=None)
         overriden_default_scopes = self.validator.get_default_scopes(request=request, client_id='client_id')
 
-        self.assertEqual(overriden_default_scopes, self.default_scopes)
+        assert overriden_default_scopes == self.default_scopes
 
 
 @skip_unless_lms

@@ -56,7 +56,7 @@ class CourseTabsListTestCase(TestCase):
     @ddt.unpack
     def test_upgrade_tabs(self, tabs, expected_result):
         CourseTabList.upgrade_tabs(tabs)
-        self.assertEqual(tabs, expected_result)
+        assert tabs == expected_result
 
     @ddt.data(
         [

@@ -100,7 +100,7 @@ class HomePageCoursesViewV2Test(CourseTestCase):
             ('results', expected_data),
         ])
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     @override_waffle_switch(ENABLE_GLOBAL_STAFF_OPTIMIZATION, True)
@@ -112,8 +112,8 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         """
         response = self.client.get(self.api_v2_url, {"org": "demo-org"})
 
-        self.assertEqual(len(response.data['results']['courses']), 1)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert len(response.data['results']['courses']) == 1
+        assert response.status_code == status.HTTP_200_OK
 
     @override_waffle_switch(ENABLE_GLOBAL_STAFF_OPTIMIZATION, True)
     def test_org_query_if_empty(self):
@@ -124,8 +124,8 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         """
         response = self.client.get(self.api_v2_url)
 
-        self.assertEqual(len(response.data['results']['courses']), 0)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert len(response.data['results']['courses']) == 0
+        assert response.status_code == status.HTTP_200_OK
 
     def test_active_only_query_if_passed(self):
         """Get list of active courses only.
@@ -135,7 +135,7 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         """
         response = self.client.get(self.api_v2_url, {"active_only": "true"})
 
-        self.assertEqual(len(response.data["results"]["courses"]), 1)
+        assert len(response.data["results"]["courses"]) == 1
         self.assertEqual(response.data["results"]["courses"], [OrderedDict([
             ("course_key", str(self.course.id)),
             ("display_name", self.course.display_name),
@@ -148,7 +148,7 @@ class HomePageCoursesViewV2Test(CourseTestCase):
             ("url", f'/course/{str(self.course.id)}'),
             ("is_active", True),
         ])])
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
     def test_archived_only_query_if_passed(self):
         """Get list of archived courses only.
@@ -158,7 +158,7 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         """
         response = self.client.get(self.api_v2_url, {"archived_only": "true"})
 
-        self.assertEqual(len(response.data["results"]["courses"]), 1)
+        assert len(response.data["results"]["courses"]) == 1
         self.assertEqual(response.data["results"]["courses"], [OrderedDict([
             ("course_key", str(self.archived_course.id)),
             ("display_name", self.archived_course.display_name),
@@ -174,7 +174,7 @@ class HomePageCoursesViewV2Test(CourseTestCase):
             ("url", f'/course/{str(self.archived_course.id)}'),
             ("is_active", False),
         ])])
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
     def test_search_query_if_passed(self):
         """Get list of courses when search filter passed as a query param.
@@ -184,7 +184,7 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         """
         response = self.client.get(self.api_v2_url, {"search": "sample"})
 
-        self.assertEqual(len(response.data["results"]["courses"]), 1)
+        assert len(response.data["results"]["courses"]) == 1
         self.assertEqual(response.data["results"]["courses"], [OrderedDict([
             ("course_key", str(self.archived_course.id)),
             ("display_name", self.archived_course.display_name),
@@ -200,7 +200,7 @@ class HomePageCoursesViewV2Test(CourseTestCase):
             ("url", f'/course/{str(self.archived_course.id)}'),
             ("is_active", False),
         ])])
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
     def test_order_query_if_passed(self):
         """Get list of courses when order filter passed as a query param.
@@ -210,9 +210,9 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         """
         response = self.client.get(self.api_v2_url, {"order": "org"})
 
-        self.assertEqual(len(response.data["results"]["courses"]), 2)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["results"]["courses"][0]["org"], "demo-org")
+        assert len(response.data["results"]["courses"]) == 2
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["results"]["courses"][0]["org"] == "demo-org"
 
     def test_page_query_if_passed(self):
         """Get list of courses when page filter passed as a query param.
@@ -222,8 +222,8 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         """
         response = self.client.get(self.api_v2_url, {"page": 1})
 
-        self.assertEqual(response.data["count"], 2)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.data["count"] == 2
+        assert response.status_code == status.HTTP_200_OK
 
     @patch("cms.djangoapps.contentstore.views.course.CourseOverview")
     @patch("cms.djangoapps.contentstore.views.course.modulestore")
@@ -236,6 +236,6 @@ class HomePageCoursesViewV2Test(CourseTestCase):
         with override_settings(FEATURES={'ENABLE_HOME_PAGE_COURSE_API_V2': False}):
             response = self.client.get(self.api_v1_url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         mock_modulestore().get_course_summaries.assert_called_once()
         mock_course_overview.get_all_courses.assert_not_called()

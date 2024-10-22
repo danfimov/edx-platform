@@ -385,4 +385,4 @@ class TestCourseEnrollmentEmailTask(ModuleStoreTestCase):
                 kwargs=self.send_course_enrollment_email_kwargs
             )
         pytest.raises(Exception, task.get)
-        self.assertEqual(mock_get_braze_client.call_count, (MAX_RETRIES + 1))
+        assert mock_get_braze_client.call_count == (MAX_RETRIES + 1)

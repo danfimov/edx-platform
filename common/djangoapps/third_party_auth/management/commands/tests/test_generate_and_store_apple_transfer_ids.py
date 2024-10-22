@@ -72,7 +72,7 @@ class TestGenerateAndStoreTransferIds(TestCase):
         mock_generate_client_secret.return_value = 'sample_client_secret'
         mock_generate_access_token.return_value = 'sample_access_token'
 
-        self.assertEqual(0, AppleMigrationUserIdInfo.objects.all().count())
+        assert 0 == AppleMigrationUserIdInfo.objects.all().count()
 
         with mock.patch.object(AppleIdAuth, 'name', self.slug):
             call_command(self.command, 'sample_team_id')
@@ -83,4 +83,4 @@ class TestGenerateAndStoreTransferIds(TestCase):
         expected_transfer_sub = 'sample_transfer_sub'
         actual_transfer_sub = AppleMigrationUserIdInfo.objects.filter(
             old_apple_id='sample_old_apple_id').first().transfer_id
-        self.assertEqual(expected_transfer_sub, actual_transfer_sub)
+        assert expected_transfer_sub == actual_transfer_sub

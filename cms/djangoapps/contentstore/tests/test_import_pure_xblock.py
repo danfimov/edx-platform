@@ -63,4 +63,4 @@ class XBlockImportTest(ModuleStoreTestCase):
 
         xblock = self.store.get_item(xblock_location)
         assert isinstance(xblock, StubXBlock)
-        self.assertEqual(xblock.test_field, expected_field_val)
+        assert xblock.test_field == expected_field_val

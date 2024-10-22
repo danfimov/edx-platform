@@ -242,7 +242,7 @@ class RegistryTest(testutil.TestCase):
     def test_get_returns_none_if_provider_not_enabled_change(self):
         linkedin_provider_id = "oa2-linkedin-oauth2"
         # At this point there should be no configuration entries at all so no providers should be enabled
-        assert provider.Registry.enabled() == []
+        assert not provider.Registry.enabled()
         assert provider.Registry.get(linkedin_provider_id) is None
         # Now explicitly disabled this provider:
         self.configure_linkedin_provider(enabled=False)
@@ -257,7 +257,7 @@ class RegistryTest(testutil.TestCase):
         assert provider.Registry.get(linkedin_provider_id).provider_id == linkedin_provider_id
 
     def test_get_from_pipeline_returns_none_if_provider_not_enabled(self):
-        assert provider.Registry.enabled() == [], 'By default, no providers are enabled.'
+        assert not provider.Registry.enabled(), 'By default, no providers are enabled.'
         assert provider.Registry.get_from_pipeline(Mock()) is None
 
     def test_get_enabled_by_backend_name_returns_enabled_provider(self):

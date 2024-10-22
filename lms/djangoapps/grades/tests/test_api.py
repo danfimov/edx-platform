@@ -172,8 +172,8 @@ class ClearGradeTests(ModuleStoreTestCase):
             self.subsection.location
         )
         course_grade = PersistentCourseGrade.read(self.user.id, self.course.id)
-        self.assertIsNotNone(course_grade)
-        self.assertIsNotNone(override_obj)
+        assert course_grade is not None
+        assert override_obj is not None
 
         api.clear_user_course_grades(self.user.id, self.course.id)
 
@@ -215,10 +215,10 @@ class ClearGradeTests(ModuleStoreTestCase):
         # fetch and assert grades are available for both users
         user_course_grade = PersistentCourseGrade.read(self.user.id, self.course.id)
         other_user_course_grade = PersistentCourseGrade.read(self.user.id, self.course.id)
-        self.assertIsNotNone(user_course_grade)
-        self.assertIsNotNone(user_override_obj)
-        self.assertIsNotNone(other_user_override_obj)
-        self.assertIsNotNone(other_user_course_grade)
+        assert user_course_grade is not None
+        assert user_override_obj is not None
+        assert other_user_override_obj is not None
+        assert other_user_course_grade is not None
 
         api.clear_user_course_grades(other_user.id, self.course.id)
 
@@ -231,8 +231,8 @@ class ClearGradeTests(ModuleStoreTestCase):
         after_clear_user_course_grade = PersistentCourseGrade.read(self.user.id, self.course.id)
         with self.assertRaises(PersistentCourseGrade.DoesNotExist):
             PersistentCourseGrade.read(other_user.id, self.course.id)
-        self.assertIsNotNone(after_clear_override_obj)
-        self.assertIsNotNone(after_clear_user_course_grade)
+        assert after_clear_override_obj is not None
+        assert after_clear_user_course_grade is not None
 
     @patch('lms.djangoapps.grades.models_api._PersistentSubsectionGrade')
     @patch('lms.djangoapps.grades.models_api._PersistentCourseGrade')

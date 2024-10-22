@@ -24,12 +24,12 @@ class LtiAuthenticationBackendTest(TestCase):
         get_user_model().objects.create(username='foobar')
         backend = LtiAuthenticationBackend()
         user = backend.authenticate(None, iss=self.iss, aud=self.aud, sub=self.sub)
-        self.assertIsNone(user)
+        assert user is None
 
     def test_with_profile(self):
         profile = LtiProfile.objects.create(
             platform_id=self.iss, client_id=self.aud, subject_id=self.sub)
         backend = LtiAuthenticationBackend()
         user = backend.authenticate(None, iss=self.iss, aud=self.aud, sub=self.sub)
-        self.assertIsNotNone(user)
-        self.assertEqual(user.contentlibraries_lti_profile, profile)
+        assert user is not None
+        assert user.contentlibraries_lti_profile == profile

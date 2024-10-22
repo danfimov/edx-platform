@@ -269,7 +269,7 @@ class GetCourseTestBlackouts(ForumsEnableMixin, UrlResetMixin, ModuleStoreTestCa
         ]
         modulestore().update_item(self.course, self.user.id)
         result = get_course(self.request, self.course.id)
-        assert result['blackouts'] == []
+        assert not result['blackouts']
 
 
 @mock.patch.dict("django.conf.settings.FEATURES", {"DISABLE_START_DATES": False})
@@ -1940,8 +1940,8 @@ class CreateThreadTest(
 
         with self.assertRaises(DiscussionBlackOutException) as assertion:
             create_thread(self.request, self.minimal_data)
-        self.assertEqual(assertion.exception.status_code, 403)
-        self.assertEqual(assertion.exception.detail, "Discussions are in blackout period.")
+        assert assertion.exception.status_code == 403
+        assert assertion.exception.detail == "Discussions are in blackout period."
 
     @mock.patch("eventtracking.tracker.emit")
     def test_basic_in_blackout_period_with_user_access(self, mock_emit):
@@ -1998,7 +1998,7 @@ class CreateThreadTest(
             }
         )
         event_name, event_data = mock_emit.call_args[0]
-        self.assertEqual(event_name, "edx.forum.thread.created")
+        assert event_name == "edx.forum.thread.created"
         self.assertEqual(
             event_data,
             {
@@ -2421,8 +2421,8 @@ class CreateCommentTest(
         if parent_id:
             expected_event_data["response"] = {"id": parent_id}
         actual_event_name, actual_event_data = mock_emit.call_args[0]
-        self.assertEqual(actual_event_name, expected_event_name)
-        self.assertEqual(actual_event_data, expected_event_data)
+        assert actual_event_name == expected_event_name
+        assert actual_event_data == expected_event_data
 
     def test_error_in_black_out(self):
         """
@@ -2432,8 +2432,8 @@ class CreateCommentTest(
 
         with self.assertRaises(DiscussionBlackOutException) as assertion:
             create_comment(self.request, self.minimal_data)
-        self.assertEqual(assertion.exception.status_code, 403)
-        self.assertEqual(assertion.exception.detail, "Discussions are in blackout period.")
+        assert assertion.exception.status_code == 403
+        assert assertion.exception.detail == "Discussions are in blackout period."
 
     @ddt.data(
         *itertools.product(
@@ -2762,7 +2762,7 @@ class UpdateThreadTest(
         with mock.patch(mock_path) as signal_patch:
             result = update_thread(self.request, "test_thread", data)
             if old_following != new_following:
-                self.assertEqual(signal_patch.call_count, 1)
+                assert signal_patch.call_count == 1
         assert result['following'] == new_following
         last_request_path = urlparse(httpretty.last_request().path).path  # lint-amnesty, pylint: disable=no-member
         subscription_url = f"/api/v1/users/{self.user.id}/subscriptions"
@@ -2958,8 +2958,8 @@ class UpdateThreadTest(
                 expected_event_data['reported_status_cleared'] = False
 
             actual_event_name, actual_event_data = mock_emit.call_args[0]
-            self.assertEqual(actual_event_name, expected_event_name)
-            self.assertEqual(actual_event_data, expected_event_data)
+            assert actual_event_name == expected_event_name
+            assert actual_event_data == expected_event_data
 
     @ddt.data(
         (False, True),
@@ -3007,8 +3007,8 @@ class UpdateThreadTest(
         }
 
         actual_event_name, actual_event_data = mock_emit.call_args[0]
-        self.assertEqual(actual_event_name, expected_event_name)
-        self.assertEqual(actual_event_data, expected_event_data)
+        assert actual_event_name == expected_event_name
+        assert actual_event_data == expected_event_data
 
     def test_invalid_field(self):
         self.register_thread()
@@ -3061,8 +3061,8 @@ class UpdateThreadTest(
             }
 
             actual_event_name, actual_event_data = mock_emit.call_args[0]
-            self.assertEqual(actual_event_name, expected_event_name)
-            self.assertEqual(actual_event_data, expected_event_data)
+            assert actual_event_name == expected_event_name
+            assert actual_event_data == expected_event_data
 
         except ValidationError as error:
             assert role_name == FORUM_ROLE_STUDENT
@@ -3117,8 +3117,8 @@ class UpdateThreadTest(
             }
 
             actual_event_name, actual_event_data = mock_emit.call_args[0]
-            self.assertEqual(actual_event_name, expected_event_name)
-            self.assertEqual(actual_event_data, expected_event_data)
+            assert actual_event_name == expected_event_name
+            assert actual_event_data == expected_event_data
         except ValidationError as error:
             assert role_name == FORUM_ROLE_STUDENT
             assert error.message_dict == {
@@ -3371,7 +3371,7 @@ class UpdateCommentTest(
         )
         try:
             update_comment(self.request, "test_comment", {"endorsed": True})
-            self.assertEqual(endorsed_mock.call_count, 1)
+            assert endorsed_mock.call_count == 1
             assert not expected_error
         except ValidationError as err:
             assert expected_error
@@ -3547,8 +3547,8 @@ class UpdateCommentTest(
                 expected_event_data['reported_status_cleared'] = False
 
             actual_event_name, actual_event_data = mock_emit.call_args[0]
-            self.assertEqual(actual_event_name, expected_event_name)
-            self.assertEqual(actual_event_data, expected_event_data)
+            assert actual_event_name == expected_event_name
+            assert actual_event_data == expected_event_data
 
     @ddt.data(
         (False, True),
@@ -3592,8 +3592,8 @@ class UpdateCommentTest(
         }
 
         actual_event_name, actual_event_data = mock_emit.call_args[0]
-        self.assertEqual(actual_event_name, expected_event_name)
-        self.assertEqual(actual_event_data, expected_event_data)
+        assert actual_event_name == expected_event_name
+        assert actual_event_data == expected_event_data
 
     @ddt.data(
         FORUM_ROLE_ADMINISTRATOR,
@@ -3640,8 +3640,8 @@ class UpdateCommentTest(
             }
 
             actual_event_name, actual_event_data = mock_emit.call_args[0]
-            self.assertEqual(actual_event_name, expected_event_name)
-            self.assertEqual(actual_event_data, expected_event_data)
+            assert actual_event_name == expected_event_name
+            assert actual_event_data == expected_event_data
 
         except ValidationError:
             assert role_name == FORUM_ROLE_STUDENT
@@ -3716,8 +3716,8 @@ class DeleteThreadTest(
         }
 
         actual_event_name, actual_event_data = mock_emit.call_args[0]
-        self.assertEqual(actual_event_name, expected_event_name)
-        self.assertEqual(actual_event_data, expected_event_data)
+        assert actual_event_name == expected_event_name
+        assert actual_event_data == expected_event_data
 
     def test_thread_id_not_found(self):
         self.register_get_thread_error_response("missing_thread", 404)
@@ -3876,8 +3876,8 @@ class DeleteCommentTest(
         }
 
         actual_event_name, actual_event_data = mock_emit.call_args[0]
-        self.assertEqual(actual_event_name, expected_event_name)
-        self.assertEqual(actual_event_data, expected_event_data)
+        assert actual_event_name == expected_event_name
+        assert actual_event_data == expected_event_data
 
     def test_comment_id_not_found(self):
         self.register_get_comment_error_response("missing_comment", 404)

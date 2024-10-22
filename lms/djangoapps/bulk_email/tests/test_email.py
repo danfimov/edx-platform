@@ -227,7 +227,7 @@ class AceEmailTestCase(SendEmailWithMockedUgettextMixin, EmailSendFromDashboardT
             BULK_EMAIL_SEND_USING_EDX_ACE=ace_enabled
         ):
             response = self.client.post(self.send_mail_url, test_email)
-            self.assertEqual(email_sent_with_ace, mock_ace_email_send.called)
+            assert email_sent_with_ace == mock_ace_email_send.called
 
     def test_keyword_substitution_in_message_body(self):
         """

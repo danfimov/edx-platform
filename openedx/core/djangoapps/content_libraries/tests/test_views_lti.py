@@ -34,7 +34,7 @@ class LtiToolJwksViewTest(TestCase):
         Then return 404
         """
         response = self.client.get(URL_LIB_LTI_JWKS)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
     @override_features(ENABLE_CONTENT_LIBRARIES=True,
                        ENABLE_CONTENT_LIBRARIES_LTI_TOOL=True)
@@ -45,7 +45,7 @@ class LtiToolJwksViewTest(TestCase):
         Then return empty
         """
         response = self.client.get(URL_LIB_LTI_JWKS)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertJSONEqual(response.content, '{"keys": []}')
 
 

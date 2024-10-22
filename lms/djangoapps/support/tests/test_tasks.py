@@ -129,7 +129,7 @@ class ResetStudentCourse(TestSubmittingProblems):
     def test_reset_student_course(self):
         """ Test that it resets student attempts  """
         with patch(
-                'lms.djangoapps.support.tasks.reset_student_attempts',
+            'lms.djangoapps.support.tasks.reset_student_attempts',
         ) as mock_reset_student_attempts:
             self.basic_setup()
             reset_student_course(self.course_id, self.student_user.email, self.user.email)
@@ -172,8 +172,8 @@ class ResetStudentCourse(TestSubmittingProblems):
             self.mock_clear_block_completion.assert_called_once_with(self.student_user, self.course.id)
             self.mock_clear_user_course_grades.assert_called_once_with(self.student_user.id, self.course.id)
             course_reset_audit = CourseResetAudit.objects.get(course_enrollment=self.enrollment)
-            self.assertIsNotNone(course_reset_audit.completed_at)
-            self.assertEqual(course_reset_audit.status, CourseResetAudit.CourseResetStatus.COMPLETE)
+            assert course_reset_audit.completed_at is not None
+            assert course_reset_audit.status == CourseResetAudit.CourseResetStatus.COMPLETE
             self.assert_email_sent_successfully({
                 'subject': f'The course { self.course.display_name } has been reset !',
                 'body': f'Your progress in course { self.course.display_name } has been reset on your behalf.'
@@ -182,8 +182,8 @@ class ResetStudentCourse(TestSubmittingProblems):
     def test_reset_student_course_student_module_not_found(self):
 
         with patch(
-                'lms.djangoapps.support.tasks.reset_student_attempts',
-                Mock(side_effect=StudentModule.DoesNotExist())
+            'lms.djangoapps.support.tasks.reset_student_attempts',
+            Mock(side_effect=StudentModule.DoesNotExist())
         ) as mock_reset_student_attempts:
             self.basic_setup()
             reset_student_course(self.course_id, self.student_user.email, self.user.email)
@@ -218,8 +218,8 @@ class ResetStudentCourse(TestSubmittingProblems):
             self.mock_clear_user_course_grades.assert_called_once_with(self.student_user.id, self.course.id)
             course_reset_audit = CourseResetAudit.objects.get(course_enrollment=self.enrollment)
             self.assertRaises(StudentModule.DoesNotExist, mock_reset_student_attempts)
-            self.assertIsNotNone(course_reset_audit.completed_at)
-            self.assertEqual(course_reset_audit.status, CourseResetAudit.CourseResetStatus.COMPLETE)
+            assert course_reset_audit.completed_at is not None
+            assert course_reset_audit.status == CourseResetAudit.CourseResetStatus.COMPLETE
 
     @patch('lms.djangoapps.support.tasks.reset_student_attempts')
     def test_reset_student_course_fail(self, mock_reset_student_attempts):
@@ -232,8 +232,8 @@ class ResetStudentCourse(TestSubmittingProblems):
             self.mock_clear_block_completion.assert_not_called()
             self.mock_clear_user_course_grades.assert_not_called()
             course_reset_audit = CourseResetAudit.objects.get(course_enrollment=self.enrollment)
-            self.assertIsNone(course_reset_audit.completed_at)
-            self.assertEqual(course_reset_audit.status, CourseResetAudit.CourseResetStatus.FAILED)
+            assert course_reset_audit.completed_at is None
+            assert course_reset_audit.status == CourseResetAudit.CourseResetStatus.FAILED
 
     def test_reset_student_attempts_raise_exception(self):
         with patch(
@@ -246,5 +246,5 @@ class ResetStudentCourse(TestSubmittingProblems):
             self.mock_clear_block_completion.assert_not_called()
             self.mock_clear_user_course_grades.assert_not_called()
             course_reset_audit = CourseResetAudit.objects.get(course_enrollment=self.enrollment)
-            self.assertIsNone(course_reset_audit.completed_at)
-            self.assertEqual(course_reset_audit.status, CourseResetAudit.CourseResetStatus.FAILED)
+            assert course_reset_audit.completed_at is None
+            assert course_reset_audit.status == CourseResetAudit.CourseResetStatus.FAILED

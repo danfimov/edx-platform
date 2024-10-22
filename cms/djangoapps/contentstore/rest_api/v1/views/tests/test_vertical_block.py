@@ -125,7 +125,7 @@ class ContainerHandlerViewTest(BaseXBlockContainer):
         """
         url = self.get_reverse_url(self.vertical.location)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
 
     def test_not_valid_usage_key_string(self):
         """
@@ -136,7 +136,7 @@ class ContainerHandlerViewTest(BaseXBlockContainer):
         )
         url = self.get_reverse_url(usage_key_string)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 class ContainerVerticalViewTest(BaseXBlockContainer):
@@ -152,9 +152,9 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         """
         url = self.get_reverse_url(self.vertical.location)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["children"]), 2)
-        self.assertFalse(response.data["is_published"])
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["children"]) == 2
+        assert not response.data["is_published"]
         assert response.data["can_paste_component"]
 
     def test_xblock_is_published(self):
@@ -236,7 +236,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
             },
         ]
         self.maxDiff = None
-        self.assertEqual(response.data["children"], expected_response)
+        assert response.data["children"] == expected_response
 
     def test_not_valid_usage_key_string(self):
         """
@@ -247,7 +247,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         )
         url = self.get_reverse_url(usage_key_string)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @override_waffle_flag(DISABLE_TAGGING_FEATURE, True)
     def test_actions_with_turned_off_taxonomy_flag(self):
@@ -257,7 +257,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         url = self.get_reverse_url(self.vertical.location)
         response = self.client.get(url)
         for children in response.data["children"]:
-            self.assertFalse(children["actions"]["can_manage_tags"])
+            assert not children["actions"]["can_manage_tags"]
 
     def test_validation_errors(self):
         """
@@ -293,7 +293,7 @@ class ContainerVerticalViewTest(BaseXBlockContainer):
         children_response = response.data["children"]
 
         # Verify that html_unit_first access settings contradict its parent's access settings.
-        self.assertEqual(children_response[0]["validation_messages"][0]["type"], ValidationMessage.ERROR)
+        assert children_response[0]["validation_messages"][0]["type"] == ValidationMessage.ERROR
 
         # Verify that html_unit_second has no validation messages.
-        self.assertFalse(children_response[1]["validation_messages"])
+        assert not children_response[1]["validation_messages"]

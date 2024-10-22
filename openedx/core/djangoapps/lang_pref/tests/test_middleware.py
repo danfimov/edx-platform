@@ -104,7 +104,7 @@ class TestUserPreferenceMiddleware(CacheIsolationTestCase):
         self.middleware.process_request(self.request)
 
         if lang_cookie is None:
-            assert mock_set_user_preference.mock_calls == []
+            assert not mock_set_user_preference.mock_calls
         else:
             mock_set_user_preference.assert_called_with(self.user, LANGUAGE_KEY, lang_cookie)
 

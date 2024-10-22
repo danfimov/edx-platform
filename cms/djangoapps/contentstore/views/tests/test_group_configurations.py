@@ -219,7 +219,7 @@ class GroupConfigurationsBaseTestCase:
                 HTTP_ACCEPT="application/json",
                 HTTP_X_REQUESTED_WITH="XMLHttpRequest",
             )
-            self.assertEqual(response.status_code, 400)
+            assert response.status_code == 400
             self.assertNotIn("Location", response)
             content = json.loads(response.content.decode('utf-8'))
             self.assertIn("error", content)
@@ -238,7 +238,7 @@ class GroupConfigurationsBaseTestCase:
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
         self.assertNotIn("Location", response)
         content = json.loads(response.content.decode('utf-8'))
         self.assertIn("error", content)
@@ -272,7 +272,7 @@ class GroupConfigurationsListHandlerTestCase(CourseTestCase, GroupConfigurations
             self.store.update_item(self.course, self.user.id)
 
         response = self.client.get(self._url())
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertContains(response, 'First name', count=1)
         self.assertContains(response, 'Group C')
         self.assertContains(response, CONTENT_GROUP_CONFIGURATION_NAME)
@@ -285,7 +285,7 @@ class GroupConfigurationsListHandlerTestCase(CourseTestCase, GroupConfigurations
             self._url(),
             HTTP_ACCEPT="text/plain",
         )
-        self.assertEqual(response.status_code, 406)
+        assert response.status_code == 406
 
     def test_can_create_group_configuration(self):
         """
@@ -307,33 +307,33 @@ class GroupConfigurationsListHandlerTestCase(CourseTestCase, GroupConfigurations
             self._url(),
             data=GROUP_CONFIGURATION_JSON
         )
-        self.assertEqual(response.status_code, 201)
+        assert response.status_code == 201
         self.assertIn("Location", response)
         content = json.loads(response.content.decode('utf-8'))
         configuration_id, group_ids = self._remove_ids(content)  # pylint: disable=unused-variable
-        self.assertEqual(content, expected)
+        assert content == expected
         # IDs are unique
-        self.assertEqual(len(group_ids), len(set(group_ids)))
-        self.assertEqual(len(group_ids), 2)
+        assert len(group_ids) == len(set(group_ids))
+        assert len(group_ids) == 2
         self.reload_course()
         # Verify that user_partitions in the course contains the new group configuration.
         user_partititons = self.course.user_partitions
-        self.assertEqual(len(user_partititons), 1)
-        self.assertEqual(user_partititons[0].name, 'Test name')
-        self.assertEqual(len(user_partititons[0].groups), 2)
-        self.assertEqual(user_partititons[0].groups[0].name, 'Group A')
-        self.assertEqual(user_partititons[0].groups[1].name, 'Group B')
-        self.assertEqual(user_partititons[0].parameters, {})
+        assert len(user_partititons) == 1
+        assert user_partititons[0].name == 'Test name'
+        assert len(user_partititons[0].groups) == 2
+        assert user_partititons[0].groups[0].name == 'Group A'
+        assert user_partititons[0].groups[1].name == 'Group B'
+        assert user_partititons[0].parameters == {}
 
     def test_lazily_creates_cohort_configuration(self):
         """
         Test that a cohort schemed user partition is NOT created by
         default for the user.
         """
-        self.assertEqual(len(self.course.user_partitions), 0)
+        assert len(self.course.user_partitions) == 0
         self.client.get(self._url())
         self.reload_course()
-        self.assertEqual(len(self.course.user_partitions), 0)
+        assert len(self.course.user_partitions) == 0
 
     @ddt.data('content_type_gate', 'enrollment_track')
     def test_cannot_create_restricted_group_configuration(self, scheme_id):
@@ -347,7 +347,7 @@ class GroupConfigurationsListHandlerTestCase(CourseTestCase, GroupConfigurations
             self._url(),
             data=group_config
         )
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
 
 @ddt.ddt
@@ -394,16 +394,16 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
         )
         content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(content, expected)
+        assert content == expected
         self.reload_course()
         # Verify that user_partitions in the course contains the new group configuration.
         user_partitions = self.course.user_partitions
-        self.assertEqual(len(user_partitions), 1)
-        self.assertEqual(user_partitions[0].name, 'Test name')
-        self.assertEqual(len(user_partitions[0].groups), 2)
-        self.assertEqual(user_partitions[0].groups[0].name, 'Group A')
-        self.assertEqual(user_partitions[0].groups[1].name, 'Group B')
-        self.assertEqual(user_partitions[0].parameters, {})
+        assert len(user_partitions) == 1
+        assert user_partitions[0].name == 'Test name'
+        assert len(user_partitions[0].groups) == 2
+        assert user_partitions[0].groups[0].name == 'Group A'
+        assert user_partitions[0].groups[1].name == 'Group B'
+        assert user_partitions[0].parameters == {}
 
     def test_can_edit_content_group(self):
         """
@@ -434,18 +434,18 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(content, expected)
+        assert content == expected
         self.reload_course()
 
         # Verify that user_partitions is properly updated in the course.
         user_partititons = self.course.user_partitions
 
-        self.assertEqual(len(user_partititons), 1)
-        self.assertEqual(user_partititons[0].name, 'New Test name')
-        self.assertEqual(len(user_partititons[0].groups), 2)
-        self.assertEqual(user_partititons[0].groups[0].name, 'New Group Name')
-        self.assertEqual(user_partititons[0].groups[1].name, 'Group C')
-        self.assertEqual(user_partititons[0].parameters, {})
+        assert len(user_partititons) == 1
+        assert user_partititons[0].name == 'New Test name'
+        assert len(user_partititons[0].groups) == 2
+        assert user_partititons[0].groups[0].name == 'New Group Name'
+        assert user_partititons[0].groups[1].name == 'Group C'
+        assert user_partititons[0].parameters == {}
 
     def test_can_delete_content_group(self):
         """
@@ -461,14 +461,14 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 204)
+        assert response.status_code == 204
         self.reload_course()
         # Verify that group and partition is properly updated in the course.
         user_partititons = self.course.user_partitions
-        self.assertEqual(len(user_partititons), 1)
-        self.assertEqual(user_partititons[0].name, 'Name 0')
-        self.assertEqual(len(user_partititons[0].groups), 2)
-        self.assertEqual(user_partititons[0].groups[1].name, 'Group C')
+        assert len(user_partititons) == 1
+        assert user_partititons[0].name == 'Name 0'
+        assert len(user_partititons[0].groups) == 2
+        assert user_partititons[0].groups[1].name == 'Group C'
 
     def test_cannot_delete_used_content_group(self):
         """
@@ -484,15 +484,15 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
         content = json.loads(response.content.decode('utf-8'))
         assert content['error']
         self.reload_course()
         # Verify that user_partitions and groups are still the same.
         user_partititons = self.course.user_partitions
-        self.assertEqual(len(user_partititons), 1)
-        self.assertEqual(len(user_partititons[0].groups), 3)
-        self.assertEqual(user_partititons[0].groups[1].name, 'Group B')
+        assert len(user_partititons) == 1
+        assert len(user_partititons[0].groups) == 3
+        assert user_partititons[0].groups[1].name == 'Group B'
 
     def test_cannot_delete_non_existent_content_group(self):
         """
@@ -506,11 +506,11 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
         # Verify that user_partitions is still the same.
         user_partititons = self.course.user_partitions
-        self.assertEqual(len(user_partititons), 1)
-        self.assertEqual(len(user_partititons[0].groups), 3)
+        assert len(user_partititons) == 1
+        assert len(user_partititons[0].groups) == 3
 
     def test_can_create_new_group_configuration_if_it_does_not_exist(self):
         """
@@ -539,16 +539,16 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(content, expected)
+        assert content == expected
         self.reload_course()
         # Verify that user_partitions in the course contains the new group configuration.
         user_partitions = self.course.user_partitions
-        self.assertEqual(len(user_partitions), 1)
-        self.assertEqual(user_partitions[0].name, 'Test name')
-        self.assertEqual(len(user_partitions[0].groups), 2)
-        self.assertEqual(user_partitions[0].groups[0].name, 'Group A')
-        self.assertEqual(user_partitions[0].groups[1].name, 'Group B')
-        self.assertEqual(user_partitions[0].parameters, {})
+        assert len(user_partitions) == 1
+        assert user_partitions[0].name == 'Test name'
+        assert len(user_partitions[0].groups) == 2
+        assert user_partitions[0].groups[0].name == 'Group A'
+        assert user_partitions[0].groups[1].name == 'Group B'
+        assert user_partitions[0].parameters == {}
 
     def test_can_edit_group_configuration(self):
         """
@@ -580,18 +580,18 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(content, expected)
+        assert content == expected
         self.reload_course()
 
         # Verify that user_partitions is properly updated in the course.
         user_partititons = self.course.user_partitions
 
-        self.assertEqual(len(user_partititons), 1)
-        self.assertEqual(user_partititons[0].name, 'New Test name')
-        self.assertEqual(len(user_partititons[0].groups), 2)
-        self.assertEqual(user_partititons[0].groups[0].name, 'New Group Name')
-        self.assertEqual(user_partititons[0].groups[1].name, 'Group C')
-        self.assertEqual(user_partititons[0].parameters, {})
+        assert len(user_partititons) == 1
+        assert user_partititons[0].name == 'New Test name'
+        assert len(user_partititons[0].groups) == 2
+        assert user_partititons[0].groups[0].name == 'New Group Name'
+        assert user_partititons[0].groups[1].name == 'Group C'
+        assert user_partititons[0].parameters == {}
 
     def test_can_delete_group_configuration(self):
         """
@@ -606,12 +606,12 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 204)
+        assert response.status_code == 204
         self.reload_course()
         # Verify that user_partitions is properly updated in the course.
         user_partititons = self.course.user_partitions
-        self.assertEqual(len(user_partititons), 1)
-        self.assertEqual(user_partititons[0].name, 'Name 1')
+        assert len(user_partititons) == 1
+        assert user_partititons[0].name == 'Name 1'
 
     def test_cannot_delete_used_group_configuration(self):
         """
@@ -626,14 +626,14 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
         content = json.loads(response.content.decode('utf-8'))
         assert content['error']
         self.reload_course()
         # Verify that user_partitions is still the same.
         user_partititons = self.course.user_partitions
-        self.assertEqual(len(user_partititons), 2)
-        self.assertEqual(user_partititons[0].name, 'Name 0')
+        assert len(user_partititons) == 2
+        assert user_partititons[0].name == 'Name 0'
 
     def test_cannot_delete_non_existent_group_configuration(self):
         """
@@ -646,11 +646,11 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
         # Verify that user_partitions is still the same.
         user_partititons = self.course.user_partitions
-        self.assertEqual(len(user_partititons), 2)
-        self.assertEqual(user_partititons[0].name, 'Name 0')
+        assert len(user_partititons) == 2
+        assert user_partititons[0].name == 'Name 0'
 
     @ddt.data(CONTENT_TYPE_GATING_SCHEME, ENROLLMENT_SCHEME)
     def test_cannot_create_restricted_group_configuration(self, scheme_id):
@@ -664,7 +664,7 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             self._url(),
             data=group_config
         )
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     @ddt.data(
         (CONTENT_TYPE_GATING_SCHEME, CONTENT_GATING_PARTITION_ID),
@@ -685,7 +685,7 @@ class GroupConfigurationsDetailHandlerTestCase(CourseTestCase, GroupConfiguratio
             HTTP_ACCEPT="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
 
 @ddt.ddt
@@ -730,7 +730,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
         self._add_user_partitions(scheme_id='cohort')
         actual = self._get_user_partition('cohort')
         expected = self._get_expected_content_group(usage_for_group=[])
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_get_correct_usage_info_when_special_characters_are_in_content(self):
         """
@@ -751,7 +751,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
             ]
         )
 
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_get_correct_usage_info_for_content_groups(self):
         """
@@ -769,7 +769,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
             }
         ])
 
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_get_correct_usage_info_with_orphan(self):
         """
@@ -781,7 +781,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
         vertical, __ = self._create_problem_with_content_group(cid=0, group_id=1, name_suffix='0', orphan=True)
 
         # Assert that there is an orphan in the course, and that it's the vertical
-        self.assertEqual(len(self.store.get_orphans(self.course.id)), 1)
+        assert len(self.store.get_orphans(self.course.id)) == 1
         self.assertIn(vertical.location, self.store.get_orphans(self.course.id))
 
         # Get the expected content group information.
@@ -791,7 +791,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
         actual = self._get_user_partition('cohort')
 
         # Assert that actual content group information is same as expected one.
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_use_one_content_group_in_multiple_problems(self):
         """
@@ -815,7 +815,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
             }
         ])
 
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_group_configuration_not_used(self):
         """
@@ -838,7 +838,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
             'parameters': {},
             'active': True,
         }]
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_get_correct_usage_info_for_split_test(self):
         """
@@ -883,7 +883,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
         }
         actual = self._get_user_partition('cohort')
 
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_get_correct_usage_info_for_unit(self):
         """
@@ -983,7 +983,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
             'active': True,
         }]
 
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_get_usage_info_when_special_characters_are_used(self):
         """
@@ -1015,7 +1015,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
             'active': True,
         }]
 
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_use_one_configuration_in_multiple_experiments(self):
         """
@@ -1051,7 +1051,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
             'parameters': {},
             'active': True,
         }]
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_can_handle_without_parent(self):
         """
@@ -1069,7 +1069,7 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
 
         self.save_course()
         actual = GroupConfiguration.get_content_experiment_usage_info(self.store, self.course)
-        self.assertEqual(actual, {0: []})
+        assert actual == {0: []}
 
     def test_can_handle_multiple_partitions(self):
         # Create the user partitions
@@ -1108,10 +1108,10 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
         # This used to cause an exception since the code assumed that
         # only one partition would be available.
         actual = GroupConfiguration.get_partitions_usage_info(self.store, self.course)
-        self.assertEqual(list(actual.keys()), [0])
+        assert list(actual.keys()) == [0]
 
         actual = GroupConfiguration.get_content_groups_items_usage_info(self.store, self.course)
-        self.assertEqual(list(actual.keys()), [0])
+        assert list(actual.keys()) == [0]
 
     def test_can_handle_duplicate_group_ids(self):
         # Create the user partitions
@@ -1146,14 +1146,14 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
         # This used to cause an exception since the code assumed that
         # only one partition would be available.
         actual = GroupConfiguration.get_partitions_usage_info(self.store, self.course)
-        self.assertEqual(list(actual.keys()), [0, 1])
-        self.assertEqual(list(actual[0].keys()), [2])
-        self.assertEqual(list(actual[1].keys()), [3])
+        assert list(actual.keys()), [0 == 1]
+        assert list(actual[0].keys()) == [2]
+        assert list(actual[1].keys()) == [3]
 
         actual = GroupConfiguration.get_content_groups_items_usage_info(self.store, self.course)
-        self.assertEqual(list(actual.keys()), [0, 1])
-        self.assertEqual(list(actual[0].keys()), [2])
-        self.assertEqual(list(actual[1].keys()), [3])
+        assert list(actual.keys()), [0 == 1]
+        assert list(actual[0].keys()) == [2]
+        assert list(actual[1].keys()) == [3]
 
 
 class GroupConfigurationsValidationTestCase(CourseTestCase, HelperMethods):
@@ -1174,7 +1174,7 @@ class GroupConfigurationsValidationTestCase(CourseTestCase, HelperMethods):
         mocked_validation_messages.return_value = validation
 
         group_configuration = GroupConfiguration.get_split_test_partitions_with_usage(self.store, self.course)[0]
-        self.assertEqual(expected_result.to_json(), group_configuration['usage'][0]['validation'])
+        assert expected_result.to_json() == group_configuration['usage'][0]['validation']
 
     def test_error_message_present(self):
         """

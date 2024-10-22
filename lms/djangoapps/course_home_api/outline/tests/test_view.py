@@ -552,7 +552,7 @@ class SidebarBlocksTestViews(BaseCourseHomeTests):
         assert str(self.vertical.location) in sequential_data['children']
 
         vertical_data = response.data['blocks'][str(self.vertical.location)]
-        assert vertical_data['children'] == []
+        assert not vertical_data['children']
 
     @ddt.data(True, False)
     def test_get_authenticated_user_not_enrolled(self, has_previously_enrolled):

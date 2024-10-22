@@ -160,13 +160,13 @@ class XBlockVisibilityTestCase(SharedModuleStoreTestCase):
         with and without visible_to_staff_only set.
         """
         no_staff_lock = self._create_xblock_with_start_date(name, start_date, publish, visible_to_staff_only=False)
-        self.assertEqual(expected_visible_without_lock, utils.is_currently_visible_to_students(no_staff_lock))
+        assert expected_visible_without_lock == utils.is_currently_visible_to_students(no_staff_lock)
 
         # any xblock with visible_to_staff_only set to True should not be visible to students.
         staff_lock = self._create_xblock_with_start_date(
             name + "_locked", start_date, publish, visible_to_staff_only=True
         )
-        self.assertFalse(utils.is_currently_visible_to_students(staff_lock))
+        assert not utils.is_currently_visible_to_students(staff_lock)
 
     def _create_xblock_with_start_date(self, name, start_date, publish=False, visible_to_staff_only=False):
         """Helper to create an xblock with a start date, optionally publishing it"""
@@ -212,8 +212,8 @@ class ReleaseDateSourceTest(CourseTestCase):
     def _verify_release_date_source(self, item, expected_source):
         """Helper to verify that the release date source of a given item matches the expected source"""
         source = utils.find_release_date_source(item)
-        self.assertEqual(source.location, expected_source.location)
-        self.assertEqual(source.start, expected_source.start)
+        assert source.location == expected_source.location
+        assert source.start == expected_source.start
 
     def test_chapter_source_for_vertical(self):
         """Tests a vertical's release date being set by its chapter"""
@@ -281,7 +281,7 @@ class StaffLockSourceTest(StaffLockTest):
     def _verify_staff_lock_source(self, item, expected_source):
         """Helper to verify that the staff lock source of a given item matches the expected source"""
         source = utils.find_staff_lock_source(item)
-        self.assertEqual(source.location, expected_source.location)
+        assert source.location == expected_source.location
         assert source.visible_to_staff_only
 
     def test_chapter_source_for_vertical(self):
@@ -307,12 +307,12 @@ class StaffLockSourceTest(StaffLockTest):
 
     def test_orphan_has_no_source(self):
         """Tests that a orphaned xblock has no staff lock source"""
-        self.assertIsNone(utils.find_staff_lock_source(self.orphan))
+        assert utils.find_staff_lock_source(self.orphan) is None
 
     def test_no_source_for_vertical(self):
         """Tests a vertical with no staff lock set anywhere"""
         self._update_staff_locks(False, False, False)
-        self.assertIsNone(utils.find_staff_lock_source(self.vertical))
+        assert utils.find_staff_lock_source(self.vertical) is None
 
 
 class InheritedStaffLockTest(StaffLockTest):
@@ -321,9 +321,9 @@ class InheritedStaffLockTest(StaffLockTest):
     def test_no_inheritance(self):
         """Tests that a locked or unlocked vertical with no locked ancestors does not have an inherited lock"""
         self._update_staff_locks(False, False, False)
-        self.assertFalse(utils.ancestor_has_staff_lock(self.vertical))
+        assert not utils.ancestor_has_staff_lock(self.vertical)
         self._update_staff_locks(False, False, True)
-        self.assertFalse(utils.ancestor_has_staff_lock(self.vertical))
+        assert not utils.ancestor_has_staff_lock(self.vertical)
 
     def test_inheritance_in_locked_section(self):
         """Tests that a locked or unlocked vertical in a locked section has an inherited lock"""
@@ -341,7 +341,7 @@ class InheritedStaffLockTest(StaffLockTest):
 
     def test_no_inheritance_for_orphan(self):
         """Tests that an orphaned xblock does not inherit staff lock"""
-        self.assertFalse(utils.ancestor_has_staff_lock(self.orphan))
+        assert not utils.ancestor_has_staff_lock(self.orphan)
 
 
 class GroupVisibilityTest(CourseTestCase):
@@ -413,8 +413,8 @@ class GroupVisibilityTest(CourseTestCase):
         def verify_all_components_visible_to_all():
             """ Verifies when group_access has not been set on anything. """
             for item in (self.sequential, self.vertical, self.html, self.problem):
-                self.assertFalse(utils.has_children_visible_to_specific_partition_groups(item))
-                self.assertFalse(utils.is_visible_to_specific_partition_groups(item))
+                assert not utils.has_children_visible_to_specific_partition_groups(item)
+                assert not utils.is_visible_to_specific_partition_groups(item)
 
         verify_all_components_visible_to_all()
 
@@ -436,14 +436,14 @@ class GroupVisibilityTest(CourseTestCase):
         self.problem = self.store.get_item(self.problem.location)
 
         # Note that "has_children_visible_to_specific_partition_groups" only checks immediate children.
-        self.assertFalse(utils.has_children_visible_to_specific_partition_groups(self.sequential))
+        assert not utils.has_children_visible_to_specific_partition_groups(self.sequential)
         assert utils.has_children_visible_to_specific_partition_groups(self.vertical)
-        self.assertFalse(utils.has_children_visible_to_specific_partition_groups(self.html))
-        self.assertFalse(utils.has_children_visible_to_specific_partition_groups(self.problem))
+        assert not utils.has_children_visible_to_specific_partition_groups(self.html)
+        assert not utils.has_children_visible_to_specific_partition_groups(self.problem)
 
         assert utils.is_visible_to_specific_partition_groups(self.sequential)
-        self.assertFalse(utils.is_visible_to_specific_partition_groups(self.vertical))
-        self.assertFalse(utils.is_visible_to_specific_partition_groups(self.html))
+        assert not utils.is_visible_to_specific_partition_groups(self.vertical)
+        assert not utils.is_visible_to_specific_partition_groups(self.html)
         assert utils.is_visible_to_specific_partition_groups(self.problem)
 
 
@@ -519,12 +519,12 @@ class GetUserPartitionInfoTest(ModuleStoreTestCase):
                 ]
             }
         ]
-        self.assertEqual(self._get_partition_info(schemes=["cohort", "random"]), expected)
+        assert self._get_partition_info(schemes=["cohort", "random"]) == expected
 
         # Update group access and expect that now one group is marked as selected.
         self._set_group_access({0: [1]})
         expected[0]["groups"][1]["selected"] = True
-        self.assertEqual(self._get_partition_info(schemes=["cohort", "random"]), expected)
+        assert self._get_partition_info(schemes=["cohort", "random"]) == expected
 
     def test_deleted_groups(self):
         # Select a group that is not defined in the partition
@@ -533,7 +533,7 @@ class GetUserPartitionInfoTest(ModuleStoreTestCase):
         # Expect that the group appears as selected but is marked as deleted
         partitions = self._get_partition_info()
         groups = partitions[0]["groups"]
-        self.assertEqual(len(groups), 3)
+        assert len(groups) == 3
         self.assertEqual(groups[2], {
             "id": 3,
             "name": "Deleted Group",
@@ -558,7 +558,7 @@ class GetUserPartitionInfoTest(ModuleStoreTestCase):
         self._set_group_access({0: [1]})
         partitions = self._get_partition_info()
         groups = partitions[0]["groups"]
-        self.assertEqual(len(groups), 1)
+        assert len(groups) == 1
         self.assertEqual(groups[0], {
             "id": 1,
             "name": "Deleted Group",
@@ -568,8 +568,8 @@ class GetUserPartitionInfoTest(ModuleStoreTestCase):
 
     def test_filter_by_partition_scheme(self):
         partitions = self._get_partition_info(schemes=["random"])
-        self.assertEqual(len(partitions), 1)
-        self.assertEqual(partitions[0]["scheme"], "random")
+        assert len(partitions) == 1
+        assert partitions[0]["scheme"] == "random"
 
     def test_exclude_inactive_partitions(self):
         # Include an inactive verification scheme
@@ -598,8 +598,8 @@ class GetUserPartitionInfoTest(ModuleStoreTestCase):
 
         # Expect that the inactive scheme is excluded from the results
         partitions = self._get_partition_info(schemes=["cohort", "verification"])
-        self.assertEqual(len(partitions), 1)
-        self.assertEqual(partitions[0]["scheme"], "cohort")
+        assert len(partitions) == 1
+        assert partitions[0]["scheme"] == "cohort"
 
     def test_exclude_partitions_with_no_groups(self):
         # The cohort partition has no groups defined
@@ -624,8 +624,8 @@ class GetUserPartitionInfoTest(ModuleStoreTestCase):
 
         # Expect that the partition with no groups is excluded from the results
         partitions = self._get_partition_info(schemes=["cohort", "random"])
-        self.assertEqual(len(partitions), 1)
-        self.assertEqual(partitions[0]["scheme"], "random")
+        assert len(partitions) == 1
+        assert partitions[0]["scheme"] == "random"
 
     def _set_partitions(self, partitions):
         """Set the user partitions of the course block. """
@@ -663,7 +663,7 @@ class ValidateCourseOlxTests(CourseTestCase):
         """
         library_key = LibraryLocator(org='TestOrg', library='TestProbs')
         assert validate_course_olx(library_key, self.toy_course_path, self.status)
-        self.assertFalse(mock_olxcleaner_validate.called)
+        assert not mock_olxcleaner_validate.called
 
     def test_config_settings_enabled(self, mock_olxcleaner_validate):
         """
@@ -671,7 +671,7 @@ class ValidateCourseOlxTests(CourseTestCase):
         """
         with patch.dict(settings.FEATURES, ENABLE_COURSE_OLX_VALIDATION=False):
             assert validate_course_olx(self.course.id, self.toy_course_path, self.status)
-            self.assertFalse(mock_olxcleaner_validate.called)
+            assert not mock_olxcleaner_validate.called
 
     def test_config_settings_disabled(self, mock_olxcleaner_validate):
         """
@@ -707,7 +707,7 @@ class ValidateCourseOlxTests(CourseTestCase):
         ]
         assert validate_course_olx(self.course.id, self.toy_course_path, self.status)
         task_artifact = UserTaskArtifact.objects.filter(status=self.status, name='OLX_VALIDATION_ERROR').first()
-        self.assertIsNone(task_artifact)
+        assert task_artifact is None
         assert mock_olxcleaner_validate.called
 
     @mock.patch('cms.djangoapps.contentstore.tasks.report_error_summary')
@@ -729,12 +729,12 @@ class ValidateCourseOlxTests(CourseTestCase):
         mock_report_error_summary.return_value = [f'Errors: {len(errors)}']
 
         with patch(self.LOGGER) as patched_log:
-            self.assertFalse(validate_course_olx(self.course.id, self.toy_course_path, self.status))
+            assert not validate_course_olx(self.course.id, self.toy_course_path, self.status)
             patched_log.error.assert_called_once_with(
                 f'Course import {self.course.id}: CourseOlx validation failed.')
 
         task_artifact = UserTaskArtifact.objects.filter(status=self.status, name='OLX_VALIDATION_ERROR').first()
-        self.assertIsNotNone(task_artifact)
+        assert task_artifact is not None
 
     def test_validate_calls_with(self, mock_olxcleaner_validate):
         """
@@ -765,7 +765,7 @@ class DetermineLabelTests(TestCase):
         display_name = None
         block_type = "html"
         result = utils.determine_label(display_name, block_type)
-        self.assertEqual(result, "Text")
+        assert result == "Text"
 
     def test_html_replaced_with_text_for_empty(self):
         """
@@ -774,7 +774,7 @@ class DetermineLabelTests(TestCase):
         display_name = ""
         block_type = "html"
         result = utils.determine_label(display_name, block_type)
-        self.assertEqual(result, "Text")
+        assert result == "Text"
 
     def test_set_titles_not_replaced(self):
         """
@@ -783,7 +783,7 @@ class DetermineLabelTests(TestCase):
         display_name = "Something"
         block_type = "html"
         result = utils.determine_label(display_name, block_type)
-        self.assertEqual(result, "Something")
+        assert result == "Something"
 
     def test_non_html_blocks_titles_not_replaced(self):
         """
@@ -792,7 +792,7 @@ class DetermineLabelTests(TestCase):
         display_name = None
         block_type = "something else"
         result = utils.determine_label(display_name, block_type)
-        self.assertEqual(result, "something else")
+        assert result == "something else"
 
 
 class AuthorizeStaffTestCase():

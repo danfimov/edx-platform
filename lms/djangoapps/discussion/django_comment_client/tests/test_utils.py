@@ -944,7 +944,7 @@ class CategoryMapTestCase(CategoryMapTestMixin, ModuleStoreTestCase):
         )
 
     def test_ids_empty(self):
-        assert get_discussion_categories_ids(self.course, self.user) == []
+        assert not get_discussion_categories_ids(self.course, self.user)
 
     def test_ids_configured_topics(self):
         self.course.discussion_topics = {
@@ -1786,7 +1786,7 @@ class TestConvertHtmlToMarkdown(unittest.TestCase):
         """
         input_text = '<a href="https://example.com">Example</a>'
         expected_output = '[Example](https://example.com)'
-        self.assertEqual(utils.convert_a_to_markdown(input_text), expected_output)
+        assert utils.convert_a_to_markdown(input_text) == expected_output
 
     def test_convert_img_to_markdown(self):
         """
@@ -1794,7 +1794,7 @@ class TestConvertHtmlToMarkdown(unittest.TestCase):
         """
         input_text = '<img src="https://example.com/Full-form-of-URL-1-1024x824.jpg" width="1024" height="824" />'
         expected_output = '![](https://example.com/Full-form-of-URL-1-1024x824.jpg "")'
-        self.assertEqual(utils.convert_img_to_markdown(input_text), expected_output)
+        assert utils.convert_img_to_markdown(input_text) == expected_output
 
     def test_convert_p_to_markdown(self):
         """
@@ -1802,7 +1802,7 @@ class TestConvertHtmlToMarkdown(unittest.TestCase):
         """
         input_text = '<p>Paragraph text</p>'
         expected_output = '\n\nParagraph text\n\n'
-        self.assertEqual(utils.convert_p_to_markdown(input_text), expected_output)
+        assert utils.convert_p_to_markdown(input_text) == expected_output
 
     def test_convert_html_to_markdown(self):
         """
@@ -1812,4 +1812,4 @@ class TestConvertHtmlToMarkdown(unittest.TestCase):
                      '<img src="https://example.com/Full-form-of-URL-1-1024x824.jpg" width="1024" height="824" />'
         # pylint: disable=line-too-long
         expected_output = '[Example](https://example.com)\n\nParagraph text\n\n ![](https://example.com/Full-form-of-URL-1-1024x824.jpg "")'
-        self.assertEqual(utils.convert_html_to_markdown(input_text), expected_output)
+        assert utils.convert_html_to_markdown(input_text) == expected_output

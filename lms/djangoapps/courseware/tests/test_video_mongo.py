@@ -291,7 +291,7 @@ class TestVideoPublicAccess(BaseTestVideoXBlock):
             is_public_sharing_enabled = self.block.is_public_sharing_enabled()
 
         # Then I will get that course value
-        self.assertFalse(is_public_sharing_enabled)
+        assert not is_public_sharing_enabled
 
     @ddt.data(COURSE_VIDEO_SHARING_PER_VIDEO, None)
     @patch('xmodule.video_block.video_block.VideoBlock.get_course_video_sharing_override')
@@ -305,7 +305,7 @@ class TestVideoPublicAccess(BaseTestVideoXBlock):
             is_public_sharing_enabled = self.block.is_public_sharing_enabled()
 
         # I will get the per-video value
-        self.assertEqual(self.block.public_access, is_public_sharing_enabled)
+        assert self.block.public_access == is_public_sharing_enabled
 
     @patch('xmodule.video_block.video_block.get_course_by_id')
     def test_is_public_sharing_course_not_found(self, mock_get_course):
@@ -318,7 +318,7 @@ class TestVideoPublicAccess(BaseTestVideoXBlock):
             is_public_sharing_enabled = self.block.is_public_sharing_enabled()
 
         # I will fall-back to per-video values
-        self.assertEqual(self.block.public_access, is_public_sharing_enabled)
+        assert self.block.public_access == is_public_sharing_enabled
 
     @ddt.data(False, True)
     def test_context(self, is_public_sharing_enabled):

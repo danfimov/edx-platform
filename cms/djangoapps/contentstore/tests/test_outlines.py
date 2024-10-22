@@ -293,7 +293,7 @@ class OutlineFromModuleStoreTestCase(ModuleStoreTestCase):
 
         # Strip version information from seq.location before comparison.
         assert errs[0].usage_key == seq.location.map_into_course(self.course_key)
-        assert outline.sections == []
+        assert not outline.sections
         assert outline.sequences == {}
 
     def test_missing_display_names(self):

@@ -33,14 +33,14 @@ class TestNotificationRegistry(unittest.TestCase):
 
         NotificationRegistry.register('test_notification')(TestGrouper)
         grouper = NotificationRegistry.get_grouper('test_notification')
-        self.assertIsInstance(grouper, TestGrouper)
+        assert isinstance(grouper, TestGrouper)
 
     def test_get_grouper_returns_none_for_unregistered_type(self):
         """
         Test that get_grouper returns None for an unregistered notification type
         """
         grouper = NotificationRegistry.get_grouper('non_existent')
-        self.assertIsNone(grouper)
+        assert grouper is None
 
 
 class TestNewCommentGrouper(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestNewCommentGrouper(unittest.TestCase):
 
         self.assertIn('replier_name_list', updated_context)
         self.assertIn('grouped_count', updated_context)
-        self.assertEqual(updated_context['grouped_count'], 2)
+        assert updated_context['grouped_count'] == 2
         assert updated_context['grouped']
 
     def test_group_appends_to_existing_grouping(self):
@@ -85,8 +85,8 @@ class TestNewCommentGrouper(unittest.TestCase):
         updated_context = NewCommentGrouper().group(self.new_notification, self.old_notification)
 
         self.assertIn('replier_name_list', updated_context)
-        self.assertEqual(len(updated_context['replier_name_list']), 3)
-        self.assertEqual(updated_context['grouped_count'], 3)
+        assert len(updated_context['replier_name_list']) == 3
+        assert updated_context['grouped_count'] == 3
 
     def test_group_email_content(self):
         """
@@ -99,7 +99,7 @@ class TestNewCommentGrouper(unittest.TestCase):
         }
         content_context = NewCommentGrouper().group(self.new_notification, self.old_notification)
         self.assertIn('email_content', content_context)
-        self.assertEqual(content_context['email_content'], 'new content')
+        assert content_context['email_content'] == 'new content'
 
 
 class TestGroupUserNotifications(unittest.TestCase):
@@ -123,9 +123,9 @@ class TestGroupUserNotifications(unittest.TestCase):
 
         mock_grouper.group.assert_called_once_with(new_notification, old_notification)
         assert old_notification.save.called
-        self.assertIsNone(old_notification.last_read)
-        self.assertIsNone(old_notification.last_seen)
-        self.assertIsNotNone(old_notification.created)
+        assert old_notification.last_read is None
+        assert old_notification.last_seen is None
+        assert old_notification.created is not None
 
     def test_group_user_notifications_no_grouper(self):
         """
@@ -136,7 +136,7 @@ class TestGroupUserNotifications(unittest.TestCase):
 
         group_user_notifications(new_notification, old_notification)
 
-        self.assertFalse(old_notification.save.called)
+        assert not old_notification.save.called
 
 
 class TestGetUserExistingNotifications(unittest.TestCase):
@@ -168,5 +168,5 @@ class TestGetUserExistingNotifications(unittest.TestCase):
         result = get_user_existing_notifications(user_ids, notification_type, group_by_id, course_id)
 
         # Verify the results
-        self.assertEqual(result[1], mock_notification1)
-        self.assertIsNone(result[2])  # user 2 has no notifications
+        assert result[1] == mock_notification1
+        assert result[2] is None  # user 2 has no notifications

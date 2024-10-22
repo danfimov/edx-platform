@@ -34,7 +34,7 @@ class PwnedPasswordsAPITest(TestCase):
         mock_get.return_value = response
         response = PwnedPasswordsAPI.range('7ecd7')
 
-        self.assertEqual(response, pwned_password)
+        assert response == pwned_password
 
     @override_waffle_switch(ENABLE_PWNED_PASSWORD_API, True)
     @patch('requests.get', side_effect=ReadTimeout)
@@ -60,4 +60,4 @@ class PwnedPasswordsAPITest(TestCase):
         assert PwnedPasswordsAPI.is_sha1(hashed_password)
 
         raw_password = 'testpassword'
-        self.assertFalse(PwnedPasswordsAPI.is_sha1(raw_password))
+        assert not PwnedPasswordsAPI.is_sha1(raw_password)

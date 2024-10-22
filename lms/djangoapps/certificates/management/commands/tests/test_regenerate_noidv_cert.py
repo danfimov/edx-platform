@@ -75,7 +75,7 @@ class RegenerateNoIDVCertTests(ModuleStoreTestCase):
         )
 
         regenerated = call_command("regenerate_noidv_cert", "-c", course_run_key)
-        self.assertEqual('1', regenerated)
+        assert '1' == regenerated
 
     def test_regeneration_verified(self):
         """
@@ -99,7 +99,7 @@ class RegenerateNoIDVCertTests(ModuleStoreTestCase):
         )
 
         regenerated = call_command("regenerate_noidv_cert", "-c", course_run_key)
-        self.assertEqual('0', regenerated)
+        assert '0' == regenerated
 
     def _multisetup(self):
         """
@@ -189,11 +189,11 @@ class RegenerateNoIDVCertTests(ModuleStoreTestCase):
 
         #3/5 in unverified status
         regenerated = call_command("regenerate_noidv_cert", "-c", course_run_key, course_run_key2)
-        self.assertEqual('3', regenerated)
+        assert '3' == regenerated
 
         #nothing left unverified for another run
         regenerated = call_command("regenerate_noidv_cert", "-c", course_run_key, course_run_key2)
-        self.assertEqual('0', regenerated)
+        assert '0' == regenerated
 
     def test_course_at_a_time(self):
         """
@@ -202,10 +202,10 @@ class RegenerateNoIDVCertTests(ModuleStoreTestCase):
         course_run_key, course_run_key2 = self._multisetup()
 
         regenerated = call_command("regenerate_noidv_cert", "-c", course_run_key)
-        self.assertEqual('2', regenerated)
+        assert '2' == regenerated
 
         regenerated = call_command("regenerate_noidv_cert", "-c", course_run_key2)
-        self.assertEqual('1', regenerated)
+        assert '1' == regenerated
 
     def test_regenerate_all(self):
         """
@@ -213,7 +213,7 @@ class RegenerateNoIDVCertTests(ModuleStoreTestCase):
         """
         self._multisetup()
         regenerated = call_command("regenerate_noidv_cert")
-        self.assertEqual('3', regenerated)
+        assert '3' == regenerated
 
     def test_regenerate_all_with_excluded_keys(self):
         """
@@ -222,4 +222,4 @@ class RegenerateNoIDVCertTests(ModuleStoreTestCase):
         course_run_key, course_run_key2 = self._multisetup()
 
         regenerated = call_command("regenerate_noidv_cert", "--excluded-keys", course_run_key)
-        self.assertEqual('1', regenerated)
+        assert '1' == regenerated

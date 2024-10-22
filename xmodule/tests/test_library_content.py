@@ -680,7 +680,7 @@ class TestLibraryContentAnalytics(LegacyLibraryContentTest):
         assert len(children) == 0
         event_data = self._assert_event_was_published("removed")
         assert len(event_data['removed']) == 1
-        assert event_data['result'] == []
+        assert not event_data['result']
         assert event_data['reason'] == 'overlimit'
 
     def test_removed_invalid(self):

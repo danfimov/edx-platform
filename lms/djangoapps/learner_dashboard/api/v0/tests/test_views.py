@@ -202,7 +202,7 @@ class TestProgramsView(SharedModuleStoreTestCase, ProgramCacheMixin):
         )
 
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         program = response.data[0]
 
         assert len(program)
@@ -236,5 +236,5 @@ class TestProgramsView(SharedModuleStoreTestCase, ProgramCacheMixin):
         )
 
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [])
+        assert response.status_code == 200
+        assert not response.data

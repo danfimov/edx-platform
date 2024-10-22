@@ -51,7 +51,7 @@ class EnrollmentsServiceTests(ModuleStoreTestCase):
         Test that it returns a list of active enrollments for a course
         """
         enrollments = self.service.get_active_enrollments_by_course(course_id=str(self.course.id))
-        self.assertEqual(len(self.course_modes), len(enrollments))
+        assert len(self.course_modes) == len(enrollments)
 
     def test_get_active_enrollments_by_course_and_user(self):
         """
@@ -73,7 +73,7 @@ class EnrollmentsServiceTests(ModuleStoreTestCase):
             'course-v1:testx+none+123',
             self.users[0].id,
         )
-        self.assertIsNone(enrollments)
+        assert enrollments is None
 
     def test_get_active_enrollments_by_course_and_user_none_user(self):
         """

@@ -47,9 +47,9 @@ class CourseGroupConfigurationsViewTest(CourseTestCase, PermissionAccessMixin):
             self.store.update_item(self.course, self.user.id)
 
         response = self.client.get(self.url)
-        self.assertEqual(len(response.data["all_group_configurations"]), 1)
-        self.assertEqual(len(response.data["experiment_group_configurations"]), 1)
+        assert len(response.data["all_group_configurations"]) == 1
+        assert len(response.data["experiment_group_configurations"]) == 1
         self.assertContains(response, "First name", count=1)
         self.assertContains(response, "Group C")
         self.assertContains(response, CONTENT_GROUP_CONFIGURATION_NAME)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK

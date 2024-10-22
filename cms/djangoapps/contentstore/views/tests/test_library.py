@@ -59,38 +59,38 @@ class UnitTestLibraries(CourseTestCase):
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", False)
     def test_library_creator_status_libraries_not_enabled(self):
         _, nostaff_user = self.create_non_staff_authed_user_client()
-        self.assertEqual(user_can_create_library(nostaff_user, None), False)
+        assert not user_can_create_library(nostaff_user, None)
 
     # When creator group is disabled, non-staff users can create libraries
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", True)
     def test_library_creator_status_with_no_course_creator_role(self):
         _, nostaff_user = self.create_non_staff_authed_user_client()
-        self.assertEqual(user_can_create_library(nostaff_user, 'An Org'), True)
+        assert user_can_create_library(nostaff_user == 'An Org'), True
 
     # When creator group is enabled, Non staff users cannot create libraries
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", True)
     def test_library_creator_status_for_enabled_creator_group_setting_for_non_staff_users(self):
         _, nostaff_user = self.create_non_staff_authed_user_client()
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
-            self.assertEqual(user_can_create_library(nostaff_user, None), False)
+            assert not user_can_create_library(nostaff_user, None)
 
     # Global staff can create libraries for any org, even ones that don't exist.
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", True)
     def test_library_creator_status_with_is_staff_user(self):
         print(self.user.is_staff)
-        self.assertEqual(user_can_create_library(self.user, 'aNyOrg'), True)
+        assert user_can_create_library(self.user, 'aNyOrg')
 
     # Global staff can create libraries for any org, but an org has to be supplied.
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", True)
     def test_library_creator_status_with_is_staff_user_no_org(self):
         print(self.user.is_staff)
-        self.assertEqual(user_can_create_library(self.user, None), False)
+        assert not user_can_create_library(self.user, None)
 
     # When creator groups are enabled, global staff can create libraries in any org
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", True)
     def test_library_creator_status_for_enabled_creator_group_setting_with_is_staff_user(self):
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
-            self.assertEqual(user_can_create_library(self.user, 'RandomOrg'), True)
+            assert user_can_create_library(self.user, 'RandomOrg')
 
     # When creator groups are enabled, course creators can create libraries in any org.
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", True)
@@ -98,7 +98,7 @@ class UnitTestLibraries(CourseTestCase):
         _, nostaff_user = self.create_non_staff_authed_user_client()
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
             grant_course_creator_status(self.user, nostaff_user)
-            self.assertEqual(user_can_create_library(nostaff_user, 'soMeRandOmoRg'), True)
+            assert user_can_create_library(nostaff_user == 'soMeRandOmoRg'), True
 
     # When creator groups are enabled, course staff members can create libraries
     # but only in the org they are course staff for.
@@ -107,8 +107,8 @@ class UnitTestLibraries(CourseTestCase):
         _, nostaff_user = self.create_non_staff_authed_user_client()
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
             auth.add_users(self.user, CourseStaffRole(self.course.id), nostaff_user)
-            self.assertEqual(user_can_create_library(nostaff_user, self.course.org), True)
-            self.assertEqual(user_can_create_library(nostaff_user, 'SomEOtherOrg'), False)
+            assert user_can_create_library(nostaff_user == self.course.org), True
+            assert user_can_create_library(nostaff_user == 'SomEOtherOrg'), False
 
     # When creator groups are enabled, course instructor members can create libraries
     # but only in the org they are course staff for.
@@ -117,8 +117,8 @@ class UnitTestLibraries(CourseTestCase):
         _, nostaff_user = self.create_non_staff_authed_user_client()
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
             auth.add_users(self.user, CourseInstructorRole(self.course.id), nostaff_user)
-            self.assertEqual(user_can_create_library(nostaff_user, self.course.org), True)
-            self.assertEqual(user_can_create_library(nostaff_user, 'SomEOtherOrg'), False)
+            assert user_can_create_library(nostaff_user == self.course.org), True
+            assert user_can_create_library(nostaff_user == 'SomEOtherOrg'), False
 
     @ddt.data(
         (False, False, True),
@@ -142,7 +142,7 @@ class UnitTestLibraries(CourseTestCase):
                     "DISABLE_LIBRARY_CREATION": disable_library
                 }
             ):
-                self.assertEqual(user_can_create_library(nostaff_user, 'SomEOrg'), expected_status)
+                assert user_can_create_library(nostaff_user == 'SomEOrg'), expected_status
 
     @mock.patch.dict('django.conf.settings.FEATURES', {'DISABLE_COURSE_CREATION': True})
     @mock.patch("cms.djangoapps.contentstore.toggles.libraries_v1_enabled", True)
@@ -151,15 +151,15 @@ class UnitTestLibraries(CourseTestCase):
         Ensure that `DISABLE_COURSE_CREATION` feature works with libraries as well.
         """
         nostaff_client, nostaff_user = self.create_non_staff_authed_user_client()
-        self.assertFalse(user_can_create_library(nostaff_user, 'SomEOrg'))
+        assert not user_can_create_library(nostaff_user, 'SomEOrg')
 
         # To be explicit, this user can GET, but not POST
         get_response = nostaff_client.get_json(LIBRARY_REST_URL)
         post_response = nostaff_client.ajax_post(LIBRARY_REST_URL, {
             'org': 'org', 'library': 'lib', 'display_name': "New Library",
         })
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(post_response.status_code, 403)
+        assert get_response.status_code == 200
+        assert post_response.status_code == 403
 
     @mock.patch.dict('django.conf.settings.FEATURES', {'ENABLE_CONTENT_LIBRARIES': False})
     def test_with_libraries_disabled(self):
@@ -167,7 +167,7 @@ class UnitTestLibraries(CourseTestCase):
         The library URLs should return 404 if libraries are disabled.
         """
         response = self.client.get_json(LIBRARY_REST_URL)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
     def test_list_libraries(self):
         """
@@ -178,15 +178,15 @@ class UnitTestLibraries(CourseTestCase):
         lib_dict = {lib.location.library_key: lib for lib in libraries}
 
         response = self.client.get_json(LIBRARY_REST_URL)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         lib_list = parse_json(response)
-        self.assertEqual(len(lib_list), len(libraries))
+        assert len(lib_list) == len(libraries)
         for entry in lib_list:
             self.assertIn("library_key", entry)
             self.assertIn("display_name", entry)
             key = CourseKey.from_string(entry["library_key"])
             self.assertIn(key, lib_dict)
-            self.assertEqual(entry["display_name"], lib_dict[key].display_name)
+            assert entry["display_name"] == lib_dict[key].display_name
             del lib_dict[key]  # To ensure no duplicates are matched
 
     @ddt.data("delete", "put")
@@ -195,7 +195,7 @@ class UnitTestLibraries(CourseTestCase):
         We should get an error if we do weird requests to /library/
         """
         response = getattr(self.client, verb)(LIBRARY_REST_URL)
-        self.assertEqual(response.status_code, 405)
+        assert response.status_code == 405
 
     def test_create_library(self):
         """ Create a library. """
@@ -204,7 +204,7 @@ class UnitTestLibraries(CourseTestCase):
             'library': 'lib',
             'display_name': "New Library",
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         # That's all we check. More detailed tests are in contentstore.tests.test_libraries...
 
     @patch.dict('django.conf.settings.FEATURES', {'ENABLE_CREATOR_GROUP': True})
@@ -219,7 +219,7 @@ class UnitTestLibraries(CourseTestCase):
         response = self.client.ajax_post(LIBRARY_REST_URL, {
             'org': 'org', 'library': 'lib', 'display_name': "New Library",
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @patch.dict('django.conf.settings.FEATURES', {'ENABLE_CREATOR_GROUP': False})
     def test_lib_create_permission_no_course_creator_role_and_no_course_creator_group(self):
@@ -233,7 +233,7 @@ class UnitTestLibraries(CourseTestCase):
         response = self.client.ajax_post(LIBRARY_REST_URL, {
             'org': 'org', 'library': 'lib', 'display_name': "New Library",
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @patch.dict('django.conf.settings.FEATURES', {'ENABLE_CREATOR_GROUP': True})
     def test_lib_create_permission_no_course_creator_role_and_no_course_creator_group_and_no_course_staff_role(self):
@@ -247,7 +247,7 @@ class UnitTestLibraries(CourseTestCase):
         response = self.client.ajax_post(LIBRARY_REST_URL, {
             'org': 'org', 'library': 'lib', 'display_name': "New Library",
         })
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     @patch.dict('django.conf.settings.FEATURES', {'ENABLE_CREATOR_GROUP': True})
     def test_lib_create_permission_course_staff_role(self):
@@ -264,7 +264,7 @@ class UnitTestLibraries(CourseTestCase):
         response = self.client.ajax_post(LIBRARY_REST_URL, {
             'org': self.course.org, 'library': 'lib', 'display_name': "New Library",
         })
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     @ddt.data(
         {},
@@ -278,7 +278,7 @@ class UnitTestLibraries(CourseTestCase):
         Make sure we are prevented from creating libraries with invalid keys/data
         """
         response = self.client.ajax_post(LIBRARY_REST_URL, data)
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     def test_no_duplicate_libraries(self):
         """
@@ -292,7 +292,7 @@ class UnitTestLibraries(CourseTestCase):
             'display_name': "A Duplicate key, same as 'lib'",
         })
         self.assertIn('already a library defined', parse_json(response)['ErrMsg'])
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     @override_settings(ORGANIZATIONS_AUTOCREATE=True)
     def test_library_with_unknown_organization_autocreation(self):
@@ -344,14 +344,14 @@ class UnitTestLibraries(CourseTestCase):
         self.assertNotEqual(version, None)
 
         response = self.client.get_json(make_url_for_lib(lib_key))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         info = parse_json(response)
-        self.assertEqual(info['display_name'], lib.display_name)
-        self.assertEqual(info['library_id'], str(lib_key))
-        self.assertEqual(info['previous_version'], None)
+        assert info['display_name'] == lib.display_name
+        assert info['library_id'] == str(lib_key)
+        assert info['previous_version'] is None
         self.assertNotEqual(info['version'], None)
         self.assertNotEqual(info['version'], '')
-        self.assertEqual(info['version'], str(version))
+        assert info['version'] == str(version)
 
     def test_get_lib_edit_html(self):
         """
@@ -360,7 +360,7 @@ class UnitTestLibraries(CourseTestCase):
         lib = LibraryFactory.create()
 
         response = self.client.get(make_url_for_lib(lib.location.library_key))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertContains(response, "<html")
         self.assertContains(response, lib.display_name)
 
@@ -370,7 +370,7 @@ class UnitTestLibraries(CourseTestCase):
         Check that various Nonexistent/invalid keys give 404 errors
         """
         response = self.client.get_json(make_url_for_lib(key_str))
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
     def test_bad_http_verb_with_lib_key(self):
         """
@@ -379,7 +379,7 @@ class UnitTestLibraries(CourseTestCase):
         lib = LibraryFactory.create()
         for verb in ("post", "delete", "put"):
             response = getattr(self.client, verb)(make_url_for_lib(lib.location.library_key))
-            self.assertEqual(response.status_code, 405)
+            assert response.status_code == 405
 
     def test_no_access(self):
         user, password = self.create_non_staff_user()
@@ -387,7 +387,7 @@ class UnitTestLibraries(CourseTestCase):
 
         lib = LibraryFactory.create()
         response = self.client.get(make_url_for_lib(lib.location.library_key))
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_get_component_templates(self):
         """
@@ -436,7 +436,7 @@ class UnitTestLibraries(CourseTestCase):
         manage_users_url = reverse_library_url('manage_library_users', str(library.location.library_key))
 
         response = self.client.get(manage_users_url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         # extra_user has not been assigned to the library so should not show up in the list:
         self.assertNotContains(response, extra_user.username)
 
@@ -450,7 +450,7 @@ class UnitTestLibraries(CourseTestCase):
 
         # Now extra_user should apear in the list:
         response = self.client.get(manage_users_url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         self.assertContains(response, extra_user.username)
 
     def test_component_limits(self):
@@ -464,11 +464,11 @@ class UnitTestLibraries(CourseTestCase):
                 'category': 'html'
             }
             response = self.client.ajax_post(reverse('xblock_handler'), data)
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
 
             # Adding another component should cause failure:
             response = self.client.ajax_post(reverse('xblock_handler'), data)
-            self.assertEqual(response.status_code, 400)
+            assert response.status_code == 400
             self.assertIn('cannot have more than 1 component', parse_json(response)['error'])
 
     def test_allowed_organizations_for_library(self):
@@ -497,19 +497,19 @@ class UnitTestLibraries(CourseTestCase):
                         ):
                             organizations = get_allowed_organizations_for_libraries(self.user)
                             # Assert that the method returned the expected value
-                            self.assertEqual(organizations, [])
+                            assert not organizations
                         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
                             # Assert that correct org values are returned based on course creator state
                             for course_creator_state in CourseCreator.STATES:
                                 course_creator.state = course_creator_state
                                 organizations = get_allowed_organizations_for_libraries(self.user)
                                 if course_creator_state != CourseCreator.GRANTED:
-                                    self.assertEqual(organizations, [])
+                                    assert not organizations
                                 else:
-                                    self.assertEqual(organizations, ['org1', 'org2'])
+                                    assert organizations == ['org1', 'org2']
                     with mock.patch.dict(
                         'django.conf.settings.FEATURES',
                         {"ENABLE_ORGANIZATION_STAFF_ACCESS_FOR_CONTENT_LIBRARIES": True}
                     ):
                         organizations = get_allowed_organizations_for_libraries(self.user)
-                        self.assertEqual(organizations, ['org3'])
+                        assert organizations == ['org3']

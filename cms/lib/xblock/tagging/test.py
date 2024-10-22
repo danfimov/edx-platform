@@ -127,7 +127,7 @@ class StructuredTagsAsideTestCase(ModuleStoreTestCase):
         runtime = TestRuntime(services={'field-data': field_data})
         xblock_aside = StructuredTagsAside(scope_ids=sids, runtime=runtime)
         available_tags = xblock_aside.get_available_tags()
-        self.assertEqual(len(available_tags), 2, "StructuredTagsAside should contains two tag categories")
+        assert len(available_tags) == 2, "StructuredTagsAside should contains two tag categories"
 
     def test_preview_html(self):
         """
@@ -148,39 +148,39 @@ class StructuredTagsAsideTestCase(ModuleStoreTestCase):
         tree = etree.parse(StringIO(problem_html), parser)
 
         main_div_nodes = tree.xpath('/html/body/div/section/div')
-        self.assertEqual(len(main_div_nodes), 2)
+        assert len(main_div_nodes) == 2
 
         loader_div_node = main_div_nodes[0]
         self.assertIn('ui-loading', loader_div_node.get('class'))
 
         div_node = main_div_nodes[1]
-        self.assertEqual(div_node.get('data-init'), 'StructuredTagsInit')
-        self.assertEqual(div_node.get('data-runtime-class'), 'PreviewRuntime')
-        self.assertEqual(div_node.get('data-block-type'), 'tagging_aside')
-        self.assertEqual(div_node.get('data-runtime-version'), '1')
+        assert div_node.get('data-init') == 'StructuredTagsInit'
+        assert div_node.get('data-runtime-class') == 'PreviewRuntime'
+        assert div_node.get('data-block-type') == 'tagging_aside'
+        assert div_node.get('data-runtime-version') == '1'
         self.assertIn('xblock_asides-v1', div_node.get('class'))
 
         select_nodes = div_node.xpath("div//select[@multiple='multiple']")
-        self.assertEqual(len(select_nodes), 2)
+        assert len(select_nodes) == 2
 
         select_node1 = select_nodes[0]
-        self.assertEqual(select_node1.get('name'), self.aside_tag_dif)
+        assert select_node1.get('name') == self.aside_tag_dif
 
         option_nodes1 = select_node1.xpath('option')
-        self.assertEqual(len(option_nodes1), 3)
+        assert len(option_nodes1) == 3
 
         option_values1 = [opt_elem.text for opt_elem in option_nodes1]
-        self.assertEqual(option_values1, ['Easy', 'Hard', 'Medium'])
+        assert option_values1 == ['Easy', 'Hard', 'Medium']
 
         select_node2 = select_nodes[1]
-        self.assertEqual(select_node2.get('name'), self.aside_tag_lo)
-        self.assertEqual(select_node2.get('multiple'), 'multiple')
+        assert select_node2.get('name') == self.aside_tag_lo
+        assert select_node2.get('multiple') == 'multiple'
 
         option_nodes2 = select_node2.xpath('option')
-        self.assertEqual(len(option_nodes2), 3)
+        assert len(option_nodes2) == 3
 
         option_values2 = [opt_elem.text for opt_elem in option_nodes2 if opt_elem.text]
-        self.assertEqual(option_values2, ['Learned a few things', 'Learned everything', 'Learned nothing'])
+        assert option_values2 == ['Learned a few things', 'Learned everything', 'Learned nothing']
 
         # Now ensure the acid_aside is not in the result
         self.assertNotRegex(problem_html, r"data-block-type=[\"\']acid_aside[\"\']")
@@ -204,15 +204,15 @@ class StructuredTagsAsideTestCase(ModuleStoreTestCase):
         client.login(username=self.user.username, password=self.user_password)
 
         response = client.post(handler_url, json.dumps({}), content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         response = client.post(handler_url, json.dumps({'undefined_tag': ['undefined1', 'undefined2']}),
                                content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         response = client.post(handler_url, json.dumps({self.aside_tag_dif: ['undefined1', 'undefined2']}),
                                content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         def _test_helper_func(problem_location):
             """
@@ -229,18 +229,17 @@ class StructuredTagsAsideTestCase(ModuleStoreTestCase):
 
         response = client.post(handler_url, json.dumps({self.aside_tag_dif: [self.aside_tag_dif_value]}),
                                content_type="application/json")
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         tag_aside = _test_helper_func(self.problem.location)
-        self.assertIsNotNone(tag_aside, "Necessary StructuredTagsAside object isn't found")
-        self.assertEqual(tag_aside.saved_tags[self.aside_tag_dif], [self.aside_tag_dif_value])
+        assert tag_aside is not None, "Necessary StructuredTagsAside object isn't found"
+        assert tag_aside.saved_tags[self.aside_tag_dif] == [self.aside_tag_dif_value]
 
         response = client.post(handler_url, json.dumps({self.aside_tag_dif: [self.aside_tag_dif_value,
                                                                              self.aside_tag_dif_value2]}),
                                content_type="application/json")
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         tag_aside = _test_helper_func(self.problem.location)
-        self.assertIsNotNone(tag_aside, "Necessary StructuredTagsAside object isn't found")
-        self.assertEqual(tag_aside.saved_tags[self.aside_tag_dif], [self.aside_tag_dif_value,
-                                                                    self.aside_tag_dif_value2])
+        assert tag_aside is not None, "Necessary StructuredTagsAside object isn't found"
+        assert tag_aside.saved_tags[self.aside_tag_dif] == [self.aside_tag_dif_value, self.aside_tag_dif_value2]

@@ -536,7 +536,7 @@ class CourseModeViewTest(CatalogIntegrationMixin, UrlResetMixin, ModuleStoreTest
 
             # Choose mode (POST request)
             response = self.client.post(url, post_params)
-            self.assertEqual(response.status_code, status_code)
+            assert response.status_code == status_code
 
             if has_perm:
                 self.assertContains(response, error_msg)

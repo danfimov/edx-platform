@@ -425,7 +425,7 @@ class TeamsConfigurationTests(unittest.TestCase):
     @ddt.unpack
     def test_team_settings(self, config_block, error_message):
         result = CourseMetadata.validate_team_settings(config_block)
-        self.assertEqual(len(result), len(error_message))
+        assert len(result) == len(error_message)
         if len(error_message) > 0:
             for res in result:
                 self.assertIn(res['message'], error_message)

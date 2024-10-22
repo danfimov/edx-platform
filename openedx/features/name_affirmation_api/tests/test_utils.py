@@ -22,7 +22,7 @@ class TestNameAffirmationAPIUtils(TestCase):
     def test_name_affirmation_not_installed(self, mock_manager):
         mock_manager.side_effect = PluginError('No such plugin')
         with self.assertRaises(PluginError):
-            self.assertFalse(is_name_affirmation_installed())
+            assert not is_name_affirmation_installed()
 
     @patch('edx_name_affirmation.services.NameAffirmationService')
     @ddt.data(True, False)
@@ -31,6 +31,6 @@ class TestNameAffirmationAPIUtils(TestCase):
                    return_value=name_affirmation_installed):
             name_affirmation_service = get_name_affirmation_service()
             if name_affirmation_installed:
-                self.assertEqual(name_affirmation_service, mock_service())
+                assert name_affirmation_service == mock_service()
             else:
-                self.assertIsNone(name_affirmation_service)
+                assert name_affirmation_service is None

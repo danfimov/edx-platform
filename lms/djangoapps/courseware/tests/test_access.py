@@ -550,7 +550,7 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
 
         # User cannot enroll in the course if it is just invitation only.
         course = self._mock_course_with_invitation(invitation=True)
-        self.assertFalse(access._has_access_course(user, 'enroll', course))
+        assert not access._has_access_course(user, 'enroll', course)
 
         # User can enroll in the course if it is not just invitation only.
         course = self._mock_course_with_invitation(invitation=False)
@@ -566,11 +566,11 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
 
         # User cannot enroll in the course if it is just invitation only and COURSES_INVITE_ONLY is also set.
         course = self._mock_course_with_invitation(invitation=True)
-        self.assertFalse(access._has_access_course(user, 'enroll', course))
+        assert not access._has_access_course(user, 'enroll', course)
 
         # User cannot enroll in the course if COURSES_INVITE_ONLY is set despite of the course invitation_only value.
         course = self._mock_course_with_invitation(invitation=False)
-        self.assertFalse(access._has_access_course(user, 'enroll', course))
+        assert not access._has_access_course(user, 'enroll', course)
 
     @ddt.data(True, False)
     def test_old_mongo_is_invite_only(self, old_mongo):
@@ -579,8 +579,8 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
         """
         user = UserFactory.create()
         course = self._mock_course_with_invitation(invitation=False, deprecated=old_mongo)
-        self.assertEqual(course_is_invitation_only(course), old_mongo)
-        self.assertEqual(access._has_access_course(user, 'enroll', course).has_access, not old_mongo)
+        assert course_is_invitation_only(course) == old_mongo
+        assert access._has_access_course(user, 'enroll', course).has_access == (not old_mongo)
 
     def _mock_course_with_invitation(self, invitation, deprecated=False):
         yesterday = datetime.datetime.now(pytz.utc) - datetime.timedelta(days=1)

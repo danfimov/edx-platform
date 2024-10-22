@@ -807,7 +807,7 @@ class ProblemWithUploadedFilesTest(TestSubmittingProblems):
         args, kwargs = mock_xqueue_post.call_args
         assert len(args) == 2
         assert args[0].endswith('/submit/')
-        self.assertEqual(list(kwargs['files'].keys()), filenames.split())
+        assert list(kwargs['files'].keys()) == filenames.split()
 
 
 class TestPythonGradedResponse(TestSubmittingProblems):
@@ -1240,7 +1240,7 @@ class TestConditionalContent(TestSubmittingProblems):
         self.split_one_group_no_problems_setup(self.user_partition_group_0)
 
         assert self.score_for_hw('homework1') == [1.0]
-        assert self.score_for_hw('homework2') == []
+        assert not self.score_for_hw('homework2')
         assert self.earned_hw_scores() == [1.0]
 
         # Grade percent is .25. Here is the calculation:

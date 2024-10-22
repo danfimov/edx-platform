@@ -130,7 +130,7 @@ class AssetsViewGetTest(AssetsViewTestCase, ModuleStoreTestCase, APITestCase):
         url = self.get_url()
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_assets_handler_called_with_correct_arguments(self):
         self.client.login(
@@ -187,7 +187,7 @@ class AssetsViewPostTest(AssetsViewTestCase, ModuleStoreTestCase, APITestCase):
         url = self.get_url()
 
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_assets_handler_called_with_correct_arguments(self):
         self.client.login(
@@ -237,7 +237,7 @@ class AssetsViewPutTest(AssetsViewTestCase, ModuleStoreTestCase, APITestCase):
         url = self.get_url()
 
         response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_assets_handler_called_with_correct_arguments(self):
         self.client.login(
@@ -282,7 +282,7 @@ class AssetsViewDeleteTest(AssetsViewTestCase, ModuleStoreTestCase, APITestCase)
         url = self.get_url()
 
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_assets_handler_called_with_correct_arguments(self):
         self.client.login(

@@ -180,7 +180,7 @@ class ThreadActionGroupIdTestCase(
         with mock.patch('openedx.core.djangoapps.django_comment_common.signals.thread_flagged.send') as signal_mock:
             response = self.call_view("flag_abuse_for_thread", mock_request)
             self._assert_json_response_contains_group_info(response)
-            self.assertEqual(signal_mock.call_count, 1)
+            assert signal_mock.call_count == 1
         response = self.call_view("un_flag_abuse_for_thread", mock_request)
         self._assert_json_response_contains_group_info(response)
 
@@ -1397,7 +1397,7 @@ class CommentActionTestCase(
     def test_flag(self, mock_request):
         with mock.patch('openedx.core.djangoapps.django_comment_common.signals.comment_flagged.send') as signal_mock:
             self.call_view("flag_abuse_for_comment", mock_request)
-            self.assertEqual(signal_mock.call_count, 1)
+            assert signal_mock.call_count == 1
 
 
 @disable_signal(views, 'comment_created')
@@ -2053,7 +2053,7 @@ class UsersEndpointTestCase(ForumsEnableMixin, SharedModuleStoreTestCase, MockRe
         self.set_post_counts(mock_request)
         response = self.make_request(username="othor")
         assert response.status_code == 200
-        assert json.loads(response.content.decode('utf-8'))['users'] == []
+        assert not json.loads(response.content.decode('utf-8'))['users']
 
     def test_requires_GET(self):
         response = self.make_request(method='post', username="other")
@@ -2090,7 +2090,7 @@ class UsersEndpointTestCase(ForumsEnableMixin, SharedModuleStoreTestCase, MockRe
         self.set_post_counts(mock_request, 0, 0)
         response = self.make_request(username="other")
         assert response.status_code == 200
-        assert json.loads(response.content.decode('utf-8'))['users'] == []
+        assert not json.loads(response.content.decode('utf-8'))['users']
 
 
 @ddt.ddt
@@ -2376,14 +2376,14 @@ class ForumThreadViewedEventTransformerTestCase(ForumsEnableMixin, UrlResetMixin
             username=self.student.username,
         )
         assert event_trans_2['event'].get('user_forums_roles') == [FORUM_ROLE_STUDENT]
-        assert event_trans_2['event'].get('user_course_roles') == []
+        assert not event_trans_2['event'].get('user_course_roles')
 
         # Course staff user
         _, event_trans_3 = _create_and_transform_event(
             course_id=self.course.id,
             username=self.staff.username,
         )
-        assert event_trans_3['event'].get('user_forums_roles') == []
+        assert not event_trans_3['event'].get('user_forums_roles')
         assert event_trans_3['event'].get('user_course_roles') == [CourseStaffRole.ROLE]
 
     def test_teams(self):

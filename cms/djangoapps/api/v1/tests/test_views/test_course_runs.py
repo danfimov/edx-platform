@@ -261,15 +261,15 @@ class CourseRunViewSetTests(ModuleStoreTestCase):
         data = self.get_course_run_data(user, start, end, pacing_type, role)
 
         response = self.client.post(self.list_url, data, format='json')
-        self.assertEqual(response.status_code, 201)
+        assert response.status_code == 201
 
         course_run_key = CourseKey.from_string(response.data['id'])
         course_run = modulestore().get_course(course_run_key)
-        self.assertEqual(course_run.display_name, data['title'])
-        self.assertEqual(course_run.id.org, data['org'])
-        self.assertEqual(course_run.id.course, data['number'])
-        self.assertEqual(course_run.id.run, data['run'])
-        self.assertEqual(course_run.self_paced, expected_self_paced_value)
+        assert course_run.display_name == data['title']
+        assert course_run.id.org == data['org']
+        assert course_run.id.course == data['number']
+        assert course_run.id.run == data['run']
+        assert course_run.self_paced == expected_self_paced_value
         self.assert_course_run_schedule(course_run, start, end)
         self.assert_access_role(course_run, user, role)
         self.assert_course_access_role_count(course_run, 1)
@@ -285,7 +285,7 @@ class CourseRunViewSetTests(ModuleStoreTestCase):
         data = self.get_course_run_data(user, start, end, 'self-paced')
         data['team'] = [{'user': 'invalid-username'}]
         response = self.client.post(self.list_url, data, format='json')
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
         self.assertDictContainsSubset({'team': ['Course team user does not exist']}, response.data)
 
     def test_images_upload(self):
@@ -377,7 +377,7 @@ class CourseRunViewSetTests(ModuleStoreTestCase):
         self.assert_access_role(course_run, user, role)
         self.assert_course_access_role_count(course_run, 1)
         course_orgs = get_course_organizations(course_run_key)
-        self.assertEqual(len(course_orgs), 1)
+        assert len(course_orgs) == 1
         self.assertEqual(course_orgs[0]['short_name'], original_course_run.id.org)  # lint-amnesty, pylint: disable=no-member
 
     def test_rerun_duplicate_run(self):
@@ -412,7 +412,7 @@ class CourseRunViewSetTests(ModuleStoreTestCase):
         }
         response = self.client.post(url, data, format='json')
         assert response.status_code == 201
-        self.assertEqual(response.data, {"message": "Course cloned successfully."})
+        assert response.data == {"message": "Course cloned successfully."}
 
     def test_clone_course_with_missing_source_id(self):
         url = reverse('api:v1:course_run-clone')
@@ -421,7 +421,7 @@ class CourseRunViewSetTests(ModuleStoreTestCase):
         }
         response = self.client.post(url, data, format='json')
         assert response.status_code == 400
-        self.assertEqual(response.data, {'source_course_id': ['This field is required.']})
+        assert response.data == {'source_course_id': ['This field is required.']}
 
     def test_clone_course_with_missing_dest_id(self):
         url = reverse('api:v1:course_run-clone')
@@ -430,7 +430,7 @@ class CourseRunViewSetTests(ModuleStoreTestCase):
         }
         response = self.client.post(url, data, format='json')
         assert response.status_code == 400
-        self.assertEqual(response.data, {'destination_course_id': ['This field is required.']})
+        assert response.data == {'destination_course_id': ['This field is required.']}
 
     def test_clone_course_with_nonexistent_source_course(self):
         url = reverse('api:v1:course_run-clone')

@@ -366,7 +366,7 @@ class TestCachePrograms(CatalogIntegrationMixin, CacheIsolationTestCase, SiteMix
         assert context.value.code == 1
 
         cached_uuids = cache.get(SITE_PROGRAM_UUIDS_CACHE_KEY_TPL.format(domain=self.site_domain))
-        assert cached_uuids == []
+        assert not cached_uuids
 
     def test_handle_missing_pathways(self):
         """
@@ -389,7 +389,7 @@ class TestCachePrograms(CatalogIntegrationMixin, CacheIsolationTestCase, SiteMix
         assert context.value.code == 1
 
         cached_pathways = cache.get(SITE_PATHWAY_IDS_CACHE_KEY_TPL.format(domain=self.site_domain))
-        assert cached_pathways == []
+        assert not cached_pathways
 
     def test_handle_missing_programs(self):
         """

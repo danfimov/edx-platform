@@ -1318,7 +1318,7 @@ class ProgramCourseGradesGetTests(EnrollmentsDataMixin, APITestCase):
         with self.patch_grades_with({}):
             response = self.client.get(url)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert response.data['results'] == []
+        assert not response.data['results']
 
     def test_200_grades_with_no_exceptions(self):
         other_student = UserFactory.create(username='other_student')
@@ -1602,7 +1602,7 @@ class UserProgramReadOnlyAccessGetTests(EnrollmentsDataMixin, APITestCase):
         response = self.client.get(reverse(self.view_name))
 
         assert status.HTTP_200_OK == response.status_code
-        assert response.data == []
+        assert not response.data
         mock_get_programs.assert_called_once_with(uuids=[])
 
     def test_learner_200_many_programs(self):
@@ -1972,7 +1972,7 @@ class ProgramCourseEnrollmentOverviewGetTests(
                 for block in block_data:
                     assert block in due_dates
             else:
-                assert due_dates == []
+                assert not due_dates
 
     @mock.patch.object(CourseOverview, 'has_ended')
     def test_course_run_status_instructor_paced_completed(self, mock_has_ended):
@@ -2271,7 +2271,7 @@ class UserProgramCourseEnrollmentViewGetTests(ProgramCourseEnrollmentOverviewGet
         ):
             response_status, response_course_runs = self.get_status_and_course_runs()
         assert response_status == 200
-        assert response_course_runs == []
+        assert not response_course_runs
 
     @ddt.data(
         # If not provided, the page size is defaults to 10.

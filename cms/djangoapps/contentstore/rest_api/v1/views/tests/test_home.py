@@ -67,7 +67,7 @@ class HomePageViewTest(CourseTestCase):
         """Check successful response content"""
         response = self.client.get(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(self.expected_response, response.data)
 
     @override_settings(MEILISEARCH_ENABLED=True)
@@ -78,7 +78,7 @@ class HomePageViewTest(CourseTestCase):
         expected_response = self.expected_response
         expected_response["libraries_v2_enabled"] = True
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     def test_taxonomy_list_link(self):
@@ -127,7 +127,7 @@ class HomePageCoursesViewTest(CourseTestCase):
             "in_process_course_actions": [],
         }
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         print(response.data)
         self.assertDictEqual(expected_response, response.data)
 
@@ -158,7 +158,7 @@ class HomePageCoursesViewTest(CourseTestCase):
         with override_settings(FEATURES=FEATURES_WITH_HOME_PAGE_COURSE_V2_API):
             response = self.client.get(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     @override_waffle_switch(ENABLE_GLOBAL_STAFF_OPTIMIZATION, True)
@@ -172,15 +172,15 @@ class HomePageCoursesViewTest(CourseTestCase):
         )
         CourseOverviewFactory.create(id=test_course.id, org='foo-org')
         response = self.client.get(self.url, {"org": "foo-org"})
-        self.assertEqual(len(response.data['courses']), 1)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert len(response.data['courses']) == 1
+        assert response.status_code == status.HTTP_200_OK
 
     @override_waffle_switch(ENABLE_GLOBAL_STAFF_OPTIMIZATION, True)
     def test_org_query_if_empty(self):
         """Test home page with an empty org query param"""
         response = self.client.get(self.url)
-        self.assertEqual(len(response.data['courses']), 0)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert len(response.data['courses']) == 0
+        assert response.status_code == status.HTTP_200_OK
 
 
 @ddt.ddt
@@ -208,6 +208,6 @@ class HomePageLibrariesViewTest(LibraryTestCase):
             }],
         }
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         print(response.data)
         self.assertDictEqual(expected_response, response.data)

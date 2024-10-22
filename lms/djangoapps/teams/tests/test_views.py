@@ -1316,7 +1316,7 @@ class TestCreateTeamAPI(EventTestMixin, TeamAPITestCase):
             description="Another fantastic team",
         ), user=user)
 
-        assert team['membership'] == []
+        assert not team['membership']
 
     @ddt.unpack
     @ddt.data(

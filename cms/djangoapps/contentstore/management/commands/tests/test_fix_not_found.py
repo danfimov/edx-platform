@@ -38,7 +38,7 @@ class TestFixNotFound(ModuleStoreTestCase):
 
         # the course block should now point to two children, one of which
         # doesn't actually exist
-        self.assertEqual(len(course.children), 2)
+        assert len(course.children) == 2
         self.assertIn(dangling_pointer, course.children)
 
         call_command("fix_not_found", str(course.id))
@@ -46,5 +46,5 @@ class TestFixNotFound(ModuleStoreTestCase):
         # make sure the dangling pointer was removed from
         # the course block's children
         course = self.store.get_course(course.id)
-        self.assertEqual(len(course.children), 1)
+        assert len(course.children) == 1
         self.assertNotIn(dangling_pointer, course.children)

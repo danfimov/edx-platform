@@ -40,4 +40,4 @@ class TestWikiAccessMiddleware(ModuleStoreTestCase):
         response = self.client.get('/wiki/math101/')
         request = response.wsgi_request
         assert hasattr(request, 'course')
-        self.assertEqual(request.course.id, self.course_math101.id)
+        assert request.course.id == self.course_math101.id

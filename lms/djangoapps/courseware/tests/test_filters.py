@@ -189,8 +189,8 @@ class CourseAboutFiltersTest(ModuleStoreTestCase):
         """
         response = self.client.get(self.course_about_url)
 
-        self.assertEqual(status.HTTP_302_FOUND, response.status_code)
-        self.assertEqual(f"courses/{self.course.id}/survey", response.url)
+        assert status.HTTP_302_FOUND == response.status_code
+        assert f"courses/{self.course.id}/survey" == response.url
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -212,8 +212,8 @@ class CourseAboutFiltersTest(ModuleStoreTestCase):
         """
         response = self.client.get(self.course_about_url)
 
-        self.assertEqual(status.HTTP_302_FOUND, response.status_code)
-        self.assertEqual(f"{reverse('dashboard')}", response.url)
+        assert status.HTTP_302_FOUND == response.status_code
+        assert f"{reverse('dashboard')}" == response.url
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={

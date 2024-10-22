@@ -195,7 +195,7 @@ class UpstreamTestCase(ModuleStoreTestCase):
     #       # Start with an uncustomized downstream block.
     #       downstream = BlockFactory.create(category='html', parent=self.unit, upstream=str(self.upstream_key))
     #       sync_from_upstream(downstream, self.user)
-    #       assert downstream.downstream_customized == []
+    #       assert not downstream.downstream_customized
     #       assert downstream.display_name == downstream.upstream_display_name == "Upstream Title V2"
     #
     #       # Then, customize our downstream title.

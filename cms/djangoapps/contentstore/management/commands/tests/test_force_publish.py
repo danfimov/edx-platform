@@ -102,7 +102,7 @@ class TestForcePublishModifications(ModuleStoreTestCase):
             call_command('force_publish', str(self.course.id), '--commit')
 
             # verify that course has no changes
-            self.assertFalse(self.store.has_changes(self.store.get_item(self.course.location)))
+            assert not self.store.has_changes(self.store.get_item(self.course.location))
 
             # get new draft and publish branch versions
             versions = get_course_versions(str(self.course.id))
@@ -110,8 +110,8 @@ class TestForcePublishModifications(ModuleStoreTestCase):
             new_published_version = versions['published-branch']
 
             # verify that the draft branch didn't change while the published branch did
-            self.assertEqual(draft_version, new_draft_version)
+            assert draft_version == new_draft_version
             self.assertNotEqual(published_version, new_published_version)
 
             # verify that draft and publish point to same versions now
-            self.assertEqual(new_draft_version, new_published_version)
+            assert new_draft_version == new_published_version

@@ -215,7 +215,7 @@ class CompletionServiceTestCase(CompletionWaffleTestMixin, SharedModuleStoreTest
             user_id=self.user.id,
         )
         # Library Content Block needs its children to be completed.
-        self.assertFalse(self.completion_service.can_mark_block_complete_on_view(library_content_block))
+        assert not self.completion_service.can_mark_block_complete_on_view(library_content_block)
 
         # Dirty hack:
         # sync_from_library isn't *supposed* to work inside LMS, but this test case was written

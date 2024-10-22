@@ -179,7 +179,7 @@ class TestUserTaskStopped(APITestCase):
         subject = "{platform_name} {studio_name}: Task Status Update".format(
             platform_name=settings.PLATFORM_NAME, studio_name=settings.STUDIO_NAME
         )
-        self.assertEqual(msg.subject, subject)
+        assert msg.subject == subject
 
     def assert_msg_body_fragments(self, msg, body_fragments):
         """Verify that email body contains expected fragments"""
@@ -201,7 +201,7 @@ class TestUserTaskStopped(APITestCase):
             reverse('usertaskstatus-detail', args=[self.status.uuid])
         ]
 
-        self.assertEqual(len(mail.outbox), 1)
+        assert len(mail.outbox) == 1
 
         msg = mail.outbox[0]
 
@@ -219,7 +219,7 @@ class TestUserTaskStopped(APITestCase):
         end_of_task_status.name = "updating block-v1:course+type@library_content+block@uuid from library"
         user_task_stopped.send(sender=UserTaskStatus, status=end_of_task_status)
 
-        self.assertEqual(len(mail.outbox), 0)
+        assert len(mail.outbox) == 0
 
     def test_email_sent_with_olx_validations_with_config_enabled(self):
         """
@@ -238,7 +238,7 @@ class TestUserTaskStopped(APITestCase):
             user_task_stopped.send(sender=UserTaskStatus, status=self.status)
             msg = mail.outbox[0]
 
-            self.assertEqual(len(mail.outbox), 1)
+            assert len(mail.outbox) == 1
             self.assert_msg_subject(msg)
             self.assert_msg_body_fragments(msg, body_fragments_with_validation)
 
@@ -257,8 +257,8 @@ class TestUserTaskStopped(APITestCase):
         msg = mail.outbox[0]
 
         # Verify olx validation is not enabled out of the box.
-        self.assertFalse(settings.FEATURES.get('ENABLE_COURSE_OLX_VALIDATION'))
-        self.assertEqual(len(mail.outbox), 1)
+        assert not settings.FEATURES.get('ENABLE_COURSE_OLX_VALIDATION')
+        assert len(mail.outbox) == 1
         self.assert_msg_subject(msg)
         self.assert_msg_body_fragments(msg, body_fragments)
 
@@ -278,7 +278,7 @@ class TestUserTaskStopped(APITestCase):
 
         user_task_stopped.send(sender=UserTaskStatus, status=self.status)
 
-        self.assertEqual(len(mail.outbox), 1)
+        assert len(mail.outbox) == 1
         msg = mail.outbox[0]
         self.assert_msg_subject(msg)
         self.assert_msg_body_fragments(msg, body_fragments)
@@ -292,7 +292,7 @@ class TestUserTaskStopped(APITestCase):
             user=self.user, task_id=str(uuid4()), task_class='test_rest_api.sample_task', name='SampleTask 2',
             total_steps=5, parent=self.status)
         user_task_stopped.send(sender=UserTaskStatus, status=child_status)
-        self.assertEqual(len(mail.outbox), 0)
+        assert len(mail.outbox) == 0
 
     def test_email_sent_without_site(self):
         """
@@ -305,7 +305,7 @@ class TestUserTaskStopped(APITestCase):
             "Sign in to view the details of your task or download any files created."
         ]
 
-        self.assertEqual(len(mail.outbox), 1)
+        assert len(mail.outbox) == 1
 
         msg = mail.outbox[0]
         self.assert_msg_subject(msg)
@@ -335,4 +335,4 @@ class TestUserTaskStopped(APITestCase):
             )
             user_task_stopped.send(sender=UserTaskStatus, status=self.status)
             assert mock_delay.called
-            self.assertEqual(hdlr.messages['error'][0], 'Unable to queue send_task_complete_email')
+            assert hdlr.messages['error'][0] == 'Unable to queue send_task_complete_email'

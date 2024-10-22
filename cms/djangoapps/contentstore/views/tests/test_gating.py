@@ -142,10 +142,10 @@ class TestSubsectionGating(CourseTestCase):
         mock_get_required_content.assert_called_with(self.course.id, self.seq2.location)
         mock_get_prereqs.assert_called_with(self.course.id)
         assert resp['is_prereq']
-        self.assertEqual(resp['prereq'], str(self.seq1.location))
-        self.assertEqual(resp['prereq_min_score'], min_score)
-        self.assertEqual(resp['prereq_min_completion'], min_completion)
-        self.assertEqual(resp['visibility_state'], VisibilityState.gated)
+        assert resp['prereq'] == str(self.seq1.location)
+        assert resp['prereq_min_score'] == min_score
+        assert resp['prereq_min_completion'] == min_completion
+        assert resp['visibility_state'] == VisibilityState.gated
 
     @patch('cms.djangoapps.contentstore.signals.handlers.gating_api.set_required_content')
     @patch('cms.djangoapps.contentstore.signals.handlers.gating_api.remove_prerequisite')

@@ -269,7 +269,7 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         assert lib['has_unpublished_changes'] is False
 
         # A library starts out empty:
-        assert self._get_library_blocks(lib_id)['results'] == []
+        assert not self._get_library_blocks(lib_id)['results']
 
         # Add a 'problem' XBlock to the library:
         create_date = datetime(2024, 6, 6, 6, 6, 6, tzinfo=timezone.utc)
@@ -370,7 +370,7 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         assert lib['has_unpublished_changes'] is False
 
         # A library starts out empty:
-        assert self._get_library_blocks(lib_id)['results'] == []
+        assert not self._get_library_blocks(lib_id)['results']
 
         # Add a 'html' XBlock to the library:
         create_date = datetime(2024, 6, 6, 6, 6, 6, tzinfo=timezone.utc)
@@ -506,7 +506,7 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         """Test that requests fail with 404 when the library does not exist"""
         valid_not_found_key = 'lb:valid:key:video:1'
         response = self.client.get(URL_BLOCK_METADATA_URL.format(block_key=valid_not_found_key))
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
         self.assertEqual(response.json(), {
             'detail': "Content Library 'lib:valid:key' does not exist",
         })
@@ -521,7 +521,7 @@ class ContentLibrariesTestCase(ContentLibrariesRestApiTest, OpenEdxEventsTestMix
         library_key = LibraryLocatorV2.from_string(lib['id'])
         non_existent_block_key = LibraryUsageLocatorV2(lib_key=library_key, block_type='video', usage_id='123')
         response = self.client.get(URL_BLOCK_METADATA_URL.format(block_key=non_existent_block_key))
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
         self.assertEqual(response.json(), {
             'detail': f"The component '{non_existent_block_key}' does not exist.",
         })
@@ -1100,7 +1100,7 @@ class ContentLibraryXBlockValidationTest(APITestCase):
         response = self.client.get(
             endpoint.format(**endpoint_parameters),
         )
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
         msg = f"XBlock {endpoint_parameters.get('block_key')} does not exist, or you don't have permission to view it."
         self.assertEqual(response.json(), {
             'detail': msg,
@@ -1115,4 +1115,4 @@ class ContentLibraryXBlockValidationTest(APITestCase):
             user_id='random',
             secure_token='random',
         )))
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404

@@ -54,49 +54,49 @@ class CourseCreatorView(TestCase):
             update_course_creator_group(self.user, self.user, True)
 
     def test_table_initially_empty(self):
-        self.assertIsNone(get_course_creator_status(self.user))
+        assert get_course_creator_status(self.user) is None
 
     def test_add_unrequested(self):
         add_user_with_status_unrequested(self.user)
-        self.assertEqual('unrequested', get_course_creator_status(self.user))
+        assert 'unrequested' == get_course_creator_status(self.user)
 
         # Calling add again will be a no-op (even if state is different).
         add_user_with_status_granted(self.admin, self.user)
-        self.assertEqual('unrequested', get_course_creator_status(self.user))
+        assert 'unrequested' == get_course_creator_status(self.user)
 
     def test_add_granted(self):
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
             # Calling add_user_with_status_granted impacts is_user_in_course_group_role.
-            self.assertFalse(auth.user_has_role(self.user, CourseCreatorRole()))
+            assert not auth.user_has_role(self.user, CourseCreatorRole())
 
             add_user_with_status_granted(self.admin, self.user)
-            self.assertEqual('granted', get_course_creator_status(self.user))
+            assert 'granted' == get_course_creator_status(self.user)
 
             # Calling add again will be a no-op (even if state is different).
             add_user_with_status_unrequested(self.user)
-            self.assertEqual('granted', get_course_creator_status(self.user))
+            assert 'granted' == get_course_creator_status(self.user)
 
             assert auth.user_has_role(self.user, CourseCreatorRole())
 
     def test_update_creator_group(self):
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
-            self.assertFalse(auth.user_has_role(self.user, CourseCreatorRole()))
+            assert not auth.user_has_role(self.user, CourseCreatorRole())
             update_course_creator_group(self.admin, self.user, True)
             assert auth.user_has_role(self.user, CourseCreatorRole())
             update_course_creator_group(self.admin, self.user, False)
-            self.assertFalse(auth.user_has_role(self.user, CourseCreatorRole()))
+            assert not auth.user_has_role(self.user, CourseCreatorRole())
 
     def test_update_org_content_creator_role(self):
         with mock.patch.dict('django.conf.settings.FEATURES', {"ENABLE_CREATOR_GROUP": True}):
-            self.assertFalse(auth.user_has_role(self.user, OrgContentCreatorRole(self.org)))
+            assert not auth.user_has_role(self.user, OrgContentCreatorRole(self.org))
             update_org_content_creator_role(self.admin, self.user, [self.org])
             assert auth.user_has_role(self.user, OrgContentCreatorRole(self.org))
             update_org_content_creator_role(self.admin, self.user, [])
-            self.assertFalse(auth.user_has_role(self.user, OrgContentCreatorRole(self.org)))
+            assert not auth.user_has_role(self.user, OrgContentCreatorRole(self.org))
 
     def test_user_requested_access(self):
         add_user_with_status_unrequested(self.user)
-        self.assertEqual('unrequested', get_course_creator_status(self.user))
+        assert 'unrequested' == get_course_creator_status(self.user)
 
         self.client.login(username=self.user.username, password='foo')
 
@@ -104,22 +104,22 @@ class CourseCreatorView(TestCase):
         # request-specific information. Use the django TestClient to supply
         # the appropriate request context.
         self.client.post(reverse('request_course_creator'))
-        self.assertEqual('pending', get_course_creator_status(self.user))
+        assert 'pending' == get_course_creator_status(self.user)
 
     def test_user_requested_already_granted(self):
         add_user_with_status_granted(self.admin, self.user)
-        self.assertEqual('granted', get_course_creator_status(self.user))
+        assert 'granted' == get_course_creator_status(self.user)
         # Will not "downgrade" to pending because that would require removing the
         # user from the authz course creator group (and that can only be done by an admin).
         user_requested_access(self.user)
-        self.assertEqual('granted', get_course_creator_status(self.user))
+        assert 'granted' == get_course_creator_status(self.user)
 
     def test_add_user_unrequested_staff(self):
         # Users marked as is_staff will not be added to the course creator table.
         add_user_with_status_unrequested(self.admin)
-        self.assertIsNone(get_course_creator_status(self.admin))
+        assert get_course_creator_status(self.admin) is None
 
     def test_add_user_granted_staff(self):
         # Users marked as is_staff will not be added to the course creator table.
         add_user_with_status_granted(self.admin, self.admin)
-        self.assertIsNone(get_course_creator_status(self.admin))
+        assert get_course_creator_status(self.admin) is None

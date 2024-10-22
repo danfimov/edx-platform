@@ -459,7 +459,7 @@ class SupportViewEnrollmentsTests(SharedModuleStoreTestCase, SupportViewTestCase
         assert response.status_code == 200
         data = json.loads(response.content.decode('utf-8'))
         assert len(data) == 1
-        self.assertEqual(data[0]['pacing_type'], pacing_type)
+        assert data[0]['pacing_type'] == pacing_type
 
     def test_get_manual_enrollment_history(self):
         ManualEnrollmentAudit.create_manual_enrollment_audit(
@@ -1949,24 +1949,24 @@ class TestOnboardingView(SupportViewTestCase, ProctoredExamTestCase):
         Test that a request with a username which does not exits returns 404
         """
         response = self.client.get(self._url(username='does_not_exist'))
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
         response_data = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_data['verified_in'], None)
-        self.assertEqual(response_data['current_status'], None)
+        assert response_data['verified_in'] is None
+        assert response_data['current_status'] is None
 
     def test_no_record(self):
         """
         Test that a request with a username which do not have any onboarding exam returns empty data
         """
         response = self.client.get(self._url(username=self.other_user.username))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         response_data = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_data['verified_in'], None)
-        self.assertEqual(response_data['current_status'], None)
+        assert response_data['verified_in'] is None
+        assert response_data['current_status'] is None
 
     def test_no_verified_attempts(self):
         """
@@ -1980,9 +1980,9 @@ class TestOnboardingView(SupportViewTestCase, ProctoredExamTestCase):
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
 
         response = self.client.get(self._url(username=self.user.username))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data['verified_in'], None)
+        assert response_data['verified_in'] is None
         self.assertEqual(
             response_data['current_status']['onboarding_status'],
             ProctoredExamStudentAttemptStatus.submitted
@@ -1991,10 +1991,10 @@ class TestOnboardingView(SupportViewTestCase, ProctoredExamTestCase):
         # Create second attempt and assert that most recent attempt is returned
         create_exam_attempt(self.onboarding_exam_id, self.user.id, True)
         response = self.client.get(self._url(username=self.user.username))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         response_data = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_data['verified_in'], None)
+        assert response_data['verified_in'] is None
         self.assertEqual(
             response_data['current_status']['onboarding_status'],
             ProctoredExamStudentAttemptStatus.created
@@ -2011,7 +2011,7 @@ class TestOnboardingView(SupportViewTestCase, ProctoredExamTestCase):
         attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user.id, True)
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
         response = self.client.get(self._url(username=self.user.username))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         response_data = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(
@@ -2026,7 +2026,7 @@ class TestOnboardingView(SupportViewTestCase, ProctoredExamTestCase):
         # Create second attempt and assert that verified attempt is still returned
         create_exam_attempt(self.onboarding_exam_id, self.user.id, True)
         response = self.client.get(self._url(username=self.user.username))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         response_data = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(
@@ -2077,16 +2077,16 @@ class TestOnboardingView(SupportViewTestCase, ProctoredExamTestCase):
         self._create_enrollment()
 
         response = self.client.get(self._url(username=self.user.username))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         response_data = json.loads(response.content.decode('utf-8'))
 
         # assert that originally verified enrollment is reflected correctly
-        self.assertEqual(response_data['verified_in']['onboarding_status'], 'verified')
-        self.assertEqual(response_data['verified_in']['course_id'], other_course_id)
+        assert response_data['verified_in']['onboarding_status'] == 'verified'
+        assert response_data['verified_in']['course_id'] == other_course_id
 
         # assert that most recent enrollment (current status) has other_course_approved status
-        self.assertEqual(response_data['current_status']['onboarding_status'], 'other_course_approved')
-        self.assertEqual(response_data['current_status']['course_id'], self.course_id)
+        assert response_data['current_status']['onboarding_status'] == 'other_course_approved'
+        assert response_data['current_status']['course_id'] == self.course_id
 
 
 class ResetCourseViewTestBase(SupportViewTestCase):
@@ -2123,10 +2123,10 @@ class TestResetCourseListView(ResetCourseViewTestBase):
         """ Helper that asserts the course ids that will be returned from the listing endpoint """
         learner = learner or self.learner
         response = self.client.get(self._url(learner))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         actual_course_ids = [course['course_id'] for course in response.json()]
-        self.assertEqual(expected_course_ids, actual_course_ids)
+        assert expected_course_ids == actual_course_ids
 
     def test_no_enrollments(self):
         """ When a learner has no enrollments, the endpoint should return an empty list """
@@ -2169,10 +2169,10 @@ class TestResetCourseListView(ResetCourseViewTestBase):
     def assertResponse(self, expected_response):
         """ Helper to assert the contents of the response from the listing endpoint """
         response = self.client.get(self._url(self.learner))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         actual_response = response.json()
-        self.assertEqual(expected_response, actual_response)
+        assert expected_response == actual_response
         return actual_response
 
     def test_course_not_started(self):
@@ -2387,8 +2387,8 @@ class TestResetCourseCreateView(ResetCourseViewTestBase):
 
     def assert_error_response(self, response, expected_status_code, expected_error_message):
         """ Helper to assert status code and error message """
-        self.assertEqual(response.status_code, expected_status_code)
-        self.assertEqual(response.data['error'], expected_error_message)
+        assert response.status_code == expected_status_code
+        assert response.data['error'] == expected_error_message
 
     def test_wrong_username(self):
         """ A request with a username which does not exits returns 404 """
@@ -2437,7 +2437,7 @@ class TestResetCourseCreateView(ResetCourseViewTestBase):
 
         # A request for a given learner and course with a comment should return a 201
         response = self.request(comment=comment)
-        self.assertEqual(response.status_code, 201)
+        assert response.status_code == 201
         self.assertEqual(response.data, {
             'course_id': self.course_id,
             'status': response.data['status'],
@@ -2463,7 +2463,7 @@ class TestResetCourseCreateView(ResetCourseViewTestBase):
             status=CourseResetAudit.CourseResetStatus.FAILED
         )
         response = self.request()
-        self.assertEqual(response.status_code, 201)
+        assert response.status_code == 201
         self.assertEqual(response.data, {
             'course_id': self.course_id,
             'status': response.data['status'],

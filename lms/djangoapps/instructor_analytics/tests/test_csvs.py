@@ -113,11 +113,11 @@ class TestAnalyticsFormatInstances(TestCase):
         features = ['a_var']
         header, datarows = format_instances([], features)
         assert header == features
-        assert datarows == []
+        assert not datarows
 
     def test_format_instances_response_nofeatures(self):
         header, datarows = format_instances(self.instances, [])
-        assert header == []
+        assert not header
         assert datarows == [[] for _ in range(len(self.instances))]
 
     def test_format_instances_response_nonexistantfeature(self):

@@ -91,18 +91,18 @@ class TestCourseChangePlan(unittest.TestCase):
 
         # Preserve no intermediate structures -- prune the middle structures.
         plan_no_intermediate = ChangePlan.create(graph, 0, False, False)
-        self.assertEqual(plan_no_intermediate.delete, ["2", "3"])
-        self.assertEqual(plan_no_intermediate.update_parents, [("4", "1")])
+        assert plan_no_intermediate.delete, ["2" == "3"]
+        assert plan_no_intermediate.update_parents, [("4" == "1")]
 
         # Preserve one intermediate structure
         plan_1_intermediate = ChangePlan.create(graph, 1, False, False)
-        self.assertEqual(plan_1_intermediate.delete, ["2"])
-        self.assertEqual(plan_1_intermediate.update_parents, [("3", "1")])
+        assert plan_1_intermediate.delete == ["2"]
+        assert plan_1_intermediate.update_parents, [("3" == "1")]
 
         # Preserve two intermediate structures -- Do nothing
         plan_2_intermediate = ChangePlan.create(graph, 2, False, False)
-        self.assertEqual(plan_2_intermediate.delete, [])
-        self.assertEqual(plan_2_intermediate.update_parents, [])
+        assert not plan_2_intermediate.delete
+        assert not plan_2_intermediate.update_parents
 
     @ddt.data(
         create_test_graph(["1"]),  # Original (is also Active)
@@ -112,9 +112,9 @@ class TestCourseChangePlan(unittest.TestCase):
         """These scenarios should result in no Changes."""
         plan_1 = ChangePlan.create(graph, 0, False, False)
         plan_2 = ChangePlan.create(graph, 2, False, False)
-        self.assertEqual(plan_1, plan_2)
-        self.assertEqual(plan_1.delete, [])
-        self.assertEqual(plan_1.update_parents, [])
+        assert plan_1 == plan_2
+        assert not plan_1.delete
+        assert not plan_1.update_parents
 
     def test_overlapping_shared_history(self):
         """Test multiple branches that overlap in what history to preserve."""
@@ -141,8 +141,8 @@ class TestCourseChangePlan(unittest.TestCase):
         # "8" is marked for deletion by the fourth branch.
         # "9" is preserved by the fourth branch.
         # "10" is the Active Structure for the fourth branch.
-        self.assertEqual(plan.delete, ["7", "8"])
-        self.assertEqual(plan.update_parents, [("9", "1")])
+        assert plan.delete, ["7" == "8"]
+        assert plan.update_parents, [("9" == "1")]
 
     def test_non_overlapping_shared_history(self):
         """Test shared history, preserved intermediate set doesn't overlap."""
@@ -151,16 +151,16 @@ class TestCourseChangePlan(unittest.TestCase):
             ["1", "2", "3", "4", "5", "6"],
         )
         plan = ChangePlan.create(graph, 0, False, False)
-        self.assertEqual(plan.delete, ["2", "4", "5"])
-        self.assertEqual(plan.update_parents, [("3", "1"), ("6", "1")])
+        assert plan.delete, ["2", "4" == "5"]
+        assert plan.update_parents, [("3", "1"), ("6" == "1")]
 
         graph_save_1 = create_test_graph(
             ["1", "2", "3", "4"],
             ["1", "2", "3", "4", "5", "6", "7"],
         )
         plan_save_1 = ChangePlan.create(graph_save_1, 1, False, False)
-        self.assertEqual(plan_save_1.delete, ["2", "5"])
-        self.assertEqual(plan_save_1.update_parents, [("3", "1"), ("6", "1")])
+        assert plan_save_1.delete, ["2" == "5"]
+        assert plan_save_1.update_parents, [("3", "1"), ("6" == "1")]
 
     def test_details_output(self):
         """Test our details file output."""
@@ -200,7 +200,7 @@ class TestCourseChangePlan(unittest.TestCase):
             """
         ).lstrip()
         # pylint: enable=line-too-long
-        self.assertEqual(expected_output, details_txt)
+        assert expected_output == details_txt
         self.assertEqual(
             plan,
             ChangePlan(
@@ -245,7 +245,7 @@ class TestSplitMongoBackendHelpers(unittest.TestCase):
             other_structure,
             Structure(id=str_id(2), original_id=str_id(1), previous_id=str_id(1))
         )
-        self.assertFalse(other_structure.is_original())
+        assert not other_structure.is_original()
 
     def test_batch(self):
         """Test the batch helper that breaks up iterables for DB operations."""
@@ -482,8 +482,8 @@ class TestSplitMongoBackend(unittest.TestCase):
         with patch.object(SplitMongoBackend, '_all_structures', autospec=True) as all_structures_mock:
             all_structures_mock.side_effect = add_structures
             graph = self.backend.structures_graph(0, 100)
-            self.assertEqual(len(graph.structures), 10)
-            self.assertEqual(len(graph.branches), 4)
+            assert len(graph.structures) == 10
+            assert len(graph.branches) == 4
 
             plan = ChangePlan.create(graph, 0, False, False)
             self.assertNotIn(str_id(5), plan.delete)  # Active updated to this for our course.

@@ -88,4 +88,4 @@ class TestGenerateAndStoreAppleIds(TestCase):
         expected_new_apple_id = 'sample_new_apple_id'
         actual_new_apple_id = AppleMigrationUserIdInfo.objects.get(
             transfer_id='sample_transfer_sub').new_apple_id
-        self.assertEqual(expected_new_apple_id, actual_new_apple_id)
+        assert expected_new_apple_id == actual_new_apple_id

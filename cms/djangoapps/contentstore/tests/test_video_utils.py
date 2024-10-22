@@ -37,7 +37,7 @@ class ValidateVideoImageTestCase(TestCase):
         Test that when no file information is provided to validate_video_image, it gives proper error message.
         """
         error = validate_video_image({})
-        self.assertEqual(error, 'The image must have name, content type, and size information.')
+        assert error == 'The image must have name, content type, and size information.'
 
     def test_corrupt_image_file(self):
         """
@@ -50,7 +50,7 @@ class ValidateVideoImageTestCase(TestCase):
                 size=settings.VIDEO_IMAGE_SETTINGS['VIDEO_IMAGE_MIN_BYTES']
             )
             error = validate_video_image(uploaded_image_file)
-            self.assertEqual(error, 'There is a problem with this image file. Try to upload a different file.')
+            assert error == 'There is a problem with this image file. Try to upload a different file.'
 
 
 @ddt.ddt
@@ -224,8 +224,8 @@ class ScrapeVideoThumbnailsTestCase(CourseTestCase):
         thumbnail_content, thumbnail_content_type = download_youtube_video_thumbnail('test-yt-id')
 
         # Verify that we get the expected thumbnail content.
-        self.assertEqual(thumbnail_content, expected_thumbnail_content)
-        self.assertEqual(thumbnail_content_type, 'image/jpeg')
+        assert thumbnail_content == expected_thumbnail_content
+        assert thumbnail_content_type == 'image/jpeg'
 
     @override_settings(AWS_ACCESS_KEY_ID='test_key_id', AWS_SECRET_ACCESS_KEY='test_secret')
     @mock.patch('requests.get')
@@ -242,11 +242,11 @@ class ScrapeVideoThumbnailsTestCase(CourseTestCase):
 
         # Verify that video1 has no image attached.
         video1_image_url = get_course_video_image_url(course_id=course_id, edx_video_id=video1_edx_video_id)
-        self.assertIsNone(video1_image_url)
+        assert video1_image_url is None
 
         # Verify that video2 has already image attached.
         video2_image_url = get_course_video_image_url(course_id=course_id, edx_video_id=video2_edx_video_id)
-        self.assertIsNotNone(video2_image_url)
+        assert video2_image_url is not None
 
         # Scrape video thumbnails.
         scrape_youtube_thumbnail(course_id, video1_edx_video_id, 'test-yt-id')
@@ -254,11 +254,11 @@ class ScrapeVideoThumbnailsTestCase(CourseTestCase):
 
         # Verify that now video1 image is attached.
         video1_image_url = get_course_video_image_url(course_id=course_id, edx_video_id=video1_edx_video_id)
-        self.assertIsNotNone(video1_image_url)
+        assert video1_image_url is not None
 
         # Also verify that video2's image is not updated.
         video2_image_url_latest = get_course_video_image_url(course_id=course_id, edx_video_id=video2_edx_video_id)
-        self.assertEqual(video2_image_url, video2_image_url_latest)
+        assert video2_image_url == video2_image_url_latest
 
     @ddt.data(
         (
@@ -353,7 +353,7 @@ class ScrapeVideoThumbnailsTestCase(CourseTestCase):
 
         # Verify that video1 has no image attached.
         video1_image_url = get_course_video_image_url(course_id=course_id, edx_video_id=video1_edx_video_id)
-        self.assertIsNone(video1_image_url)
+        assert video1_image_url is None
 
         # Scrape video thumbnail.
         scrape_youtube_thumbnail(course_id, video1_edx_video_id, 'test-yt-id')
@@ -367,7 +367,7 @@ class ScrapeVideoThumbnailsTestCase(CourseTestCase):
 
         # Verify that no image is attached to video1.
         video1_image_url = get_course_video_image_url(course_id=course_id, edx_video_id=video1_edx_video_id)
-        self.assertIsNone(video1_image_url)
+        assert video1_image_url is None
 
 
 @ddt.ddt
@@ -405,7 +405,7 @@ class S3Boto3TestCase(TestCase):
             settings.VIDEO_IMAGE_SETTINGS.get('STORAGE_CLASS', {})
         )(**settings.VIDEO_IMAGE_SETTINGS.get('STORAGE_KWARGS', {}))
 
-        self.assertEqual(S3Boto3Storage, storage.__class__)
+        assert S3Boto3Storage == storage.__class__
 
     def test_storage_without_global_default_acl_setting(self):
         """

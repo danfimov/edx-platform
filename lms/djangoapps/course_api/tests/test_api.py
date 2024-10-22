@@ -221,7 +221,7 @@ class TestGetCourseListMultipleCourses(CourseListTestMixin, ModuleStoreTestCase)
         ]
         for filter_, expected_courses in test_cases:
             filtered_courses = self._make_api_call(self.staff_user, self.staff_user, filter_=filter_)
-            assert {course.id for course in filtered_courses} == {course.id for course in expected_courses},\
+            assert {course.id for course in filtered_courses} == {course.id for course in expected_courses}, \
                 f'testing course_api.api.list_courses with filter_={filter_}'
 
     def test_permissions(self):
@@ -244,7 +244,7 @@ class TestGetCourseListMultipleCourses(CourseListTestMixin, ModuleStoreTestCase)
             instructor_user,
             permissions={'instructor'})
 
-        self.assertEqual({c.id for c in filtered_courses}, {self.course.id})
+        assert {c.id for c in filtered_courses} == {self.course.id}
 
     def test_filter_by_keys(self):
         """
@@ -406,7 +406,7 @@ class TestGetCourseMembers(CourseApiTestMixin, SharedModuleStoreTestCase):
         with self.assertNumQueries(3):
             members = get_course_members(self.course.id)
 
-        self.assertEqual(len(members), 3)
+        assert len(members) == 3
 
         # Check parameters for all users
         expected_properties = ['id', 'username', 'email', 'name', 'enrollment_mode', 'roles']
@@ -415,14 +415,14 @@ class TestGetCourseMembers(CourseApiTestMixin, SharedModuleStoreTestCase):
 
         # Check that users have correct roles
         # Honor should be only a student and have the enrollment mode set
-        self.assertEqual(members[self.honor.id]['roles'], ['student'])
-        self.assertEqual(members[self.honor.id]['enrollment_mode'], 'audit')
+        assert members[self.honor.id]['roles'] == ['student']
+        assert members[self.honor.id]['enrollment_mode'] == 'audit'
         # Instructor should have both roles and enrollment_mode set
-        self.assertEqual(members[self.instructor.id]['roles'], ['student', 'instructor'])
-        self.assertEqual(members[self.instructor.id]['enrollment_mode'], 'audit')
+        assert members[self.instructor.id]['roles'] == ['student', 'instructor']
+        assert members[self.instructor.id]['enrollment_mode'] == 'audit'
         # Staff should only have the staff role
-        self.assertEqual(members[self.staff.id]['roles'], ['staff'])
-        self.assertEqual(members[self.staff.id]['enrollment_mode'], None)
+        assert members[self.staff.id]['roles'] == ['staff']
+        assert members[self.staff.id]['enrollment_mode'] is None
 
     def test_same_result_with_csa_or_enrollment(self):
         """

@@ -75,4 +75,4 @@ class TestSyncCoursesCommand(ModuleStoreTestCase):
         self._validate_courses()
 
         course = modulestore().get_course(course_key)
-        self.assertEqual(course.display_name, initial_display_name)
+        assert course.display_name == initial_display_name

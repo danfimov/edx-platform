@@ -51,9 +51,9 @@ class TestAmplitude(unittest.TestCase):
         with mock.patch.object(logger, "info") as mock_info:
             self.amplitude.delete_user(self.user)
 
-        self.assertEqual(mock_info.call_args, [("Amplitude user deletion succeeded",)])
+        assert mock_info.call_args == [("Amplitude user deletion succeeded",)]
 
-        self.assertEqual(len(req_mock.request_history), 1)
+        assert len(req_mock.request_history) == 1
         request = req_mock.request_history[0]
         self.assertEqual(request.json(),
                          {"user_ids": ["1234"], 'ignore_invalid_id': 'true', "requester": "user-retirement-pipeline"})
@@ -70,8 +70,8 @@ class TestAmplitude(unittest.TestCase):
             with self.assertRaises(AmplitudeException) as exc:
                 self.amplitude.delete_user(self.user)
         error = "Amplitude user deletion failed due to {message}".format(message=message)
-        self.assertEqual(mock_error.call_args, [(error,)])
-        self.assertEqual(str(exc.exception), error)
+        assert mock_error.call_args == [(error,)]
+        assert str(exc.exception) == error
 
     @ddt.data(429, 500)
     def test_delete_recoverable_error(self, status_code, req_mock):
@@ -83,4 +83,4 @@ class TestAmplitude(unittest.TestCase):
 
         with self.assertRaises(AmplitudeRecoverableException):
             self.amplitude.delete_user(self.user)
-        self.assertEqual(len(req_mock.request_history), MAX_ATTEMPTS)
+        assert len(req_mock.request_history) == MAX_ATTEMPTS

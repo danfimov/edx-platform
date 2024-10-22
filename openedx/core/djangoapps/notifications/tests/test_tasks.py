@@ -68,11 +68,11 @@ class TestNotificationsTasks(ModuleStoreTestCase):
         """
         # Test whether update_user_preference updates the preference with a different config version
         updated_preference = update_user_preference(self.preference_v1, self.user, self.course_1.id)
-        self.assertEqual(updated_preference.config_version, 1)
+        assert updated_preference.config_version == 1
 
         # Test whether update_user_preference does not update the preference if the config version is the same
         updated_preference = update_user_preference(self.preference_v2, self.user, self.course_2.id)
-        self.assertEqual(updated_preference.config_version, 1)
+        assert updated_preference.config_version == 1
 
     @override_waffle_flag(ENABLE_NOTIFICATIONS, active=True)
     def test_create_notification_pref_if_not_exists(self):
@@ -142,12 +142,12 @@ class SendNotificationsTest(ModuleStoreTestCase):
         # Assert that `Notification` objects have been created for the users.
         notification = Notification.objects.filter(user_id=self.user.id).first()
         # Assert that the `Notification` objects have the correct properties.
-        self.assertEqual(notification.user_id, self.user.id)
-        self.assertEqual(notification.app_name, app_name)
-        self.assertEqual(notification.notification_type, notification_type)
-        self.assertEqual(notification.content_context, context)
-        self.assertEqual(notification.content_url, content_url)
-        self.assertEqual(notification.course_id, self.course_1.id)
+        assert notification.user_id == self.user.id
+        assert notification.app_name == app_name
+        assert notification.notification_type == notification_type
+        assert notification.content_context == context
+        assert notification.content_url == content_url
+        assert notification.course_id == self.course_1.id
 
     @ddt.data(True, False)
     def test_enable_notification_flag(self, flag_value):
@@ -165,7 +165,7 @@ class SendNotificationsTest(ModuleStoreTestCase):
         with override_waffle_flag(ENABLE_NOTIFICATIONS, active=flag_value):
             send_notifications([self.user.id], str(self.course_1.id), app_name, notification_type, context, content_url)
         created_notifications_count = 1 if flag_value else 0
-        self.assertEqual(len(Notification.objects.all()), created_notifications_count)
+        assert len(Notification.objects.all()) == created_notifications_count
 
     @override_waffle_flag(ENABLE_NOTIFICATIONS, active=True)
     def test_notification_not_send_with_preference_disabled(self):
@@ -188,7 +188,7 @@ class SendNotificationsTest(ModuleStoreTestCase):
         preference.save()
 
         send_notifications([self.user.id], str(self.course_1.id), app_name, notification_type, context, content_url)
-        self.assertEqual(len(Notification.objects.all()), 0)
+        assert len(Notification.objects.all()) == 0
 
     @override_waffle_flag(ENABLE_NOTIFICATION_GROUPING, True)
     @override_waffle_flag(ENABLE_NOTIFICATIONS, active=True)
@@ -220,7 +220,7 @@ class SendNotificationsTest(ModuleStoreTestCase):
                 {**context},
                 content_url
             )
-            self.assertEqual(Notification.objects.filter(user_id=self.user.id).count(), 1)
+            assert Notification.objects.filter(user_id=self.user.id).count() == 1
             user_notifications_mock.assert_called_once()
 
     @override_waffle_flag(ENABLE_NOTIFICATIONS, active=True)
@@ -247,7 +247,7 @@ class SendNotificationsTest(ModuleStoreTestCase):
 
         # Assert that `Notification` objects are not created for the users.
         notification = Notification.objects.filter(user_id=self.user.id).first()
-        self.assertIsNone(notification)
+        assert notification is None
 
     @override_waffle_flag(ENABLE_NOTIFICATIONS, active=True)
     def test_notification_not_created_when_context_is_incomplete(self):
@@ -401,7 +401,7 @@ class SendBatchNotificationsTest(ModuleStoreTestCase):
         }
         content_url = 'https://example.com/'
         send_notifications(user_ids, str(self.course.id), app_name, notification_type, context, content_url)
-        self.assertEqual(len(Notification.objects.all()), generated_count)
+        assert len(Notification.objects.all()) == generated_count
 
 
 class TestDeleteNotificationTask(ModuleStoreTestCase):
@@ -455,7 +455,7 @@ class TestDeleteNotificationTask(ModuleStoreTestCase):
             }
         }
         delete_notifications(kwargs)
-        self.assertEqual(Notification.objects.all().count(), 1)
+        assert Notification.objects.all().count() == 1
 
     def test_course_id_param(self):
         """

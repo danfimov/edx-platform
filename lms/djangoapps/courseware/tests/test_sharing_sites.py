@@ -49,9 +49,9 @@ class TestSharingSites(TestCase):
         Test that the sharing url is built correctly
         """
         base_url, params = sharing_url(TEST_PUBLIC_URL, config).split("?")
-        self.assertEqual(base_url, config.base_share_url)
+        assert base_url == config.base_share_url
         decoded_params = dict(parse_qsl(params))
-        self.assertEqual(decoded_params[config.url_param_name], TEST_PUBLIC_URL)
+        assert decoded_params[config.url_param_name] == TEST_PUBLIC_URL
         if getattr(config, 'additional_site_params', False):
             # additional_site_params will be the subset of decoded_params
             for key, expected_value in config.additional_site_params.items():

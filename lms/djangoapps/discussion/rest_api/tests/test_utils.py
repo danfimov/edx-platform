@@ -68,7 +68,7 @@ class DiscussionAPIUtilsTestCase(ModuleStoreTestCase):
         CourseInstructorRole(course_key=self.course.id).add_users(self.course_instructor_user)
 
     def test_discussion_open_for_user(self):
-        self.assertFalse(discussion_open_for_user(self.course, self.student))
+        assert not discussion_open_for_user(self.course, self.student)
         assert discussion_open_for_user(self.course, self.moderator)
         assert discussion_open_for_user(self.course, self.community_ta)
 
@@ -114,7 +114,7 @@ class TestRemoveEmptySequentials(unittest.TestCase):
         # Test that the function can handle an empty list
         data = []
         result = remove_empty_sequentials(data)
-        self.assertEqual(result, [])
+        assert not result
 
     def test_no_empty_sequentials(self):
         # Test that the function does not remove any sequentials if they all have children
@@ -125,7 +125,7 @@ class TestRemoveEmptySequentials(unittest.TestCase):
             ]}
         ]
         result = remove_empty_sequentials(data)
-        self.assertEqual(result, data)
+        assert result == data
 
     def test_remove_empty_sequentials(self):
         # Test that the function removes empty sequentials
@@ -158,7 +158,7 @@ class TestRemoveEmptySequentials(unittest.TestCase):
             ]}
         ]
         result = remove_empty_sequentials(data)
-        self.assertEqual(result, expected_output)
+        assert result == expected_output
 
 
 @ddt.ddt
@@ -220,7 +220,7 @@ class TestBlackoutDates(ForumsEnableMixin, CommentsServiceMockMixin, ModuleStore
         self._set_discussion_blackouts(date_ranges)
 
         posting_allowed = self._check_posting_allowed(restriction)
-        self.assertEqual(state, posting_allowed)
+        assert state == posting_allowed
 
     def test_posting_scheduled_future(self):
         """

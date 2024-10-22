@@ -33,8 +33,8 @@ class CourseDetailsViewTest(CourseTestCase, PermissionAccessMixin):
         self.client.logout()
         response = self.client.put(self.url)
         error = self.get_and_check_developer_response(response)
-        self.assertEqual(error, "Authentication credentials were not provided.")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        assert error == "Authentication credentials were not provided."
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_put_permissions_unauthorized(self):
         """
@@ -43,8 +43,8 @@ class CourseDetailsViewTest(CourseTestCase, PermissionAccessMixin):
         client, _ = self.create_non_staff_authed_user_client()
         response = client.put(self.url)
         error = self.get_and_check_developer_response(response)
-        self.assertEqual(error, "You do not have permission to perform this action.")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        assert error == "You do not have permission to perform this action."
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @patch.dict("django.conf.settings.FEATURES", {"ENABLE_PREREQUISITE_COURSES": True})
     def test_put_invalid_pre_requisite_course(self):
@@ -55,8 +55,8 @@ class CourseDetailsViewTest(CourseTestCase, PermissionAccessMixin):
             data=json.dumps(request_data),
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()["error"], "Invalid prerequisite course key")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["error"] == "Invalid prerequisite course key"
 
     def test_put_course_details(self):
         request_data = {
@@ -110,4 +110,4 @@ class CourseDetailsViewTest(CourseTestCase, PermissionAccessMixin):
             data=json.dumps(request_data),
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK

@@ -691,7 +691,7 @@ class ViewsTestCase(BaseViewsTestCase):
         # deprecated function
         mock_user = MagicMock()
         type(mock_user).is_authenticated = PropertyMock(return_value=False)
-        assert views.user_groups(mock_user) == []
+        assert not views.user_groups(mock_user)
 
     def test_invalid_course_id(self):
         response = self.client.get('/courses/MITx/3.091X/')
@@ -976,7 +976,7 @@ class ViewsTestCase(BaseViewsTestCase):
         assert additional_info['Certify abide by the honor code'] == 'No'
 
         assert ticket_subject == f'Financial assistance request for learner {username} in course {self.course.display_name}'  # pylint: disable=line-too-long
-        self.assertEqual([{'id': 'custom_123', 'value': course}], custom_fields)
+        assert [{'id': 'custom_123', 'value': course}] == custom_fields
         assert 'Client IP' in additional_info
         assert group_name == 'Financial Assistance'
 
@@ -3105,8 +3105,8 @@ class TestRenderPublicVideoXBlock(TestBasePublicVideoXBlock):
         response = self.get_response(usage_key=target_video.location, is_embed=False)
         embed_response = self.get_response(usage_key=target_video.location, is_embed=True)
 
-        self.assertEqual(expected_status_code, response.status_code)
-        self.assertEqual(expected_status_code, embed_response.status_code)
+        assert expected_status_code == response.status_code
+        assert expected_status_code == embed_response.status_code
 
 
 class TestRenderXBlockSelfPaced(TestRenderXBlock):  # lint-amnesty, pylint: disable=test-inherits-tests
@@ -3783,8 +3783,8 @@ class TestCoursewareMFESearchAPI(SharedModuleStoreTestCase):
         response = self.client.get(self.apiUrl, content_type='application/json')
         body = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'enabled': expected_enabled})
+        assert response.status_code == 200
+        assert body == {'enabled': expected_enabled}
 
     @patch.dict('django.conf.settings.FEATURES', {'ENABLE_COURSEWARE_SEARCH_VERIFIED_ENROLLMENT_REQUIRED': True})
     def test_courseware_mfe_search_staff_access(self):
@@ -3797,8 +3797,8 @@ class TestCoursewareMFESearchAPI(SharedModuleStoreTestCase):
         response = self.client.get(self.apiUrl, content_type='application/json')
         body = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'enabled': True})
+        assert response.status_code == 200
+        assert body == {'enabled': True}
 
     @override_waffle_flag(COURSEWARE_MICROFRONTEND_SEARCH_ENABLED, active=False)
     def test_is_mfe_search_waffle_disabled(self):
@@ -3811,8 +3811,8 @@ class TestCoursewareMFESearchAPI(SharedModuleStoreTestCase):
         response = self.client.get(self.apiUrl, content_type='application/json')
         body = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'enabled': False})
+        assert response.status_code == 200
+        assert body == {'enabled': False}
 
 
 class TestCoursewareMFENavigationSidebarTogglesAPI(SharedModuleStoreTestCase):
@@ -3838,8 +3838,8 @@ class TestCoursewareMFENavigationSidebarTogglesAPI(SharedModuleStoreTestCase):
         response = self.client.get(self.apiUrl, content_type='application/json')
         body = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'enable_navigation_sidebar': True, 'always_open_auxiliary_sidebar': False})
+        assert response.status_code == 200
+        assert body == {'enable_navigation_sidebar': True, 'always_open_auxiliary_sidebar': False}
 
     @override_waffle_flag(COURSEWARE_MICROFRONTEND_ENABLE_NAVIGATION_SIDEBAR, active=True)
     @override_waffle_flag(COURSEWARE_MICROFRONTEND_ALWAYS_OPEN_AUXILIARY_SIDEBAR, active=True)
@@ -3851,8 +3851,8 @@ class TestCoursewareMFENavigationSidebarTogglesAPI(SharedModuleStoreTestCase):
         response = self.client.get(self.apiUrl, content_type='application/json')
         body = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'enable_navigation_sidebar': True, 'always_open_auxiliary_sidebar': True})
+        assert response.status_code == 200
+        assert body == {'enable_navigation_sidebar': True, 'always_open_auxiliary_sidebar': True}
 
     @override_waffle_flag(COURSEWARE_MICROFRONTEND_ENABLE_NAVIGATION_SIDEBAR, active=False)
     @override_waffle_flag(COURSEWARE_MICROFRONTEND_ALWAYS_OPEN_AUXILIARY_SIDEBAR, active=True)
@@ -3864,8 +3864,8 @@ class TestCoursewareMFENavigationSidebarTogglesAPI(SharedModuleStoreTestCase):
         response = self.client.get(self.apiUrl, content_type='application/json')
         body = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'enable_navigation_sidebar': False, 'always_open_auxiliary_sidebar': True})
+        assert response.status_code == 200
+        assert body == {'enable_navigation_sidebar': False, 'always_open_auxiliary_sidebar': True}
 
     @override_waffle_flag(COURSEWARE_MICROFRONTEND_ENABLE_NAVIGATION_SIDEBAR, active=False)
     @override_waffle_flag(COURSEWARE_MICROFRONTEND_ALWAYS_OPEN_AUXILIARY_SIDEBAR, active=False)
@@ -3876,5 +3876,5 @@ class TestCoursewareMFENavigationSidebarTogglesAPI(SharedModuleStoreTestCase):
         response = self.client.get(self.apiUrl, content_type='application/json')
         body = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'enable_navigation_sidebar': False, 'always_open_auxiliary_sidebar': False})
+        assert response.status_code == 200
+        assert body == {'enable_navigation_sidebar': False, 'always_open_auxiliary_sidebar': False}

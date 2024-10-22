@@ -236,7 +236,7 @@ class TestStudentModuleStorage(OtherUserFailureTestMixin, TestCase):
         with patch('django.db.models.Model.save', side_effect=DatabaseError):
             with pytest.raises(KeyValueMultiSaveError) as exception_context:
                 self.kvs.set_many(kv_dict)
-        assert exception_context.value.saved_field_names == []
+        assert not exception_context.value.saved_field_names
 
 
 class TestMissingStudentModule(TestCase):  # lint-amnesty, pylint: disable=missing-class-docstring

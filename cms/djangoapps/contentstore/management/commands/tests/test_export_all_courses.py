@@ -41,8 +41,8 @@ class ExportAllCourses(ModuleStoreTestCase):
         """
         # check that both courses exported successfully
         courses, failed_export_courses = export_courses_to_output_path(self.temp_dir)
-        self.assertEqual(len(courses), 2)
-        self.assertEqual(len(failed_export_courses), 0)
+        assert len(courses) == 2
+        assert len(failed_export_courses) == 0
 
         # manually make second course faulty and check that it fails on export
         second_course_id = self.second_course.id
@@ -51,6 +51,6 @@ class ExportAllCourses(ModuleStoreTestCase):
             {'$set': {'metadata.tags': 'crash'}}
         )
         courses, failed_export_courses = export_courses_to_output_path(self.temp_dir)
-        self.assertEqual(len(courses), 2)
-        self.assertEqual(len(failed_export_courses), 1)
-        self.assertEqual(failed_export_courses[0], str(second_course_id))
+        assert len(courses) == 2
+        assert len(failed_export_courses) == 1
+        assert failed_export_courses[0] == str(second_course_id)

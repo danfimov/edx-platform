@@ -120,7 +120,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         )
 
         assert cert_gen_task_created
-        self.assertEqual(CourseMode.NO_ID_PROFESSIONAL_MODE, certificate.mode)
+        assert CourseMode.NO_ID_PROFESSIONAL_MODE == certificate.mode
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -145,10 +145,8 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
                 self.user, self.course_run.id, generation_mode=CourseMode.HONOR,
             )
 
-        self.assertFalse(
-            GeneratedCertificate.objects.filter(
-                user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
-            )
+        assert not GeneratedCertificate.objects.filter(
+            user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
         )
 
     @override_settings(OPEN_EDX_FILTERS_CONFIG={})
@@ -170,7 +168,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         )
 
         assert cert_gen_task_created
-        self.assertEqual(CourseMode.HONOR, certificate.mode)
+        assert CourseMode.HONOR == certificate.mode
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -195,11 +193,9 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
 
         certificate_generated = generate_allowlist_certificate_task(self.user, self.course_run.id)
 
-        self.assertFalse(certificate_generated)
-        self.assertFalse(
-            GeneratedCertificate.objects.filter(
-                user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
-            )
+        assert not certificate_generated
+        assert not GeneratedCertificate.objects.filter(
+            user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
         )
 
     @override_settings(
@@ -223,10 +219,8 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         with self.assertLogs(level="ERROR"):
             call_command("cert_generation", "--u", self.user.id, "--c", self.course_run.id)
 
-        self.assertFalse(
-            GeneratedCertificate.objects.filter(
-                user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
-            )
+        assert not GeneratedCertificate.objects.filter(
+            user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
         )
 
     @override_settings(
@@ -250,11 +244,9 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         """
         signal_result = listen_for_passing_grade(None, self.user, self.course_run.id)
 
-        self.assertFalse(signal_result)
-        self.assertFalse(
-            GeneratedCertificate.objects.filter(
-                user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
-            )
+        assert not signal_result
+        assert not GeneratedCertificate.objects.filter(
+            user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
         )
 
     @override_settings(
@@ -282,10 +274,8 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         """
         _handle_id_verification_approved(self.user)
 
-        self.assertFalse(
-            GeneratedCertificate.objects.filter(
-                user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
-            )
+        assert not GeneratedCertificate.objects.filter(
+            user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
         )
 
     @override_settings(
@@ -308,11 +298,9 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
         """
         signal_result = _listen_for_enrollment_mode_change(None, self.user, self.course_run.id, CourseMode.HONOR)
 
-        self.assertFalse(signal_result)
-        self.assertFalse(
-            GeneratedCertificate.objects.filter(
-                user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
-            )
+        assert not signal_result
+        assert not GeneratedCertificate.objects.filter(
+            user=self.user, course_id=self.course_run.id, mode=CourseMode.HONOR,
         )
 
     @override_settings(
@@ -348,7 +336,7 @@ class CertificateFiltersTest(SharedModuleStoreTestCase):
 
         response = self.client.post(url, body)
 
-        self.assertEqual(status_code.HTTP_400_BAD_REQUEST, response.status_code)
+        assert status_code.HTTP_400_BAD_REQUEST == response.status_code
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={

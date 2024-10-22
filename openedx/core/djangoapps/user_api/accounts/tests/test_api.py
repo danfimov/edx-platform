@@ -173,7 +173,7 @@ class TestAccountApi(UserSettingsEventTestMixin, EmailTemplateTagMixin, CreateAc
 
     def test_get_empty_social_links(self):
         account_settings = get_account_settings(self.default_request)[0]
-        assert account_settings['social_links'] == []
+        assert not account_settings['social_links']
 
     def test_set_single_social_link(self):
         social_links = [
@@ -392,7 +392,7 @@ class TestAccountApi(UserSettingsEventTestMixin, EmailTemplateTagMixin, CreateAc
             update_account_settings(self.user, {'name': account_settings['name']})
             # The name should not be added to profile metadata
             updated_meta = user_profile.get_meta()
-            self.assertEqual(meta, updated_meta)
+            assert meta == updated_meta
 
     @patch('edx_name_affirmation.name_change_validator.NameChangeValidator.validate', Mock(return_value=False))
     @patch('openedx.core.djangoapps.user_api.accounts.api.get_certificates_for_user',

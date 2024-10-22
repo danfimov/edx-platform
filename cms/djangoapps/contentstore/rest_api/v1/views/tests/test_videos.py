@@ -73,7 +73,7 @@ class CourseVideosViewTest(CourseTestCase, PermissionAccessMixin):
             "pagination_context": {}
         }
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertDictEqual(expected_response, response.data)
 
     @override_waffle_switch(WaffleSwitch(  # lint-amnesty, pylint: disable=toggle-missing-annotation
@@ -84,7 +84,7 @@ class CourseVideosViewTest(CourseTestCase, PermissionAccessMixin):
         Make sure if the feature flag is enabled we have updated the dict keys in response.
         """
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert response.status_code == status.HTTP_200_OK
         self.assertIn("video_image_settings", response.data)
 
         imageSettings = response.data["video_image_settings"]
@@ -103,7 +103,7 @@ class CourseVideosViewTest(CourseTestCase, PermissionAccessMixin):
 
             expect_active_preferences = get_transcript_preferences(str(self.course.id))
             self.assertIn("active_transcript_preferences", response.data)
-            self.assertEqual(expect_active_preferences, response.data["active_transcript_preferences"])
+            assert expect_active_preferences == response.data["active_transcript_preferences"]
 
             expected_credentials = get_transcript_credentials_state_for_org(self.course.id.org)
             self.assertIn("transcript_credentials", response.data)
@@ -120,14 +120,14 @@ class CourseVideosViewTest(CourseTestCase, PermissionAccessMixin):
                 str(self.course.id)
             )
             self.assertIn("transcript_preferences_handler_url", transcript_settings)
-            self.assertEqual(expected_preference_handler, transcript_settings["transcript_preferences_handler_url"])
+            assert expected_preference_handler == transcript_settings["transcript_preferences_handler_url"]
 
             expected_credentials_handler = reverse_course_url(
                 'transcript_credentials_handler',
                 str(self.course.id)
             )
             self.assertIn("transcript_credentials_handler_url", transcript_settings)
-            self.assertEqual(expected_credentials_handler, transcript_settings["transcript_credentials_handler_url"])
+            assert expected_credentials_handler == transcript_settings["transcript_credentials_handler_url"]
         with patch(
             'openedx.core.djangoapps.video_config.toggles.XPERT_TRANSLATIONS_UI.is_enabled'
         ) as xpertTranslationfeature:

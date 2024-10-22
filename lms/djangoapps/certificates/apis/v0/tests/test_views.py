@@ -304,7 +304,7 @@ class CertificatesListRestApiTest(AuthAndScopesTestMixin, SharedModuleStoreTestC
             requested_user=student_no_cert,
         )
         assert resp.status_code == status.HTTP_200_OK
-        assert resp.data == []
+        assert not resp.data
 
     def test_query_counts(self):
         # Test student with no certificates
@@ -383,7 +383,7 @@ class CertificatesListRestApiTest(AuthAndScopesTestMixin, SharedModuleStoreTestC
             requested_user=self.student,
         )
         assert response.status_code == status.HTTP_200_OK
-        assert response.data == []
+        assert not response.data
 
         self.course_overview.has_any_active_web_certificate = True
         self.course_overview.save()

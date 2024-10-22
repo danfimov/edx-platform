@@ -207,7 +207,7 @@ class CohortFiltersTest(SharedModuleStoreTestCase):
 
         cohort_membership, _ = CohortMembership.assign(cohort=self.second_cohort, user=self.user)
 
-        self.assertEqual({}, cohort_membership.user.profile.get_meta())
+        assert {} == cohort_membership.user.profile.get_meta()
 
     @override_settings(OPEN_EDX_FILTERS_CONFIG={})
     def test_cohort_assignment_without_filter_configuration(self):
@@ -220,4 +220,4 @@ class CohortFiltersTest(SharedModuleStoreTestCase):
         """
         cohort_membership, _ = CohortMembership.assign(cohort=self.second_cohort, user=self.user)
 
-        self.assertEqual({}, cohort_membership.user.profile.get_meta())
+        assert {} == cohort_membership.user.profile.get_meta()

@@ -131,7 +131,7 @@ class CourseTestCase(ProceduralCourseTestMixin, ModuleStoreTestCase):
         """
         course1_items = self.store.get_items(course1_id)
         course2_items = self.store.get_items(course2_id)
-        self.assertGreater(len(course1_items), 0)  # ensure it found content instead of [] == []
+        assert len(course1_items) > 0
         if len(course1_items) != len(course2_items):
             course1_block_ids = {item.location.block_id for item in course1_items}
             course2_block_ids = {item.location.block_id for item in course2_items}
@@ -158,9 +158,9 @@ class CourseTestCase(ProceduralCourseTestMixin, ModuleStoreTestCase):
             )
 
             # compare data
-            self.assertEqual(hasattr(course1_item, 'data'), hasattr(course2_item, 'data'))
+            assert hasattr(course1_item, 'data') == hasattr(course2_item, 'data')
             if hasattr(course1_item, 'data'):
-                self.assertEqual(course1_item.data, course2_item.data)
+                assert course1_item.data == course2_item.data
 
             # compare meta-data
             course1_metadata = own_metadata(course1_item)
@@ -168,23 +168,23 @@ class CourseTestCase(ProceduralCourseTestMixin, ModuleStoreTestCase):
             # Omit edx_video_id as it can be different in case of extrnal video imports.
             course1_metadata.pop('edx_video_id', None)
             course2_metadata.pop('edx_video_id', None)
-            self.assertEqual(course1_metadata, course2_metadata)
+            assert course1_metadata == course2_metadata
 
             # compare children
-            self.assertEqual(course1_item.has_children, course2_item.has_children)
+            assert course1_item.has_children == course2_item.has_children
             if course1_item.has_children:
                 expected_children = []
                 for course1_item_child in course1_item.children:
                     expected_children.append(
                         course2_id.make_usage_key(course1_item_child.block_type, course1_item_child.block_id)
                     )
-                self.assertEqual(expected_children, course2_item.children)
+                assert expected_children == course2_item.children
 
         # compare assets
         content_store = self.store.contentstore
         course1_assets, count_course1_assets = content_store.get_all_content_for_course(course1_id)
         _, count_course2_assets = content_store.get_all_content_for_course(course2_id)
-        self.assertEqual(count_course1_assets, count_course2_assets)
+        assert count_course1_assets == count_course2_assets
         for asset in course1_assets:
             asset_son = asset.get('content_son', asset['_id'])
             self.assertAssetsEqual(asset_son, course1_id, course2_id)
@@ -195,7 +195,7 @@ class CourseTestCase(ProceduralCourseTestMixin, ModuleStoreTestCase):
         self.assertGreater(len(items), 0, "Course has no verticals (units) to check")
         for block in items:
             resp = self.client.get_html(get_url('container_handler', block.location))
-            self.assertEqual(resp.status_code, 200)
+            assert resp.status_code == 200
 
     def assertAssetsEqual(self, asset_son, course1_id, course2_id):
         """Verifies the asset of the given key has the same attributes in both given courses."""
@@ -204,12 +204,12 @@ class CourseTestCase(ProceduralCourseTestMixin, ModuleStoreTestCase):
         filename = asset_son.block_id if hasattr(asset_son, 'block_id') else asset_son['name']
         course1_asset_attrs = content_store.get_attrs(course1_id.make_asset_key(category, filename))
         course2_asset_attrs = content_store.get_attrs(course2_id.make_asset_key(category, filename))
-        self.assertEqual(len(course1_asset_attrs), len(course2_asset_attrs))
+        assert len(course1_asset_attrs) == len(course2_asset_attrs)
         for key, value in course1_asset_attrs.items():
             if key in ['_id', 'filename', 'uploadDate', 'content_son', 'thumbnail_location']:
                 pass
             else:
-                self.assertEqual(value, course2_asset_attrs[key])
+                assert value == course2_asset_attrs[key]
 
 
 class HTTPGetResponse:

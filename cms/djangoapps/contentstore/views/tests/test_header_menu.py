@@ -44,7 +44,7 @@ class TestHeaderMenu(CourseTestCase, UrlResetMixin):
         self.save_course()
         outline_url = reverse_course_url('course_handler', self.course.id)
         resp = self.client.get(outline_url, HTTP_ACCEPT='text/html')
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertNotContains(resp, '<li class="nav-item nav-course-settings-certificates">')
 
     def test_header_menu_with_web_certs_enabled(self):
@@ -57,7 +57,7 @@ class TestHeaderMenu(CourseTestCase, UrlResetMixin):
             raise SkipTest("course_handler raise 404 for old mongo course")
         outline_url = reverse_course_url('course_handler', self.course.id)
         resp = self.client.get(outline_url, HTTP_ACCEPT='text/html')
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertContains(resp, '<li class="nav-item nav-course-settings-certificates">')
 
     @override_settings(FEATURES=FEATURES_WITH_EXAM_SETTINGS_DISABLED)
@@ -71,7 +71,7 @@ class TestHeaderMenu(CourseTestCase, UrlResetMixin):
             raise SkipTest("course_handler raise 404 for old mongo course")
         outline_url = reverse_course_url('course_handler', self.course.id)
         resp = self.client.get(outline_url, HTTP_ACCEPT='text/html')
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertNotContains(resp, '<li class="nav-item nav-course-settings-exams">')
 
     @override_settings(FEATURES=FEATURES_WITH_EXAM_SETTINGS_ENABLED)
@@ -85,5 +85,5 @@ class TestHeaderMenu(CourseTestCase, UrlResetMixin):
             raise SkipTest("course_handler raise 404 for old mongo course")
         outline_url = reverse_course_url('course_handler', self.course.id)
         resp = self.client.get(outline_url, HTTP_ACCEPT='text/html')
-        self.assertEqual(resp.status_code, 200)
+        assert resp.status_code == 200
         self.assertContains(resp, '<li class="nav-item nav-course-settings-exams">')

@@ -34,7 +34,7 @@ class TestGenerateUsername(TestCase):
             username = get_auto_generated_username(data)
 
         expected_username = expected_initials + current_year_month + random_string
-        self.assertEqual(username, expected_username)
+        assert username == expected_username
 
     @ddt.data(
         ({'first_name': 'John', 'last_name': 'Doe'}, "JD"),
@@ -57,7 +57,7 @@ class TestGenerateUsername(TestCase):
         Test _get_username_prefix function.
         """
         username_prefix = _get_username_prefix(data)
-        self.assertEqual(username_prefix, expected_initials)
+        assert username_prefix == expected_initials
 
     @patch('openedx.core.djangoapps.user_authn.views.utils._get_username_prefix')
     @patch('openedx.core.djangoapps.user_authn.views.utils.random.choices')
@@ -76,4 +76,4 @@ class TestGenerateUsername(TestCase):
         expected_username = current_year_month + random_string
 
         username = get_auto_generated_username({})
-        self.assertEqual(username, expected_username)
+        assert username == expected_username

@@ -409,10 +409,10 @@ class TestGetCourseChapters(ModuleStoreTestCase):
         """
         Test non-existant course returns empty list.
         """
-        assert get_course_chapter_ids(None) == []
+        assert not get_course_chapter_ids(None)
         # build a fake key
         fake_course_key = CourseKey.from_string('course-v1:FakeOrg+CN1+CR-FALLNEVER1')
-        assert get_course_chapter_ids(fake_course_key) == []
+        assert not get_course_chapter_ids(fake_course_key)
 
     def test_get_chapters(self):
         """

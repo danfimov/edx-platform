@@ -177,7 +177,7 @@ class TestInstructorDashboard(ModuleStoreTestCase, LoginEnrollmentTestCase, XssT
                 set_course_cohorted(self.course.id, True)
                 self.client.login(username=self.user.username, password=self.TEST_PASSWORD)
                 response = self.client.get(self.url).content.decode('utf-8')
-                self.assertEqual(discussion_section in response, is_discussion_tab_available)
+                assert discussion_section in response == is_discussion_tab_available
 
     @ddt.data(
         (False, False, True),
@@ -200,7 +200,7 @@ class TestInstructorDashboard(ModuleStoreTestCase, LoginEnrollmentTestCase, XssT
                 set_course_cohorted(self.course.id, True)
                 self.client.login(username=user.username, password=self.TEST_PASSWORD)
                 response = self.client.get(self.url).content.decode('utf-8')
-                self.assertEqual(discussion_section in response, is_discussion_tab_available)
+                assert discussion_section in response == is_discussion_tab_available
 
     @ddt.data(
         ('staff', False, False),

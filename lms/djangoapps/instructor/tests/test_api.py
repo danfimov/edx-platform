@@ -2892,7 +2892,7 @@ class TestInstructorAPILevelsDataDump(SharedModuleStoreTestCase, LoginEnrollment
             # assert that if the integrity signature is enabled, the verification
             # status is not included as a query feature
             args = mock_task_endpoint.call_args.args
-            self.assertEqual(len(args), 3)
+            assert len(args) == 3
             query_features = args[2]
 
             self.assertNotIn('verification_status', query_features)
@@ -2977,7 +2977,7 @@ class TestInstructorAPILevelsDataDump(SharedModuleStoreTestCase, LoginEnrollment
 
         for key, value in expected_data.items():
             self.assertIn(key, res_json)
-            self.assertEqual(res_json[key], value)
+            assert res_json[key] == value
 
     def test_get_student_progress_url_response_headers(self):
         """
@@ -3000,7 +3000,7 @@ class TestInstructorAPILevelsDataDump(SharedModuleStoreTestCase, LoginEnrollment
 
         for key, value in expected_headers.items():
             self.assertIn(key, response.headers)
-            self.assertEqual(response.headers[key], value)
+            assert response.headers[key] == value
 
     def test_get_student_progress_url_from_uname(self):
         """ Test that progress_url is in the successful response. """
@@ -3017,7 +3017,7 @@ class TestInstructorAPILevelsDataDump(SharedModuleStoreTestCase, LoginEnrollment
 
         for key, value in expected_data.items():
             self.assertIn(key, res_json)
-            self.assertEqual(res_json[key], value)
+            assert res_json[key] == value
 
     def test_get_student_progress_url_noparams(self):
         """ Test that the endpoint 404's without the required query params. """

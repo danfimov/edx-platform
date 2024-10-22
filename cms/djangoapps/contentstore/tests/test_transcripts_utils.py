@@ -157,7 +157,7 @@ class TestSaveSubsToStore(SharedModuleStoreTestCase):
             self.course)
 
         assert contentstore().find(self.content_location)
-        self.assertEqual(result_location, self.content_location)
+        assert result_location == self.content_location
 
     def test_save_unjsonable_subs_to_store(self):
         """
@@ -238,9 +238,9 @@ class TestDownloadYoutubeSubs(TestYoutubeSubsBase):
             setup_caption_responses(mock_get, language_code, caption_response_string)
             transcripts_utils.download_youtube_subs(good_youtube_sub, self.course, settings)
 
-            self.assertEqual(2, len(mock_get.mock_calls))
+            assert 2 == len(mock_get.mock_calls)
             args, kwargs = mock_get.call_args_list[0]
-            self.assertEqual(args[0], 'https://www.youtube.com/watch?v=good_id_2')
+            assert args[0] == 'https://www.youtube.com/watch?v=good_id_2'
             args, kwargs = mock_get.call_args_list[1]
             assert re.match(r"^https://www\.youtube\.com/api/timedtext.*", args[0])
 
@@ -251,11 +251,11 @@ class TestDownloadYoutubeSubs(TestYoutubeSubsBase):
         incorrect subs name parsing
         """
         html5_ids = transcripts_utils.get_html5_ids(['foo.mp4', 'foo.1.bar.mp4', 'foo/bar/baz.1.4.mp4', 'foo'])
-        self.assertEqual(4, len(html5_ids))
-        self.assertEqual(html5_ids[0], 'foo')
-        self.assertEqual(html5_ids[1], 'foo.1.bar')
-        self.assertEqual(html5_ids[2], 'baz.1.4')
-        self.assertEqual(html5_ids[3], 'foo')
+        assert 4 == len(html5_ids)
+        assert html5_ids[0] == 'foo'
+        assert html5_ids[1] == 'foo.1.bar'
+        assert html5_ids[2] == 'baz.1.4'
+        assert html5_ids[3] == 'foo'
 
     @patch('xmodule.video_block.transcripts_utils.requests.get')
     def test_fail_downloading_subs(self, mock_get):
@@ -347,7 +347,7 @@ class TestGenerateSubsFromSource(TestDownloadYoutubeSubs):  # lint-amnesty, pyli
         with self.assertRaises(transcripts_utils.TranscriptsGenerationException) as cm:
             transcripts_utils.generate_subs_from_source(youtube_subs, 'BAD_FORMAT', srt_filedata, self.course)
         exception_message = str(cm.exception)
-        self.assertEqual(exception_message, "We support only SubRip (*.srt) transcripts format.")
+        assert exception_message == "We support only SubRip (*.srt) transcripts format."
 
     def test_fail_bad_subs_filedata(self):
         youtube_subs = {
@@ -361,7 +361,7 @@ class TestGenerateSubsFromSource(TestDownloadYoutubeSubs):  # lint-amnesty, pyli
         with self.assertRaises(transcripts_utils.TranscriptsGenerationException) as cm:
             transcripts_utils.generate_subs_from_source(youtube_subs, 'srt', srt_filedata, self.course)
         exception_message = str(cm.exception)
-        self.assertEqual(exception_message, "Something wrong with SubRip transcripts file during parsing.")
+        assert exception_message == "Something wrong with SubRip transcripts file during parsing."
 
 
 class TestGenerateSrtFromSjson(TestDownloadYoutubeSubs):  # lint-amnesty, pylint: disable=test-inherits-tests
@@ -451,7 +451,7 @@ class TestGenerateSrtFromSjson(TestDownloadYoutubeSubs):  # lint-amnesty, pylint
             ]
         }
         srt_subs = transcripts_utils.generate_srt_from_sjson(sjson_subs, 1)
-        self.assertFalse(srt_subs)
+        assert not srt_subs
 
 
 class TestYoutubeTranscripts(unittest.TestCase):
@@ -496,10 +496,10 @@ class TestYoutubeTranscripts(unittest.TestCase):
             link = transcripts_utils.get_transcript_links_from_youtube(youtube_id, settings, translation)
             transcripts = transcripts_utils.get_transcript_from_youtube(link['en'], youtube_id, translation)
 
-        self.assertEqual(transcripts, expected_transcripts)
-        self.assertEqual(2, len(mock_get.mock_calls))
+        assert transcripts == expected_transcripts
+        assert 2 == len(mock_get.mock_calls)
         args, kwargs = mock_get.call_args_list[0]
-        self.assertEqual(args[0], f'https://www.youtube.com/watch?v={youtube_id}')
+        assert args[0] == f'https://www.youtube.com/watch?v={youtube_id}'
         args, kwargs = mock_get.call_args_list[1]
         assert re.match(r"^https://www\.youtube\.com/api/timedtext.*", args[0])
 
@@ -547,7 +547,7 @@ class TestTranscript(unittest.TestCase):
         """
         expected = self.txt_transcript
         actual = transcripts_utils.Transcript.convert(self.srt_transcript, 'srt', 'txt')
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_convert_srt_to_srt(self):
         """
@@ -555,7 +555,7 @@ class TestTranscript(unittest.TestCase):
         """
         expected = self.srt_transcript
         actual = transcripts_utils.Transcript.convert(self.srt_transcript, 'srt', 'srt')
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_convert_sjson_to_txt(self):
         """
@@ -563,7 +563,7 @@ class TestTranscript(unittest.TestCase):
         """
         expected = self.txt_transcript
         actual = transcripts_utils.Transcript.convert(self.sjson_transcript, 'sjson', 'txt')
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_convert_sjson_to_srt(self):
         """
@@ -571,7 +571,7 @@ class TestTranscript(unittest.TestCase):
         """
         expected = self.srt_transcript
         actual = transcripts_utils.Transcript.convert(self.sjson_transcript, 'sjson', 'srt')
-        self.assertEqual(actual, expected)
+        assert actual == expected
 
     def test_convert_srt_to_sjson(self):
         """
@@ -649,9 +649,9 @@ class TestSubsFilename(unittest.TestCase):
 
     def test_unicode(self):
         name = transcripts_utils.subs_filename("˙∆©ƒƒƒ")
-        self.assertEqual(name, 'subs_˙∆©ƒƒƒ.srt.sjson')
+        assert name == 'subs_˙∆©ƒƒƒ.srt.sjson'
         name = transcripts_utils.subs_filename("˙∆©ƒƒƒ", 'uk')
-        self.assertEqual(name, 'uk_subs_˙∆©ƒƒƒ.srt.sjson')
+        assert name == 'uk_subs_˙∆©ƒƒƒ.srt.sjson'
 
 
 @ddt.ddt
@@ -691,7 +691,7 @@ class TestVideoIdsInfo(unittest.TestCase):
         Verify that `get_video_ids_info` works as expected.
         """
         actual_result = transcripts_utils.get_video_ids_info(edx_video_id, youtube_id_1_0, html5_sources)
-        self.assertEqual(actual_result, expected_result)
+        assert actual_result == expected_result
 
 
 @ddt.ddt
@@ -869,9 +869,9 @@ class TestGetTranscript(SharedModuleStoreTestCase):
             language
         )
 
-        self.assertEqual(content, self.subs[language])
-        self.assertEqual(file_name, expected_filename)
-        self.assertEqual(mimetype, self.srt_mime_type)
+        assert content == self.subs[language]
+        assert file_name == expected_filename
+        assert mimetype == self.srt_mime_type
 
     def test_get_transcript_from_content_store_for_ur(self):
         """
@@ -885,9 +885,9 @@ class TestGetTranscript(SharedModuleStoreTestCase):
             output_format=transcripts_utils.Transcript.SJSON
         )
 
-        self.assertEqual(json.loads(content), self.subs_sjson)
-        self.assertEqual(filename, 'ur_video_101.sjson')
-        self.assertEqual(mimetype, self.sjson_mime_type)
+        assert json.loads(content) == self.subs_sjson
+        assert filename == 'ur_video_101.sjson'
+        assert mimetype == self.sjson_mime_type
 
     @patch('xmodule.video_block.transcripts_utils.get_video_transcript_content')
     def test_get_transcript_from_val(self, mock_get_video_transcript_content):
@@ -902,9 +902,9 @@ class TestGetTranscript(SharedModuleStoreTestCase):
         content, filename, mimetype = transcripts_utils.get_transcript(
             self.video,
         )
-        self.assertEqual(content, self.subs_srt)
-        self.assertEqual(filename, 'edx.srt')
-        self.assertEqual(mimetype, self.srt_mime_type)
+        assert content == self.subs_srt
+        assert filename == 'edx.srt'
+        assert mimetype == self.srt_mime_type
 
     def test_get_transcript_invalid_format(self):
         """
@@ -918,7 +918,7 @@ class TestGetTranscript(SharedModuleStoreTestCase):
             )
 
         exception_message = str(invalid_format_exception.exception)
-        self.assertEqual(exception_message, 'Invalid transcript format `mpeg`')
+        assert exception_message == 'Invalid transcript format `mpeg`'
 
     def test_get_transcript_no_content(self):
         """
@@ -934,7 +934,7 @@ class TestGetTranscript(SharedModuleStoreTestCase):
             )
 
         exception_message = str(no_content_exception.exception)
-        self.assertEqual(exception_message, 'No transcript content')
+        assert exception_message == 'No transcript content'
 
     def test_get_transcript_no_en_transcript(self):
         """
@@ -949,7 +949,7 @@ class TestGetTranscript(SharedModuleStoreTestCase):
             )
 
         exception_message = str(no_en_transcript_exception.exception)
-        self.assertEqual(exception_message, 'No transcript for `en` language')
+        assert exception_message == 'No transcript for `en` language'
 
     @patch('xmodule.video_block.transcripts_utils.edxval_api.get_video_transcript_data')
     def test_get_transcript_incorrect_json_(self, mock_get_video_transcript_data):

@@ -80,12 +80,12 @@ class CourseValidationViewTest(SharedModuleStoreTestCase, APITestCase):
     def test_student_fails(self):
         self.client.login(username=self.student.username, password=self.password)
         resp = self.client.get(self.get_url(self.course_key))
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
 
     def test_staff_succeeds(self):
         self.client.login(username=self.staff.username, password=self.password)
         resp = self.client.get(self.get_url(self.course_key), {'all': 'true'})
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        assert resp.status_code == status.HTTP_200_OK
         expected_data = {
             'assignments': {
                 'total_number': 1,

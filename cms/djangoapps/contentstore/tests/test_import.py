@@ -69,7 +69,7 @@ class ContentStoreImportTest(ModuleStoreTestCase):
         )
         course_id = module_store.make_course_key('edX', 'test_import_course', '2012_Fall')
         course = module_store.get_course(course_id)
-        self.assertIsNotNone(course)
+        assert course is not None
 
         return module_store, content_store, course
 
@@ -86,7 +86,7 @@ class ContentStoreImportTest(ModuleStoreTestCase):
             target_id=course.id,
             verbose=True,
         )
-        self.assertEqual(len(course_items), 1)
+        assert len(course_items) == 1
 
     def test_unicode_chars_in_course_name_import(self):
         """
@@ -106,10 +106,10 @@ class ContentStoreImportTest(ModuleStoreTestCase):
             )
 
             course = module_store.get_course(course_id)
-            self.assertIsNotNone(course)
+            assert course is not None
 
             # test that course 'display_name' same as imported course 'display_name'
-            self.assertEqual(course.display_name, "Φυσικά το όνομα Unicode")
+            assert course.display_name == "Φυσικά το όνομα Unicode"
 
     def test_static_import(self):
         '''
@@ -120,8 +120,8 @@ class ContentStoreImportTest(ModuleStoreTestCase):
         # make sure we have ONE asset in our contentstore ("should_be_imported.html")
         all_assets, count = content_store.get_all_content_for_course(course.id)
         print("len(all_assets)=%d" % len(all_assets))
-        self.assertEqual(len(all_assets), 1)
-        self.assertEqual(count, 1)
+        assert len(all_assets) == 1
+        assert count == 1
 
         content = None
         try:
@@ -130,11 +130,11 @@ class ContentStoreImportTest(ModuleStoreTestCase):
         except NotFoundError:
             pass
 
-        self.assertIsNotNone(content)
+        assert content is not None
 
         # make sure course.static_asset_path is correct
         print(f"static_asset_path = {course.static_asset_path}")
-        self.assertEqual(course.static_asset_path, 'test_import_course')
+        assert course.static_asset_path == 'test_import_course'
 
     def test_asset_import_nostatic(self):
         '''
@@ -153,8 +153,8 @@ class ContentStoreImportTest(ModuleStoreTestCase):
 
         # make sure we have NO assets in our contentstore
         all_assets, count = content_store.get_all_content_for_course(course.id)
-        self.assertEqual(len(all_assets), 0)
-        self.assertEqual(count, 0)
+        assert len(all_assets) == 0
+        assert count == 0
 
     def test_no_static_link_rewrites_on_import(self):
         module_store = modulestore()
@@ -173,7 +173,7 @@ class ContentStoreImportTest(ModuleStoreTestCase):
     def test_tab_name_imports_correctly(self):
         _module_store, _content_store, course = self.load_test_import_course()
         print(f"course tabs = {course.tabs}")
-        self.assertEqual(course.tabs[1]['name'], 'Syllabus')
+        assert course.tabs[1]['name'] == 'Syllabus'
 
     def test_reimport(self):
         __, __, course = self.load_test_import_course(create_if_not_present=True)
@@ -196,7 +196,7 @@ class ContentStoreImportTest(ModuleStoreTestCase):
         conditional_block = module_store.get_item(
             target_id.make_usage_key('conditional', 'condone')
         )
-        self.assertIsNotNone(conditional_block)
+        assert conditional_block is not None
         different_course_id = module_store.make_course_key('edX', 'different_course', 'course_run')
         self.assertListEqual(
             [
@@ -249,13 +249,13 @@ class ContentStoreImportTest(ModuleStoreTestCase):
         split_test_block = module_store.get_item(
             target_id.make_usage_key('split_test', split_test_name)
         )
-        self.assertIsNotNone(split_test_block)
+        assert split_test_block is not None
 
         remapped_verticals = {
             key: target_id.make_usage_key('vertical', value) for key, value in groups_to_verticals.items()
         }
 
-        self.assertEqual(remapped_verticals, split_test_block.group_id_to_child)
+        assert remapped_verticals == split_test_block.group_id_to_child
 
     def test_video_components_present_while_import(self):
         """
@@ -273,4 +273,4 @@ class ContentStoreImportTest(ModuleStoreTestCase):
         vertical = module_store.get_item(re_course.id.make_usage_key('vertical', 'vertical_test'))
 
         video = module_store.get_item(vertical.children[1])
-        self.assertEqual(video.display_name, 'default')
+        assert video.display_name == 'default'

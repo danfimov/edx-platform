@@ -152,7 +152,7 @@ class EnrollmentFiltersTest(ModuleStoreTestCase):
         """
         enrollment = CourseEnrollment.enroll(self.user, self.course.id, mode='audit')
 
-        self.assertEqual('honor', enrollment.mode)
+        assert 'honor' == enrollment.mode
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -186,7 +186,7 @@ class EnrollmentFiltersTest(ModuleStoreTestCase):
         """
         enrollment = CourseEnrollment.enroll(self.user, self.course.id, mode='audit')
 
-        self.assertEqual('audit', enrollment.mode)
+        assert 'audit' == enrollment.mode
         assert CourseEnrollment.is_enrolled(self.user, self.course.id)
 
 
@@ -233,7 +233,7 @@ class UnenrollmentFiltersTest(ModuleStoreTestCase):
 
         CourseEnrollment.unenroll(self.user, self.course.id)
 
-        self.assertFalse(CourseEnrollment.is_enrolled(self.user, self.course.id))
+        assert not CourseEnrollment.is_enrolled(self.user, self.course.id)
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -271,7 +271,7 @@ class UnenrollmentFiltersTest(ModuleStoreTestCase):
 
         CourseEnrollment.unenroll(self.user, self.course.id)
 
-        self.assertFalse(CourseEnrollment.is_enrolled(self.user, self.course.id))
+        assert not CourseEnrollment.is_enrolled(self.user, self.course.id)
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -300,8 +300,8 @@ class UnenrollmentFiltersTest(ModuleStoreTestCase):
 
         response = self.client.post(reverse("change_enrollment"), params)
 
-        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertEqual("You can't un-enroll from this site.", response.content.decode("utf-8"))
+        assert status.HTTP_400_BAD_REQUEST == response.status_code
+        assert "You can't un-enroll from this site." == response.content.decode("utf-8")
 
 
 @skip_unless_lms
@@ -396,8 +396,8 @@ class StudentDashboardFiltersTest(ModuleStoreTestCase):
         """
         response = self.client.get(self.dashboard_url)
 
-        self.assertEqual(status.HTTP_302_FOUND, response.status_code)
-        self.assertEqual("https://custom-dashboard.com", response.url)
+        assert status.HTTP_302_FOUND == response.status_code
+        assert "https://custom-dashboard.com" == response.url
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -420,8 +420,8 @@ class StudentDashboardFiltersTest(ModuleStoreTestCase):
         """
         response = self.client.get(self.dashboard_url)
 
-        self.assertEqual(status.HTTP_302_FOUND, response.status_code)
-        self.assertEqual(reverse("account_settings"), response.url)
+        assert status.HTTP_302_FOUND == response.status_code
+        assert reverse("account_settings") == response.url
 
     @override_settings(
         OPEN_EDX_FILTERS_CONFIG={
@@ -443,7 +443,7 @@ class StudentDashboardFiltersTest(ModuleStoreTestCase):
         """
         response = self.client.get(self.dashboard_url)
 
-        self.assertEqual("This is a custom response.", response.content.decode("utf-8"))
+        assert "This is a custom response." == response.content.decode("utf-8")
 
     @override_settings(OPEN_EDX_FILTERS_CONFIG={})
     def test_dashboard_render_without_filter_config(self):

@@ -179,8 +179,8 @@ class TestGetEnrollments(SharedModuleStoreTestCase):
         returned_enrollments, course_mode_info = get_enrollments(self.user, None, None)
 
         # Then I return an empty list and dict
-        self.assertEqual(returned_enrollments, [])
-        self.assertEqual(course_mode_info, {})
+        assert not returned_enrollments
+        assert course_mode_info == {}
 
 
 class TestGetEntitlements(SharedModuleStoreTestCase):

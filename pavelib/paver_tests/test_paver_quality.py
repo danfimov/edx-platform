@@ -153,4 +153,4 @@ class TestPrepareReportDir(unittest.TestCase):
     def test_report_dir_without_files(self):
         os.remove(self.test_file.name)
         pavelib.quality._prepare_report_dir(path(self.test_dir))  # pylint: disable=protected-access
-        assert os.listdir(path(self.test_dir)) == []
+        assert not os.listdir(path(self.test_dir))

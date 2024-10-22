@@ -58,7 +58,7 @@ class TestXMLModuleStore(TestCase):
 
         # Look up the errors during load. There should be none.
         errors = modulestore.get_course_errors(CourseKey.from_string("edX/toy/2012_Fall"))
-        assert errors == []
+        assert not errors
 
     def test_get_courses_for_wiki(self):
         """

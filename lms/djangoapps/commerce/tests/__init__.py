@@ -64,7 +64,7 @@ class DeprecatedRestApiClientTests(TestCase):
         We also check that the auth type of the api is what we expect.
         """
         api = DeprecatedRestApiClient(**kwargs)
-        self.assertIsInstance(api._store['session'].auth, auth_type)  # pylint: disable=protected-access
+        assert isinstance(api._store['session'].auth, auth_type)  # pylint: disable=protected-access
 
     @ddt.data(
         {'url': None, 'signing_key': SIGNING_KEY, 'username': USERNAME},
@@ -116,7 +116,7 @@ class DeprecatedRestApiClientTests(TestCase):
             uagent = user_agent()
             self.assertIn('awesome_app', uagent)
 
-        self.assertEqual(user_agent(), DeprecatedRestApiClient.user_agent())
+        assert user_agent() == DeprecatedRestApiClient.user_agent()
 
 
 class DeprecatedRestApiClientTest(TestCase):

@@ -70,7 +70,7 @@ class TestOrphanBase(CourseTestCase):
         Asserts that we have the expected count of orphans
         for a given course_key
         """
-        self.assertEqual(len(self.store.get_orphans(course_key)), number)
+        assert len(self.store.get_orphans(course_key)) == number
 
 
 class TestOrphan(TestOrphanBase):
@@ -91,7 +91,7 @@ class TestOrphan(TestOrphanBase):
                 HTTP_ACCEPT='application/json'
             ).content.decode('utf-8')
         )
-        self.assertEqual(len(orphans), 3, f"Wrong # {orphans}")
+        assert len(orphans) == 3, f"Wrong # {orphans}"
         location = course.location.replace(category='chapter', name='OrphanChapter')
         self.assertIn(str(location), orphans)
         location = course.location.replace(category='vertical', name='OrphanVert')
@@ -112,7 +112,7 @@ class TestOrphan(TestOrphanBase):
         orphans = json.loads(
             self.client.get(orphan_url, HTTP_ACCEPT='application/json').content.decode('utf-8')
         )
-        self.assertEqual(len(orphans), 0, f"Orphans not deleted {orphans}")
+        assert len(orphans) == 0, f"Orphans not deleted {orphans}"
 
         # make sure that any children with one orphan parent and one non-orphan
         # parent are not deleted
@@ -128,9 +128,9 @@ class TestOrphan(TestOrphanBase):
         test_user_client, test_user = self.create_non_staff_authed_user_client()
         CourseEnrollment.enroll(test_user, course.id)
         response = test_user_client.get(orphan_url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
         response = test_user_client.delete(orphan_url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_path_to_location_for_orphan_vertical(self):
         r"""
@@ -164,7 +164,7 @@ class TestOrphan(TestOrphanBase):
         # HTML component has `vertical1` as its parent.
         html_parent = self.store.get_parent_location(multi_parent_html.location)
         self.assertNotEqual(str(html_parent), str(orphan_vertical.location))
-        self.assertEqual(str(html_parent), str(vertical1.location))
+        assert str(html_parent) == str(vertical1.location)
 
         # Get path of the `multi_parent_html` & verify path_to_location returns a expected path
         path = path_to_location(self.store, multi_parent_html.location)
@@ -176,9 +176,9 @@ class TestOrphan(TestOrphanBase):
             "",
             path[-1]
         )
-        self.assertIsNotNone(path)
-        self.assertEqual(len(path), 6)
-        self.assertEqual(path, expected_path)
+        assert path is not None
+        assert len(path) == 6
+        assert path == expected_path
 
     def test_path_to_location_for_orphan_chapter(self):
         r"""
@@ -215,7 +215,7 @@ class TestOrphan(TestOrphanBase):
 
         # Verify chapter1 is parent of vertical1.
         vertical1_parent = self.store.get_parent_location(vertical1.location)
-        self.assertEqual(str(vertical1_parent), str(chapter1.location))
+        assert str(vertical1_parent) == str(chapter1.location)
 
         # Make `Vertical1` the parent of `HTML0`. So `HTML0` will have to parents (`Vertical0` & `Vertical1`)
         vertical1.children.append(html.location)
@@ -224,7 +224,7 @@ class TestOrphan(TestOrphanBase):
         # Get parent location & verify its either of the two verticals. As both parents are non-orphan,
         # alphabetically least is returned
         html_parent = self.store.get_parent_location(html.location)
-        self.assertEqual(str(html_parent), str(vertical1.location))
+        assert str(html_parent) == str(vertical1.location)
 
         # verify path_to_location returns a expected path
         path = path_to_location(self.store, html.location)
@@ -236,6 +236,6 @@ class TestOrphan(TestOrphanBase):
             "",
             path[-1]
         )
-        self.assertIsNotNone(path)
-        self.assertEqual(len(path), 6)
-        self.assertEqual(path, expected_path)
+        assert path is not None
+        assert len(path) == 6
+        assert path == expected_path

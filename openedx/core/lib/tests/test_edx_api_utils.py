@@ -380,7 +380,7 @@ class TestGetEdxApiData(
         )
 
         assert mock_warning.called
-        assert actual == []
+        assert not actual
 
     @mock.patch(UTILITY_MODULE + ".log.exception")
     def test_data_retrieval_failure(self, mock_exception):
@@ -406,7 +406,7 @@ class TestGetEdxApiData(
         )
 
         assert mock_exception.called
-        assert actual == []
+        assert not actual
 
     @mock.patch(UTILITY_MODULE + ".log.warning")
     def test_api_config_disabled_with_id_and_not_collection(self, mock_warning):

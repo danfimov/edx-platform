@@ -56,7 +56,7 @@ class ReportStoreTestMixin:
         in reverse chronological order.
         """
         report_store = self.create_report_store()  # lint-amnesty, pylint: disable=assignment-from-no-return
-        assert report_store.links_for(self.course_id) == []
+        assert not report_store.links_for(self.course_id)
 
         report_store.store(self.course_id, 'old_file', StringIO())
         time.sleep(1)  # Ensure we have a unique timestamp.

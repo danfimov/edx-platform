@@ -351,10 +351,10 @@ class PersistentSubsectionGradeTest(GradesModelTestCase):
         deleted = PersistentSubsectionGrade.delete_subsection_grades_for_learner(
             self.user.id, self.course_key
         )
-        self.assertEqual(deleted, 1)
-        self.assertFalse(PersistentSubsectionGrade.objects.filter(
-            user_id=self.user.id, course_id=self.course_key).exists()
-        )
+        assert deleted == 1
+        assert not PersistentSubsectionGrade.objects.filter(
+            user_id=self.user.id, course_id=self.course_key
+        ).exists()
 
     def test_clear_subsection_grade_override(self):
         grade = PersistentSubsectionGrade.update_or_create_grade(**self.params)
@@ -366,7 +366,7 @@ class PersistentSubsectionGradeTest(GradesModelTestCase):
             feature=GradeOverrideFeatureEnum.gradebook,
         )
         deleted = PersistentSubsectionGrade.delete_subsection_grades_for_learner(self.user.id, self.course_key)
-        self.assertEqual(deleted, 2)
+        assert deleted == 2
 
 
 @ddt.ddt
@@ -452,7 +452,7 @@ class PersistentCourseGradesTest(GradesModelTestCase):
         with freeze_time(now()):
             grade = PersistentCourseGrade.update_or_create(**self.params)
             assert now() == grade.passed_timestamp
-            self.assertEqual(mock.call_count, 1)
+            assert mock.call_count == 1
 
     def test_create_and_read_grade(self):
         created_grade = PersistentCourseGrade.update_or_create(**self.params)
@@ -545,7 +545,7 @@ class PersistentCourseGradesTest(GradesModelTestCase):
             PersistentCourseGrade.read(self.params['user_id'], self.course_key)
 
         another_user_grade = PersistentCourseGrade.read(other_user_params['user_id'], self.course_key)
-        self.assertIsNotNone(another_user_grade)
+        assert another_user_grade is not None
 
         assert PersistentCourseGrade.objects.filter(
             user_id=self.params['user_id'], course_id=other_course_key

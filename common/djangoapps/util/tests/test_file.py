@@ -306,8 +306,7 @@ class TestUniversalNewlineIterator(TestCase):
 
     @ddt.data(1, 2, 999)
     def test_empty_file(self, buffer_size):
-        assert [thing.decode('utf-8') for thing in
-                UniversalNewlineIterator(StringIO(''), buffer_size=buffer_size)] == []
+        assert not [thing.decode('utf-8') for thing in UniversalNewlineIterator(StringIO(''), buffer_size=buffer_size)]
 
     @ddt.data(1, 2, 999)
     def test_unicode_data(self, buffer_size):

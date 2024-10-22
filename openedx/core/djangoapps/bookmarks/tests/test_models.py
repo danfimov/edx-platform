@@ -297,7 +297,7 @@ class BookmarkModelTests(BookmarksTestsBase):
 
         assert bookmark.path == expected_path
         assert bookmark.xblock_cache is not None
-        assert bookmark.xblock_cache.paths == []
+        assert not bookmark.xblock_cache.paths
 
     def test_create_bookmark_success(self):
         """
@@ -402,16 +402,16 @@ class BookmarkModelTests(BookmarksTestsBase):
         bookmark_data = self.get_bookmark_data(self.other_vertical_2, user=user)
         bookmark, __ = Bookmark.create(bookmark_data)
 
-        assert bookmark.path == []
+        assert not bookmark.path
         assert bookmark.xblock_cache is not None
-        assert bookmark.xblock_cache.paths == []
+        assert not bookmark.xblock_cache.paths
 
         # Parent block could not be retrieved
         with mock.patch('openedx.core.djangoapps.bookmarks.models.search.path_to_location') as mock_path_to_location:
             mock_path_to_location.return_value = [usage_key]
             bookmark_data = self.get_bookmark_data(self.other_sequential_1, user=user)
             bookmark, __ = Bookmark.create(bookmark_data)
-            assert bookmark.path == []
+            assert not bookmark.path
 
 
 @ddt.ddt

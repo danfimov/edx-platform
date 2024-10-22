@@ -87,11 +87,11 @@ class TestReindexCourse(ModuleStoreTestCase):
         with mock.patch(self.REINDEX_PATH_LOCATION) as patched_index, \
                 mock.patch(self.MODULESTORE_PATCH_LOCATION, mock.Mock(return_value=self.store)):
             call_command('reindex_course', str(self.first_course.id))
-            self.assertEqual(patched_index.mock_calls, self._build_calls(self.first_course))
+            assert patched_index.mock_calls == self._build_calls(self.first_course)
             patched_index.reset_mock()
 
             call_command('reindex_course', str(self.second_course.id))
-            self.assertEqual(patched_index.mock_calls, self._build_calls(self.second_course))
+            assert patched_index.mock_calls == self._build_calls(self.second_course)
             patched_index.reset_mock()
 
             call_command(
@@ -100,7 +100,7 @@ class TestReindexCourse(ModuleStoreTestCase):
                 str(self.second_course.id)
             )
             expected_calls = self._build_calls(self.first_course, self.second_course)
-            self.assertEqual(patched_index.mock_calls, expected_calls)
+            assert patched_index.mock_calls == expected_calls
 
     def test_given_all_key_prompts_and_reindexes_all_courses(self):
         """ Test that reindexes all courses when --all key is given and confirmed """

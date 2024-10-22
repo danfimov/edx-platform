@@ -703,9 +703,9 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         EmailChangeMiddleware.register_email_change(request=self.request, email=self.user.email)
 
         # Ensure email is set in the session
-        self.assertEqual(self.request.session.get('email'), self.user.email)
+        assert self.request.session.get('email') == self.user.email
         # Ensure session cookie exist
-        self.assertEqual(len(self.client.response.cookies), 1)
+        assert len(self.client.response.cookies) == 1
 
         # No email change occurred in any browser
 
@@ -718,9 +718,9 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         mock_set_custom_attribute.assert_has_calls([call('is_enforce_session_email_match_enabled', True)])
 
         # Assert that the session and cookies are not affected
-        self.assertEqual(self.request.session.get('email'), self.user.email)
-        self.assertEqual(len(self.client.response.cookies), 1)
-        self.assertEqual(self.client.response.cookies[settings.SESSION_COOKIE_NAME].value, 'authenticated')
+        assert self.request.session.get('email') == self.user.email
+        assert len(self.client.response.cookies) == 1
+        assert self.client.response.cookies[settings.SESSION_COOKIE_NAME].value == 'authenticated'
 
         # Assert that _mark_cookie_for_deletion not called
         mock_mark_cookie_for_deletion.assert_not_called()
@@ -746,9 +746,9 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         EmailChangeMiddleware.register_email_change(request=self.request, email=self.user.email)
 
         # Ensure email is set in the session
-        self.assertEqual(self.request.session.get('email'), self.user.email)
+        assert self.request.session.get('email') == self.user.email
         # Ensure session cookie exist
-        self.assertEqual(len(self.client.response.cookies), 1)
+        assert len(self.client.response.cookies) == 1
 
         # No email change occurred in any browser
 
@@ -761,9 +761,9 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         mock_set_custom_attribute.assert_has_calls([call('is_enforce_session_email_match_enabled', False)])
 
         # Assert that the session and cookies are not affected
-        self.assertEqual(self.request.session.get('email'), self.user.email)
-        self.assertEqual(len(self.client.response.cookies), 1)
-        self.assertEqual(self.client.response.cookies[settings.SESSION_COOKIE_NAME].value, 'authenticated')
+        assert self.request.session.get('email') == self.user.email
+        assert len(self.client.response.cookies) == 1
+        assert self.client.response.cookies[settings.SESSION_COOKIE_NAME].value == 'authenticated'
 
         # Assert that _mark_cookie_for_deletion not called
         mock_mark_cookie_for_deletion.assert_not_called()
@@ -790,9 +790,9 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         EmailChangeMiddleware.register_email_change(request=self.request, email=self.user.email)
 
         # Ensure email is set in the session
-        self.assertEqual(self.request.session.get('email'), self.user.email)
+        assert self.request.session.get('email') == self.user.email
         # Ensure session cookie exist
-        self.assertEqual(len(self.client.response.cookies), 1)
+        assert len(self.client.response.cookies) == 1
 
         # simulating email changed in some other browser
         self.user.email = 'new_email@test.com'
@@ -833,9 +833,9 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         EmailChangeMiddleware.register_email_change(request=self.request, email=self.user.email)
 
         # Ensure email is set in the session
-        self.assertEqual(self.request.session.get('email'), self.user.email)
+        assert self.request.session.get('email') == self.user.email
         # Ensure session cookie exist
-        self.assertEqual(len(self.client.response.cookies), 1)
+        assert len(self.client.response.cookies) == 1
 
         # simulating email changed in some other browser
         self.user.email = 'new_email@test.com'
@@ -851,8 +851,8 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
 
         # Assert that the session and cookies are not affected
         self.assertNotEqual(self.request.session.get('email'), self.user.email)
-        self.assertEqual(len(self.client.response.cookies), 1)
-        self.assertEqual(self.client.response.cookies[settings.SESSION_COOKIE_NAME].value, 'authenticated')
+        assert len(self.client.response.cookies) == 1
+        assert self.client.response.cookies[settings.SESSION_COOKIE_NAME].value == 'authenticated'
 
         # Assert that _mark_cookie_for_deletion not called
         mock_mark_cookie_for_deletion.assert_not_called()
@@ -874,10 +874,10 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         self.client.response.set_cookie(settings.SESSION_COOKIE_NAME, 'authenticated')  # Add some logged-in cookie
 
         # Ensure there is no email in the session denoting no previous history of email change
-        self.assertEqual(self.request.session.get('email'), None)
+        assert self.request.session.get('email') is None
 
         # Ensure session cookie exist
-        self.assertEqual(len(self.client.response.cookies), 1)
+        assert len(self.client.response.cookies) == 1
 
         # simulating email changed in some other browser
         self.user.email = 'new_email@test.com'
@@ -887,8 +887,8 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         EmailChangeMiddleware(get_response=lambda request: None).process_request(self.request)
 
         # Assert that the session and cookies are not affected
-        self.assertEqual(len(self.client.response.cookies), 1)
-        self.assertEqual(self.client.response.cookies[settings.SESSION_COOKIE_NAME].value, 'authenticated')
+        assert len(self.client.response.cookies) == 1
+        assert self.client.response.cookies[settings.SESSION_COOKIE_NAME].value == 'authenticated'
 
         # Assert that _mark_cookie_for_deletion not called
         mock_mark_cookie_for_deletion.assert_not_called()
@@ -910,10 +910,10 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         self.client.response.set_cookie(settings.SESSION_COOKIE_NAME, 'authenticated')  # Add some logged-in cookie
 
         # Ensure there is no email in the session denoting no previous history of email change
-        self.assertEqual(self.request.session.get('email'), None)
+        assert self.request.session.get('email') is None
 
         # Ensure session cookie exist
-        self.assertEqual(len(self.client.response.cookies), 1)
+        assert len(self.client.response.cookies) == 1
 
         # simulating email changed in some other browser
         self.user.email = 'new_email@test.com'
@@ -923,8 +923,8 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         EmailChangeMiddleware(get_response=lambda request: None).process_request(self.request)
 
         # Assert that the session and cookies are not affected
-        self.assertEqual(len(self.client.response.cookies), 1)
-        self.assertEqual(self.client.response.cookies[settings.SESSION_COOKIE_NAME].value, 'authenticated')
+        assert len(self.client.response.cookies) == 1
+        assert self.client.response.cookies[settings.SESSION_COOKIE_NAME].value == 'authenticated'
 
         # Assert that _mark_cookie_for_deletion not called
         mock_mark_cookie_for_deletion.assert_not_called()
@@ -1019,7 +1019,7 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
         self.client.response.set_cookie(settings.SESSION_COOKIE_NAME, 'authenticated')  # Add some logged-in cookie
 
         # Ensure there is no email in the session
-        self.assertEqual(self.request.session.get('email'), None)
+        assert self.request.session.get('email') is None
 
         # Call process_response
         response = EmailChangeMiddleware(get_response=lambda request: None).process_response(
@@ -1028,7 +1028,7 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
 
         assert response.status_code == 200
         # Verify that email is set in the session
-        self.assertEqual(self.request.session.get('email'), self.user.email)
+        assert self.request.session.get('email') == self.user.email
 
     @patch.dict("django.conf.settings.FEATURES", {"DISABLE_SET_JWT_COOKIES_FOR_TESTS": False})
     def test_user_remain_authenticated_on_email_change_in_other_browser_with_toggle_disabled(self):
@@ -1366,4 +1366,4 @@ class TestEmailChangeMiddleware(TestSafeSessionsLogMixin, TestCase):
             self.assertIn(cookie, response.cookies.keys())
 
             # Assert that the value is not an empty string
-            self.assertEqual(response.cookies[cookie].value, "")
+            assert response.cookies[cookie].value == ""
